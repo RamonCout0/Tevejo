@@ -1,0 +1,105 @@
+<div class="max-w-4xl mx-auto space-y-6">
+
+  <a *ngIf="comunidade() as c" [routerLink]="['/comunidades', c.id]" class="tv-btn tv-btn-ghost tv-btn-sm -ml-2 max-w-full">
+    <i class="fas fa-arrow-left text-xs" aria-hidden="true"></i>
+    <span class="truncate">{{ c.nome }}</span>
+  </a>
+
+  <section class="tv-card tv-card-marca p-6 sm:p-7 pt-8 space-y-6">
+
+    <header class="flex items-end justify-between flex-wrap gap-4">
+      <div class="space-y-1">
+        <p class="tv-page-eyebrow">Fila de denúncias</p>
+        <h1 class="tv-page-title">Requer moderação</h1>
+      </div>
+
+      <div class="flex gap-3">
+        <div class="text-center px-4 py-2 rounded-2xl tv-badge-warning">
+          <p class="text-2xl font-bold leading-none" style="font-family: var(--tv-font-display);">{{ pendentesCount() }}</p>
+          <p class="text-[11px] uppercase tracking-wider font-semibold mt-1">Pendentes</p>
+        </div>
+        <div class="text-center px-4 py-2 rounded-2xl tv-badge-success">
+          <p class="text-2xl font-bold leading-none" style="font-family: var(--tv-font-display);">{{ analisadasCount() }}</p>
+          <p class="text-[11px] uppercase tracking-wider font-semibold mt-1">Analisadas</p>
+        </div>
+      </div>
+    </header>
+
+    <div *ngIf="sucesso() as msg" class="tv-alert tv-alert-success" role="status" aria-live="polite">
+      <i class="fas fa-check-circle mt-[2px]" aria-hidden="true"></i>
+      <span>{{ msg }}</span>
+    </div>
+
+    <div *ngIf="erro() as msg" class="tv-alert tv-alert-error" role="alert">
+      <i class="fas fa-circle-exclamation mt-[2px]" aria-hidden="true"></i>
+      <span>{{ msg }}</span>
+    </div>
+
+    <div *ngIf="carregando()" class="tv-loading-row" role="status" aria-live="polite">
+      <span class="tv-dot-loader" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span>Carregando denúncias…</span>
+    </div>
+
+    <div *ngIf="!carregando() && !erro() && denuncias().length === 0" class="tv-empty">
+      <img src="/assets/girassol.svg" alt="" class="w-14" aria-hidden="true">
+      <p class="tv-empty-title">Tudo em ordem.</p>
+      <p class="tv-empty-desc">Nenhuma denúncia pendente no momento.</p>
+    </div>
+
+    <article *ngFor="let denuncia of denuncias()"
+             class="rounded-2xl p-5 space-y-4"
+             style="background: var(--color-tv-secondary); border: 1px solid var(--tv-border-blue);">
+
+      <div class="flex items-start gap-3 min-w-0">
+        <span class="tv-avatar tv-avatar-md" [ngClass]="denuncia.denunciante | tomDaMarca">{{ denuncia.denunciante | iniciais }}</span>
+        <div class="flex-1 min-w-0 text-sm">
+          <p class="font-semibold truncate">
+            {{ denuncia.denunciante }}
+            <span class="font-normal" style="color: var(--color-tv-muted-fg);">
+              {{ denuncia.alvo_tipo === 'comentario' ? 'denunciou um comentário' : 'denunciou uma postagem' }}
+            </span>
+          </p>
+          <div class="flex flex-wrap items-center gap-2 mt-1">
+            <span class="tv-badge tv-badge-warning max-w-[16rem]" [title]="denuncia.motivo">{{ denuncia.motivo }}</span>
+            <span class="text-xs" style="color: var(--color-tv-muted-fg);">
+              {{ denuncia.criado_em | date:"dd/MM 'às' HH:mm" }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl p-4 flex gap-3 min-w-0" style="background: var(--color-tv-card); border: 1px solid var(--tv-border-blue);">
+        <span class="tv-avatar tv-avatar-sm" [ngClass]="(denuncia.alvo_tipo === 'comentario' ? denuncia.comentario_autor : denuncia.postagem_autor) | tomDaMarca">
+          {{ (denuncia.alvo_tipo === 'comentario' ? denuncia.comentario_autor : denuncia.postagem_autor) | iniciais }}
+        </span>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold flex items-center gap-2 min-w-0">
+            <span class="truncate">{{ denuncia.alvo_tipo === 'comentario' ? denuncia.comentario_autor : denuncia.postagem_autor }}</span>
+            <span class="tv-badge tv-badge-role shrink-0">{{ denuncia.alvo_tipo === 'comentario' ? 'Comentário' : 'Postagem' }}</span>
+          </p>
+          <p *ngIf="denuncia.alvo_tipo !== 'comentario' && denuncia.postagem_titulo" class="text-sm font-semibold mt-2">
+            {{ denuncia.postagem_titulo }}
+          </p>
+          <div class="tv-texto-rico tv-linhas-4 mt-1" style="font-size: 14px;"
+               [innerHTML]="(denuncia.alvo_tipo === 'comentario' ? denuncia.comentario_conteudo : denuncia.postagem_conteudo) | textoRico"></div>
+          <p *ngIf="denuncia.detalhe" class="text-xs italic mt-3 p-2 rounded-lg" style="color: var(--color-tv-muted-fg); background: var(--color-tv-secondary);">
+            <i class="fas fa-quote-left text-[9px]" aria-hidden="true"></i> {{ denuncia.detalhe }}
+          </p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap justify-end gap-2">
+        <button type="button" class="tv-btn tv-btn-secondary tv-btn-sm"
+                (click)="manterPostagem(denuncia)" [disabled]="acaoEmCurso() === denuncia.id">
+          <i class="fas fa-check" aria-hidden="true"></i>
+          {{ denuncia.alvo_tipo === 'comentario' ? 'Manter comentário' : 'Manter postagem' }}
+        </button>
+        <button type="button" class="tv-btn tv-btn-danger tv-btn-sm"
+                (click)="removerPostagem(denuncia)" [disabled]="acaoEmCurso() === denuncia.id">
+          <i class="fas fa-trash" aria-hidden="true"></i>
+          {{ denuncia.alvo_tipo === 'comentario' ? 'Remover comentário' : 'Remover postagem' }}
+        </button>
+      </div>
+    </article>
+  </section>
+</div>

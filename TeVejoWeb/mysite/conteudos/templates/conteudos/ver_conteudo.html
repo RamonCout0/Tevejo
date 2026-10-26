@@ -1,0 +1,80 @@
+{% extends 'principal/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'conteudos/css/ver_conteudo.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="conteudo-view-wrapper">
+    
+    <div class="breadcrumb-custom">
+        <a href="{% url 'conteudos:conteudos' %}">
+            <i class="fas fa-arrow-left"></i> Voltar para Conteúdo Educacional
+        </a>
+        <span>></span>
+        <span>Visualizar</span>
+    </div>
+
+    <div class="conteudo-header">
+        <h1 class="conteudo-titulo-principal">{{ conteudo.titulo }}</h1>
+        <div class="conteudo-meta">
+            <span class="conteudo-fonte">
+                <i class="fas fa-book-open"></i> Fonte: {{ conteudo.fonte }}
+            </span>
+            <span class="conteudo-data">
+                <i class="far fa-calendar-alt"></i> Publicado em {{ conteudo.data_criacao|date:"d/m/Y" }}
+            </span>
+        </div>
+    </div>
+
+    {% if conteudo.foto %}
+    <div class="conteudo-capa">
+        <img src="{{ conteudo.foto.url }}" alt="Capa de {{ conteudo.titulo }}">
+    </div>
+    {% endif %}
+
+    <div class="curador-box">
+        <div class="curador-avatar-wrapper">
+            {% if conteudo.curador.foto %}
+                <img src="{{ conteudo.curador.foto.url }}" class="curador-foto" alt="Foto do curador">
+            {% else %}
+                <img src="{% static 'principal/imgs/imagem2.png' %}" class="curador-foto" alt="Avatar padrão">
+            {% endif %}
+            <div class="verified-badge" title="Verificado"><i class="fas fa-check"></i></div>
+        </div>
+        
+        <div class="curador-info">
+            <span class="label-curadoria">Conteúdo verificado por:</span>
+            <strong>{{ conteudo.curador.nome }}</strong>
+            <span class="cargo">🎓 Especialista em {{ conteudo.curador.especialidade }}</span>
+        </div>
+    </div>
+
+    <article class="conteudo-corpo">
+        {{ conteudo.descricao|linebreaks }}
+    </article>
+
+    <div class="conteudo-footer">
+        <h3>Categorias relacionadas:</h3>
+        <div class="conteudo-tags">
+            {% for tag in conteudo.tipos.all %}
+                <span class="tag">{{ tag.nome }}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="conteudo-actions">
+        <a href="{% url 'conteudos:conteudos' %}" class="btn-voltar">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+        
+        {% if eh_curador and conteudo.curador.id == request.user.id %}
+            <a href="{% url 'conteudos:editar' conteudo.id %}" class="btn-editar">
+                <i class="fas fa-edit"></i> Editar Conteúdo
+            </a>
+        {% endif %}
+    </div>
+
+</main>
+{% endblock %}

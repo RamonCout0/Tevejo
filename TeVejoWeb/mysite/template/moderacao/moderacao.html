@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moderação - Gerenciar Comunidades</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Radio+Canada:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="moderacao.css">
+</head>
+<body>
+
+
+  <!-- LAYOUT PRINCIPAL -->
+  <main class="layout">
+
+    <!-- CONTEÚDO CENTRAL -->
+    <section class="main-content">
+      <div class="breadcrumb">tevejo/MãesDeNatal › Gerenciar Comunidades</div>
+
+      <div class="fila-header">
+        <h1 class="fila-titulo">Fila</h1>
+        
+        <div class="botoes-moderacao">
+          <button class="btn-requer-moderacao">Requer Moderação</button>
+          <button class="btn-sem-moderacao">Sem moderação</button>
+        </div>
+      </div>
+
+      <!-- ITENS DA FILA -->
+      <div class="fila-lista">
+        <!-- Item 1 -->
+        <div class="fila-item">
+          <div class="denuncia-header">
+            <div class="denuncia-avatar">C</div>
+            <div class="denuncia-info">
+              <div class="denuncia-usuario">c/alexio</div>
+              <div class="denuncia-detalhes">
+                Denunciou essa postagem por <span class="denuncia-motivo">Spam</span> • há 2 min.
+              </div>
+            </div>
+          </div>
+          
+          <div class="postagem-denunciada">
+            <div class="postagem-header">
+              <div class="postagem-avatar">c</div>
+              <div class="postagem-usuario">c/Felipus • há 2h</div>
+            </div>
+            <div class="postagem-texto">Meu Primo Thomaz tem uma bateria social muito baixa, será que pode ser autismo?</div>
+          </div>
+          
+          <div class="acoes-moderacao">
+            <button class="btn-remover">Remover a postagem</button>
+            <button class="btn-aprovar">Aprovar a postagem</button>
+          </div>
+        </div>
+
+        <div class="divisor"></div>
+
+        <!-- Item 2 -->
+        <div class="fila-item">
+          <div class="denuncia-header">
+            <div class="denuncia-avatar">C</div>
+            <div class="denuncia-info">
+              <div class="denuncia-usuario">c/Federinha</div>
+              <div class="denuncia-detalhes">
+                Denunciou essa postagem por <span class="denuncia-motivo">Postagem ofensiva</span> • há 33 min.
+              </div>
+            </div>
+          </div>
+          
+          <div class="postagem-denunciada">
+            <div class="postagem-header">
+              <div class="postagem-avatar">c</div>
+              <div class="postagem-usuario">c/Loana • há 2h</div>
+            </div>
+            <div class="postagem-texto">Odeio pessoas que gostam do número 33.</div>
+          </div>
+          
+          <div class="acoes-moderacao">
+            <button class="btn-remover">Remover a postagem</button>
+            <button class="btn-aprovar">Aprovar a postagem</button>
+          </div>
+        </div>
+
+        <div class="divisor"></div>
+
+        <!-- Item 3 -->
+        <div class="fila-item">
+          <div class="denuncia-header">
+            <div class="denuncia-avatar">C</div>
+            <div class="denuncia-info">
+              <div class="denuncia-usuario">c/Crodosvaldo</div>
+              <div class="denuncia-detalhes">
+                Denunciou essa postagem por <span class="denuncia-motivo">desinformação</span> • há 9 dias.
+              </div>
+            </div>
+          </div>
+          
+          <div class="postagem-denunciada">
+            <div class="postagem-header">
+              <div class="postagem-avatar">c</div>
+              <div class="postagem-usuario">c/Ramon • há 2h</div>
+            </div>
+            <div class="postagem-texto">Olha esse link, fala 100% verdade https:confia.com.br/everdademesmo</div>
+          </div>
+          
+          <div class="acoes-moderacao">
+            <button class="btn-remover">Remover a postagem</button>
+            <button class="btn-aprovar">Aprovar a postagem</button>
+          </div>
+        </div>
+      </div>
+
+  </main>
+</body>
+</html>

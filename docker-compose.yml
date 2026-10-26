@@ -1,0 +1,53 @@
+# Sobe o TeVejo completo: Postgres + backend Django + frontend Angular (nginx).
+#
+#   cp .env.example .env      # ajuste as senhas
+#   docker compose up --build
+#
+# Acesse http://localhost  (API em /api, Swagger em /api/docs, admin em /admin)
+# Criar superusuário: docker compose exec backend python manage.py createsuperuser
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-tevejo}
+      POSTGRES_USER: ${POSTGRES_USER:-tevejo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tevejo}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./src/backend_django
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-tevejo}
+      POSTGRES_USER: ${POSTGRES_USER:-tevejo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tevejo}
+      POSTGRES_HOST: db
+      DJANGO_MEDIA_ROOT: /app/media
+    volumes:
+      - media:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./src/frontend-angular
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
+  media:

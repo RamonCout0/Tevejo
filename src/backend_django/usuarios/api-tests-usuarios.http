@@ -1,0 +1,169 @@
+### Variáveis globais
+@base = http://localhost:8000/api
+@contentType = application/json
+
+####################################################################
+### CDU002 - Auto Cadastro
+####################################################################
+
+### 1) Cadastro válido — devolve access + refresh já autenticados
+# @name cadastro
+POST {{base}}/usuarios/cadastro/
+Content-Type: {{contentType}}
+
+{
+    "username": "maria_convivente",
+    "email": "maria@example.com",
+    "nome": "Maria Silva",
+    "password": "SenhaForte!2026",
+    "password_confirmacao": "SenhaForte!2026"
+}
+
+###
+
+####################################################################
+### CDU001 - Fazer Login
+####################################################################
+
+### 1) Login válido — devolve access + refresh
+# @name login
+POST {{base}}/usuarios/login/
+Content-Type: {{contentType}}
+
+{
+    "email": "maria@example.com",
+    "password": "SenhaForte!2026"
+}
+
+###
+
+### 2) Conferir o perfil usando o access token recebido no login
+# Copie o valor de "access" da resposta acima para @accessToken
+@accessToken = COLE_O_ACCESS_TOKEN_AQUI
+
+GET {{base}}/usuarios/me/
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 3) Renovar o access token usando o refresh token recebido no cadastro
+### 3) Renovar o access token usando o refresh token recebido no login
+POST {{base}}/token/refresh/
+Content-Type: {{contentType}}
+
+{
+    "refresh": "COLE_O_REFRESH_TOKEN_AQUI"
+}
+
+###
+
+####################################################################
+### Fluxo Alternativo I - dados inválidos/faltantes (CDU002)
+####################################################################
+
+### 4) Campos obrigatórios faltando — 400 com os campos destacados
+POST {{base}}/usuarios/cadastro/
+Content-Type: {{contentType}}
+
+{
+    "nome": "Sem usuario, email ou senha"
+}
+
+###
+
+### 5) Senha fraca (numérica/comum) — 400 com mensagem em "password"
+POST {{base}}/usuarios/cadastro/
+Content-Type: {{contentType}}
+
+{
+    "username": "joao_convivente",
+    "email": "joao@example.com",
+    "nome": "Joao",
+    "password": "12345678",
+    "password_confirmacao": "12345678"
+}
+
+###
+
+### 5b) Confirmação diferente da senha — 400 com "As senhas não coincidem." em "password_confirmacao"
+POST {{base}}/usuarios/cadastro/
+Content-Type: {{contentType}}
+
+{
+    "username": "joao_convivente",
+    "email": "joao@example.com",
+    "nome": "Joao",
+    "password": "SenhaForte!2026",
+    "password_confirmacao": "SenhaForte!2027"
+}
+
+###
+
+### 6) Username já cadastrado — 400 com mensagem em "username"
+POST {{base}}/usuarios/cadastro/
+Content-Type: {{contentType}}
+
+{
+    "username": "maria_convivente",
+    "email": "outra@example.com",
+    "nome": "Outra Maria",
+    "password": "SenhaForte!2026",
+    "password_confirmacao": "SenhaForte!2026"
+}
+
+###
+
+### 3b) Login válido por username (não documentado no CDU001, adicional p/ frontend já existente)
+POST {{base}}/usuarios/login/
+Content-Type: {{contentType}}
+
+{
+    "username": "maria_convivente",
+    "password": "SenhaForte!2026"
+}
+
+###
+
+####################################################################
+### Fluxo Alternativo I - credenciais inválidas (CDU001)
+####################################################################
+
+### 4) Senha incorreta — 400 com mensagem genérica
+POST {{base}}/usuarios/login/
+Content-Type: {{contentType}}
+
+{
+    "email": "maria@example.com",
+    "password": "senha_errada"
+}
+
+###
+
+### 5) E-mail não cadastrado — mesma mensagem genérica (não revela qual falhou)
+POST {{base}}/usuarios/login/
+Content-Type: {{contentType}}
+
+{
+    "email": "naoexiste@example.com",
+    "password": "qualquer123"
+}
+
+###
+
+### 6) Nem e-mail nem username informados
+POST {{base}}/usuarios/login/
+Content-Type: {{contentType}}
+
+{
+    "password": "qualquer123"
+}
+
+###
+
+### 7) Senha faltando
+POST {{base}}/usuarios/login/
+Content-Type: {{contentType}}
+
+{
+    "email": "maria@example.com"
+}

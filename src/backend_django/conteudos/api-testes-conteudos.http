@@ -1,0 +1,228 @@
+### Variáveis de Configuração
+@baseUrl = http://localhost:8000/api
+
+### 0. Obter Token de Acesso (Login)
+# @name login
+POST {{baseUrl}}/token/
+Content-Type: application/json
+
+{
+    "username": "admin_curador",
+    "password": "123"
+}
+
+### Armazenando o Token da Resposta
+# Se você usa a extensão REST Client no VS Code, pode capturar o token assim:
+@authToken = 93b7a3d014a96a2a3fc2bd7a5fdcc6ce8e5f50bc
+
+
+
+### 1. Listar todos os conteúdos
+GET {{baseUrl}}/conteudos/conteudo-educacional/
+Authorization: Token {{authToken}}
+Accept: application/json
+
+### 1.5. Criar uma Tag/Tipo para poder usar no conteúdo
+POST {{baseUrl}}/conteudos/tags/
+Authorization: Token {{authToken}}
+Content-Type: application/json
+
+{
+    "nome": "nivel 1" 
+}
+
+### 2. Criar Conteúdo - SUCESSO (Fluxo Principal)
+POST {{baseUrl}}/conteudos/conteudo-educacional/
+Authorization: Token {{authToken}}
+Content-Type: application/json
+
+{
+    "titulo": "2026 - dicas do Lar",
+    "fonte": "https://tevejo.edu/saude",
+    "descricao": "Manual prático de dicas do Lar.",
+    "tipos_ids": [3]
+}
+
+
+
+### 3. Criar Conteúdo - ERRO: Credenciais Inválidas (Login)
+POST {{baseUrl}}/token/
+Content-Type: application/json
+
+{
+    "username": "usuario_errado",
+    "password": "senha_errada"
+}
+
+
+### 4. Criar Conteúdo - ERRO: Usuário sem Permissão
+POST {{baseUrl}}/conteudos/conteudo-educacional/
+Authorization: Token c666431d2bbabb451faf195390be339f8f6f8b81
+Content-Type: application/json
+
+{
+    "titulo": "Tentativa de Invasão",
+    "fonte": "http://erro.com",
+    "descricao": "Não deve ser permitido",
+    "tipos_ids": [1]
+}
+
+### 5. Atualizar Conteúdo - SUCESSO (Fluxo Principal)
+PUT {{baseUrl}}/conteudos/conteudo-educacional/1/
+Authorization: Token {{authToken}}
+Content-Type: application/json
+
+{
+    "titulo": "Primeiros Socorros no Lar - 2ª Edição",
+    "fonte": "https://tevejo.edu/saude-atualizado",
+    "descricao": "Manual prático de segurança doméstica revisado.",
+    "tipos_ids": [1]
+}
+
+### 6. Deletar Conteúdo - SUCESSO (Fluxo Principal)
+DELETE {{baseUrl}}/conteudos/conteudo-educacional/1/
+Authorization: Token {{authToken}}
+
+
+
+### CDU-003 — Visualizar Conteúdo Educacional (PÚBLICO)
+### =======================================================
+
+### 1. Listar conteúdos disponíveis (Sem Token / Deslogado)
+GET {{baseUrl}}/conteudos/conteudo-educacional/
+Content-Type: application/json
+
+### 2. Visualizar um conteúdo específico (Sem Token / Deslogado)
+# Substitua o "1" pelo ID de um conteúdo que você sabe que existe
+GET {{baseUrl}}/conteudos/conteudo-educacional/2/
+Content-Type: application/json
+
+
+####################################################################
+### CDU022 — DENUNCIAR CONTEÚDO EDUCACIONAL
+####################################################################
+
+### Tokens (preencher com tokens reais após /token/)
+@tokenConvivente = SEU_TOKEN_CONVIVENTE_AQUI
+@tokenOutroConvivente = SEU_TOKEN_OUTRO_CONVIVENTE_AQUI
+
+### ID do conteúdo alvo da denúncia
+@conteudoId = 2
+
+### Login do Convivente principal
+POST {{baseUrl}}/token/
+Content-Type: application/json
+
+{
+    "username": "convivente1",
+    "password": "senha123"
+}
+
+###
+
+### Login de um segundo Convivente (para testar fluxo Alt I de outro ponto de vista)
+POST {{baseUrl}}/token/
+Content-Type: application/json
+
+{
+    "username": "convivente2",
+    "password": "senha123"
+}
+
+###
+
+### 1. Denunciar conteúdo (Fluxo Principal CDU022)
+# Esperado: 201 Created com a denúncia gravada (status=em_analise)
+POST {{baseUrl}}/conteudos/conteudo-educacional/{{conteudoId}}/denunciar/
+Authorization: Token {{tokenConvivente}}
+Content-Type: application/json
+
+{
+    "motivo": "desatualizado",
+    "descricao": "O texto referencia estudos de 2018 que já foram revisados."
+}
+
+###
+
+### 2. Denunciar sem descrição (descrição é opcional)
+# Esperado: 201 Created
+POST {{baseUrl}}/conteudos/conteudo-educacional/{{conteudoId}}/denunciar/
+Authorization: Token {{tokenOutroConvivente}}
+Content-Type: application/json
+
+{
+    "motivo": "link_quebrado"
+}
+
+###
+
+### 3. Tentar denunciar o mesmo conteúdo de novo (Fluxo Alternativo I CDU022)
+# Esperado: 400 Bad Request — "Você já denunciou esse conteúdo. Aguarde a análise do curador."
+POST {{baseUrl}}/conteudos/conteudo-educacional/{{conteudoId}}/denunciar/
+Authorization: Token {{tokenConvivente}}
+Content-Type: application/json
+
+{
+    "motivo": "incorreto",
+    "descricao": "Segunda tentativa do mesmo usuário."
+}
+
+###
+
+### 4. Tentar denunciar sem autenticação (Fluxo Alternativo III CDU022)
+# Esperado: 401 Unauthorized
+# Frontend: redireciona para /login
+POST {{baseUrl}}/conteudos/conteudo-educacional/{{conteudoId}}/denunciar/
+Content-Type: application/json
+
+{
+    "motivo": "outro"
+}
+
+###
+
+### 5. Tentar denunciar como Curador (não-Convivente)
+# Esperado: 403 Forbidden — "Apenas Conviventes podem realizar esta ação."
+POST {{baseUrl}}/conteudos/conteudo-educacional/{{conteudoId}}/denunciar/
+Authorization: Token {{authToken}}
+Content-Type: application/json
+
+{
+    "motivo": "incorreto"
+}
+
+###
+
+### 6. Denunciar com motivo inválido
+# Esperado: 400 Bad Request — choices não bate
+POST {{baseUrl}}/conteudos/conteudo-educacional/{{conteudoId}}/denunciar/
+Authorization: Token {{tokenConvivente}}
+Content-Type: application/json
+
+{
+    "motivo": "muito_legal"
+}
+
+###
+
+### 7. Denunciar conteúdo inexistente
+# Esperado: 404 Not Found
+POST {{baseUrl}}/conteudos/conteudo-educacional/9999/denunciar/
+Authorization: Token {{tokenConvivente}}
+Content-Type: application/json
+
+{
+    "motivo": "outro",
+    "descricao": "Conteúdo não existe."
+}
+
+###
+
+### 8. Verificar campo minha_denuncia no detalhe
+# Esperado: GET autenticado mostra minha_denuncia preenchido após denunciar;
+# anônimo mostra null
+GET {{baseUrl}}/conteudos/conteudo-educacional/{{conteudoId}}/
+Authorization: Token {{tokenConvivente}}
+Accept: application/json
+
+###

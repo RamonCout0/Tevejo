@@ -1,0 +1,41 @@
+@startuml Diagrama_Contexto_TeVejo
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title Diagrama de Contexto do TeVejo
+caption Visão geral do sistema e suas interações com atores e sistemas externos.
+
+' ================= Estilos personalizados (cores iguais à imagem) =================
+AddElementTag("systemBox", $bgColor="#EAF2FF", $borderColor="#3B82F6", $fontColor="#0B1B2B")
+AddElementTag("extAuth",   $bgColor="#EDE7F6", $borderColor="#8B5CF6", $fontColor="#0B1B2B")
+AddElementTag("extMaps",   $bgColor="#E9F7EF", $borderColor="#4CAF50", $fontColor="#0B1B2B")
+AddRelTag("dashedRel", $lineStyle=DashedLine())
+
+LAYOUT_LEFT_RIGHT()
+
+' ================= Atores =================
+Person(convivente, "Convivente", "Pessoa que convive com uma pessoa autista.")
+Person(curador, "Curador", "Profissional da Psicologia.")
+Person(moderador, "Moderador", "Criador de uma comunidade ou qualquer pessoa convidada pelo criador que se compromete com a responsabilidade de moderação.")
+Person(administrador, "Administrador", "Usuário de maior hierarquia na plataforma.")
+
+' ================= Sistema =================
+System(tevejo, "Sistema do TeVejo", "[Sistema Web]", "Plataforma web que promove apoio, informação e conexão entre conviventes, profissionais e comunidades, oferecendo conteúdos educacionais, encontros públicos e fóruns de apoio.", $tags="systemBox")
+
+' ================= Sistemas externos =================
+System_Ext(googleAuth, "API do Google Authenticator", "Serviço externo para login e autenticação de usuários via Google.", $tags="extAuth")
+System_Ext(googleMaps, "API do Google Maps", "Serviços de mapas, geocodificação e rotas para os encontros.", $tags="extMaps")
+
+' ================= Relacionamentos: atores -> Sistema =================
+Rel(convivente, tevejo, "Acessa conteúdos, participa de comunidades, interage em fóruns e visualiza encontros.")
+Rel(curador, tevejo, "Publica e edita conteúdos educacionais e gerencia materiais informativos.")
+Rel(moderador, tevejo, "Modera comunidades, revisa postagens e denúncias, restringe ou bani conviventes quando necessário.")
+Rel(administrador, tevejo, "Gerencia usuários (conviventes, moderadores, curadores e administradores), conteúdos educacionais e comunidades.")
+
+' ================= Comunicação externa (bidirecional, tracejada) =================
+BiRel(tevejo, googleAuth, "Autenticação de usuários", "JSON/HTTPS", $tags="dashedRel")
+BiRel(tevejo, googleMaps, "Consulta de mapas, geocodificação e rotas", "JSON/HTTPS", $tags="dashedRel")
+
+SHOW_LEGEND()
+
+@enduml

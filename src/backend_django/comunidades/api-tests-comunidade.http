@@ -1,0 +1,396 @@
+### Variáveis globais
+@base = http://localhost:8000/api
+@contentType = application/json
+
+### Tokens (preencher após executar os logins abaixo)
+@tokenConvivente = SEU_TOKEN_CONVIVENTE_AQUI
+@tokenOutroConvivente = SEU_TOKEN_OUTRO_CONVIVENTE_AQUI
+@tokenCurador = SEU_TOKEN_CURADOR_AQUI
+
+### ID da comunidade criada (preencher após executar o POST de criar)
+@comunidadeId = 1
+
+####################################################################
+### AUTENTICAÇÃO
+####################################################################
+
+### Login do Convivente principal
+# Execute primeiro e copie o token para @tokenConvivente
+POST {{base}}/token/
+Content-Type: {{contentType}}
+
+{
+    "username": "convivente1",
+    "password": "senha123"
+}
+
+###
+
+### Login de um segundo Convivente (para testar participar/sair)
+POST {{base}}/token/
+Content-Type: {{contentType}}
+
+{
+    "username": "convivente2",
+    "password": "senha123"
+}
+
+###
+
+### Login do Curador (para testar que NÃO pode criar/participar)
+POST {{base}}/token/
+Content-Type: {{contentType}}
+
+{
+    "username": "curador1",
+    "password": "senha123"
+}
+
+###
+
+### Conferir perfil/papéis do usuário autenticado
+GET {{base}}/usuarios/me/
+Authorization: Token {{tokenConvivente}}
+
+###
+
+####################################################################
+### COMUNIDADES — CDU008 (Criar) e CDU006 (Participar)
+####################################################################
+
+### 1. Criar comunidade como Convivente (Fluxo Principal CDU008)
+# Esperado: 201 Created
+POST {{base}}/comunidades/criar/
+Content-Type: {{contentType}}
+Authorization: Token {{tokenConvivente}}
+
+{
+    "nome": "Comunidade de Tecnologia",
+    "descricao": "Espaço para troca de experiências sobre tecnologia entre conviventes.",
+    "categoria": "Tecnologia",
+    "regras": "Seja respeitoso e colaborativo com todos os membros."
+}
+
+###
+
+### 2. Tentar criar comunidade SEM autenticação
+# Esperado: 401 Unauthorized
+POST {{base}}/comunidades/criar/
+Content-Type: {{contentType}}
+
+{
+    "nome": "Comunidade Sem Auth",
+    "descricao": "Tentando criar sem token.",
+    "categoria": "Geral"
+}
+
+###
+
+### 3. Tentar criar comunidade como Curador (não-Convivente)
+# Esperado: 403 Forbidden — "Apenas Conviventes podem realizar esta ação."
+POST {{base}}/comunidades/criar/
+Content-Type: {{contentType}}
+Authorization: Token {{tokenCurador}}
+
+{
+    "nome": "Comunidade do Curador",
+    "descricao": "Curador tentando criar.",
+    "categoria": "Educação"
+}
+
+###
+
+### 4. Tentar criar comunidade com nome duplicado
+# Esperado: 400 Bad Request — {"nome": ["Já existe uma comunidade com esse nome."]}
+POST {{base}}/comunidades/criar/
+Content-Type: {{contentType}}
+Authorization: Token {{tokenConvivente}}
+
+{
+    "nome": "Comunidade de Tecnologia",
+    "descricao": "Outra descrição qualquer.",
+    "categoria": "Tecnologia"
+}
+
+###
+
+### 5. Tentar criar comunidade sem campos obrigatórios
+# Esperado: 400 Bad Request com erros em nome, descricao e categoria
+POST {{base}}/comunidades/criar/
+Content-Type: {{contentType}}
+Authorization: Token {{tokenConvivente}}
+
+{
+    "nome": "",
+    "descricao": "",
+    "categoria": ""
+}
+
+###
+
+####################################################################
+### LISTAGENS
+####################################################################
+
+### 6. Listar todas as comunidades (público — pode ser anônimo)
+GET {{base}}/comunidades/
+
+###
+
+### 7. Listar todas as comunidades autenticado
+# Esperado: campos is_membro / is_moderador refletindo o usuário
+GET {{base}}/comunidades/
+Authorization: Token {{tokenConvivente}}
+
+###
+
+### 8. Listar minhas comunidades (apenas autenticado)
+# Esperado: comunidades em que o usuário é membro/moderador
+GET {{base}}/comunidades/minhas/
+Authorization: Token {{tokenConvivente}}
+
+###
+
+### 9. Listar minhas comunidades SEM autenticação
+# Esperado: 401 Unauthorized
+GET {{base}}/comunidades/minhas/
+
+###
+
+####################################################################
+### DETALHAMENTO
+####################################################################
+
+### 10. Buscar comunidade por ID
+GET {{base}}/comunidades/{{comunidadeId}}/
+
+###
+
+### 11. Buscar comunidade inexistente
+# Esperado: 404 Not Found
+GET {{base}}/comunidades/9999/
+
+###
+
+####################################################################
+### CDU006 — PARTICIPAR DE COMUNIDADE
+####################################################################
+
+### 12. Participar de comunidade (Fluxo Principal CDU006)
+# Use o token do segundo Convivente (que ainda não é membro)
+# Esperado: 200 OK; is_membro=true e membros_count incrementado
+POST {{base}}/comunidades/{{comunidadeId}}/participar/
+Authorization: Token {{tokenOutroConvivente}}
+
+###
+
+### 13. Tentar participar sem autenticação (Fluxo Alternativo I CDU006)
+# Esperado: 401 Unauthorized
+# Frontend: redireciona o visitante para /login
+POST {{base}}/comunidades/{{comunidadeId}}/participar/
+
+###
+
+### 14. Tentar participar como Curador (não-Convivente)
+# Esperado: 403 Forbidden — apenas Conviventes
+POST {{base}}/comunidades/{{comunidadeId}}/participar/
+Authorization: Token {{tokenCurador}}
+
+###
+
+### 15. Tentar participar quando JÁ é membro
+# Esperado: 400 Bad Request — "Você já é membro desta comunidade."
+POST {{base}}/comunidades/{{comunidadeId}}/participar/
+Authorization: Token {{tokenOutroConvivente}}
+
+###
+
+### 16. Moderador tenta participar da própria comunidade
+# Esperado: 400 Bad Request — "O moderador já é membro da comunidade."
+POST {{base}}/comunidades/{{comunidadeId}}/participar/
+Authorization: Token {{tokenConvivente}}
+
+###
+
+### 17. Tentar participar de comunidade inexistente
+# Esperado: 404 Not Found
+POST {{base}}/comunidades/9999/participar/
+Authorization: Token {{tokenOutroConvivente}}
+
+###
+
+####################################################################
+### SAIR DA COMUNIDADE
+####################################################################
+
+### 18. Sair da comunidade (membro comum)
+# Esperado: 200 OK; is_membro=false e membros_count decrementado
+POST {{base}}/comunidades/{{comunidadeId}}/sair/
+Authorization: Token {{tokenOutroConvivente}}
+
+###
+
+### 19. Tentar sair sem ser membro
+# Esperado: 400 Bad Request — "Você não é membro desta comunidade."
+POST {{base}}/comunidades/{{comunidadeId}}/sair/
+Authorization: Token {{tokenOutroConvivente}}
+
+###
+
+### 20. Moderador tenta sair da própria comunidade
+# Esperado: 400 Bad Request — "O moderador não pode sair da própria comunidade."
+POST {{base}}/comunidades/{{comunidadeId}}/sair/
+Authorization: Token {{tokenConvivente}}
+
+###
+
+### 21. Tentar sair sem autenticação
+# Esperado: 401 Unauthorized
+POST {{base}}/comunidades/{{comunidadeId}}/sair/
+
+###
+
+####################################################################
+### CDU024 — MODERAR CONVIVENTES
+####################################################################
+
+### ID do convivente alvo das ações (preencher após GET membros)
+@conviventeAlvoId = 2
+
+### 22. Listar membros da comunidade (apenas moderador)
+# Esperado: 200 OK com membros, restricao_ativa e acoes_count
+GET {{base}}/comunidades/{{comunidadeId}}/membros/
+Authorization: Token {{tokenConvivente}}
+
+###
+
+### 23. Tentar listar membros sendo um membro comum (não-moderador)
+# Esperado: 403 Forbidden
+GET {{base}}/comunidades/{{comunidadeId}}/membros/
+Authorization: Token {{tokenOutroConvivente}}
+
+###
+
+### 24. Restringir convivente (Fluxo Principal CDU024)
+# Esperado: 201 Created com a AcaoModeracao + expira_em populado
+POST {{base}}/comunidades/{{comunidadeId}}/moderar/
+Content-Type: {{contentType}}
+Authorization: Token {{tokenConvivente}}
+
+{
+    "convivente_id": {{conviventeAlvoId}},
+    "tipo": "restringir",
+    "duracao_dias": 7,
+    "justificativa": "Comportamento inadequado em postagens recentes."
+}
+
+###
+
+### 25. Restringir sem duração (validação)
+# Esperado: 400 Bad Request — "Duração obrigatória..."
+POST {{base}}/comunidades/{{comunidadeId}}/moderar/
+Content-Type: {{contentType}}
+Authorization: Token {{tokenConvivente}}
+
+{
+    "convivente_id": {{conviventeAlvoId}},
+    "tipo": "restringir"
+}
+
+###
+
+### 26. Banir convivente (Fluxo Alternativo I CDU024)
+# Esperado: 201 Created; convivente removido de membros e adicionado a banidos
+POST {{base}}/comunidades/{{comunidadeId}}/moderar/
+Content-Type: {{contentType}}
+Authorization: Token {{tokenConvivente}}
+
+{
+    "convivente_id": {{conviventeAlvoId}},
+    "tipo": "banir",
+    "justificativa": "Violações recorrentes das regras da comunidade."
+}
+
+###
+
+### 27. Banir sem justificativa (validação)
+# Esperado: 400 Bad Request — "Justificativa é obrigatória..."
+POST {{base}}/comunidades/{{comunidadeId}}/moderar/
+Content-Type: {{contentType}}
+Authorization: Token {{tokenConvivente}}
+
+{
+    "convivente_id": {{conviventeAlvoId}},
+    "tipo": "banir"
+}
+
+###
+
+### 28. Moderador tenta moderar a si mesmo
+# Esperado: 400 Bad Request — "O moderador não pode moderar a si mesmo."
+POST {{base}}/comunidades/{{comunidadeId}}/moderar/
+Content-Type: {{contentType}}
+Authorization: Token {{tokenConvivente}}
+
+{
+    "convivente_id": 1,
+    "tipo": "restringir",
+    "duracao_dias": 3
+}
+
+###
+
+### 29. Tentar moderar convivente que não é membro
+# Esperado: 400 Bad Request — "O convivente não é membro desta comunidade."
+POST {{base}}/comunidades/{{comunidadeId}}/moderar/
+Content-Type: {{contentType}}
+Authorization: Token {{tokenConvivente}}
+
+{
+    "convivente_id": 999,
+    "tipo": "banir",
+    "justificativa": "Teste"
+}
+
+###
+
+### 30. Não-moderador tenta aplicar ação
+# Esperado: 403 Forbidden
+POST {{base}}/comunidades/{{comunidadeId}}/moderar/
+Content-Type: {{contentType}}
+Authorization: Token {{tokenOutroConvivente}}
+
+{
+    "convivente_id": {{conviventeAlvoId}},
+    "tipo": "banir",
+    "justificativa": "Teste"
+}
+
+###
+
+### 31. Convivente banido tenta participar novamente
+# Esperado: 403 Forbidden — "Você foi banido desta comunidade."
+POST {{base}}/comunidades/{{comunidadeId}}/participar/
+Authorization: Token {{tokenOutroConvivente}}
+
+###
+
+### 32. Ver histórico de moderação de um convivente
+# Esperado: 200 OK com lista de AcaoModeracao
+GET {{base}}/comunidades/{{comunidadeId}}/membros/{{conviventeAlvoId}}/historico/
+Authorization: Token {{tokenConvivente}}
+
+###
+
+### 33. Tipo inválido
+# Esperado: 400 Bad Request — choices não bate
+POST {{base}}/comunidades/{{comunidadeId}}/moderar/
+Content-Type: {{contentType}}
+Authorization: Token {{tokenConvivente}}
+
+{
+    "convivente_id": {{conviventeAlvoId}},
+    "tipo": "advertir"
+}
+
+###

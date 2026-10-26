@@ -1,0 +1,187 @@
+<div class="max-w-3xl mx-auto space-y-8" *ngIf="perfil(); else carregando">
+
+  <section class="tv-card overflow-hidden">
+    <!-- Capa com o degradê da marca -->
+    <div class="relative h-28 sm:h-36" style="background: var(--tv-gradiente-diagonal);">
+      <img src="/assets/girassol.svg" alt="" aria-hidden="true"
+           class="absolute right-6 -bottom-8 w-24 sm:w-32 opacity-40 rotate-12 pointer-events-none">
+    </div>
+
+    <div class="px-6 sm:px-8 pb-7 space-y-5">
+      <div class="relative z-10 flex flex-col sm:flex-row sm:items-start gap-4 -mt-14">
+
+        <!-- Foto -->
+        <div class="relative shrink-0 self-start">
+          <div class="w-28 h-28 rounded-full p-1" style="background: var(--color-tv-card); box-shadow: var(--tv-shadow-md);">
+            <div class="w-full h-full rounded-full overflow-hidden flex items-center justify-center">
+              <img *ngIf="fotoExibida() as foto; else avatarLetras"
+                   [src]="foto" alt="Foto de perfil" class="w-full h-full object-cover">
+              <ng-template #avatarLetras>
+                <span class="tv-avatar w-full h-full text-3xl" [ngClass]="(perfil()?.nome || perfil()?.username) | tomDaMarca">
+                  {{ (perfil()?.nome || perfil()?.username) | iniciais }}
+                </span>
+              </ng-template>
+            </div>
+          </div>
+          <label *ngIf="editando()"
+                 class="absolute bottom-1 right-1 w-9 h-9 rounded-full flex items-center justify-center text-white cursor-pointer transition-transform hover:scale-105"
+                 style="background: var(--color-tv-primary); box-shadow: 0 0 0 3px var(--color-tv-card);"
+                 title="Escolher foto" aria-label="Escolher nova foto">
+            <i class="fas fa-camera text-sm" aria-hidden="true"></i>
+            <input type="file" accept="image/jpeg,image/png" class="hidden" (change)="onFotoSelected($event)">
+          </label>
+        </div>
+
+        <div class="flex-1 min-w-0 space-y-1.5 sm:pt-16">
+          <h1 *ngIf="!editando()" class="tv-page-title">{{ perfil()?.nome }}</h1>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="tv-badge tv-badge-verified">
+              <i class="fas" [class.fa-book-open]="isCurador()" [class.fa-heart]="!isCurador()" aria-hidden="true"></i>{{ papelLabel() }}
+            </span>
+            <span class="text-sm truncate" style="color: var(--color-tv-muted-fg);">&#64;{{ perfil()?.username }}</span>
+          </div>
+        </div>
+
+        <button *ngIf="!editando()" (click)="iniciarEdicao()" class="tv-btn tv-btn-secondary tv-btn-sm self-start sm:mt-16">
+          <i class="fas fa-pen text-xs" aria-hidden="true"></i> Editar perfil
+        </button>
+      </div>
+
+      <!-- Bio -->
+      <div *ngIf="!editando()">
+        <div *ngIf="perfil()?.biografia; else semBio" class="tv-texto-rico" [innerHTML]="perfil()?.biografia | textoRico"></div>
+        <ng-template #semBio>
+          <p class="text-sm italic" style="color: var(--color-tv-muted-fg);">
+            Você ainda não escreveu uma biografia. Conte um pouco sobre você clicando em "Editar perfil".
+          </p>
+        </ng-template>
+      </div>
+
+      <!-- Edição -->
+      <div *ngIf="editando()" class="space-y-4 pt-2">
+        <div *ngIf="fotoExibida()" class="flex items-center gap-2 text-sm" style="color: var(--color-tv-muted-fg);">
+          <i class="fas fa-circle-info" aria-hidden="true"></i>
+          Toque na câmera para trocar a foto.
+          <button type="button" (click)="marcarRemoverFoto()" class="tv-link">Remover foto</button>
+        </div>
+
+        <div>
+          <label class="tv-label" for="perfil-nome">Nome <span class="tv-required">*</span></label>
+          <input id="perfil-nome" [(ngModel)]="nome" [maxlength]="limites.usuarioNome" class="tv-input">
+          <span class="tv-contador">{{ nome.length }}/{{ limites.usuarioNome }}</span>
+        </div>
+        <div>
+          <label class="tv-label" for="perfil-email">E-mail</label>
+          <input id="perfil-email" type="email" [(ngModel)]="email" maxlength="150" class="tv-input">
+        </div>
+        <div>
+          <label class="tv-label" for="perfil-bio">Biografia</label>
+          <app-editor-texto [(ngModel)]="biografia" idCampo="perfil-bio" rotulo="Biografia"
+                            [limite]="limites.usuarioBiografia" [linhas]="4" [compacto]="true"
+                            placeholder="Conte um pouco sobre você e sua relação com o TEA…"></app-editor-texto>
+        </div>
+      </div>
+
+      <div *ngIf="erro() as msg" class="tv-alert tv-alert-error" role="alert">
+        <i class="fas fa-circle-exclamation mt-[2px]" aria-hidden="true"></i>
+        <span>{{ msg }}</span>
+      </div>
+
+      <div *ngIf="sucesso() as msg" class="tv-alert tv-alert-success" role="status" aria-live="polite">
+        <i class="fas fa-check-circle mt-[2px]" aria-hidden="true"></i>
+        <span>{{ msg }}</span>
+      </div>
+
+      <div *ngIf="editando()" class="flex justify-end gap-3">
+        <button (click)="cancelar()" [disabled]="enviando()" class="tv-btn tv-btn-secondary">Cancelar</button>
+        <button (click)="salvar()" [disabled]="enviando()" class="tv-btn tv-btn-primary">
+          <i class="fas fa-check" aria-hidden="true"></i>
+          {{ enviando() ? 'Salvando…' : 'Salvar alterações' }}
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- HISTÓRICO: curador → conteúdos publicados; convivente → postagens em comunidades -->
+  <section class="space-y-4" *ngIf="!editando()">
+    <h2 class="tv-section-title">
+      {{ isCurador() ? 'Conteúdos publicados' : 'Últimas postagens' }}
+    </h2>
+
+    <div *ngIf="carregandoHistorico()" class="tv-loading-row tv-card">
+      <span class="tv-dot-loader" aria-hidden="true"><span></span><span></span><span></span></span>
+      Carregando…
+    </div>
+
+    <!-- Curador: meus conteúdos educacionais -->
+    <ng-container *ngIf="!carregandoHistorico() && isCurador()">
+      <div *ngIf="meusConteudos().length === 0" class="tv-empty tv-card">
+        <img src="/assets/girassol.svg" alt="" class="w-12" aria-hidden="true">
+        <p class="tv-empty-desc">Você ainda não publicou conteúdos educacionais.</p>
+        <a routerLink="/postar-conteudo" class="tv-btn tv-btn-primary tv-btn-sm">
+          <i class="fas fa-plus" aria-hidden="true"></i> Publicar primeiro conteúdo
+        </a>
+      </div>
+
+      <div class="space-y-3 tv-stagger">
+        <a *ngFor="let c of meusConteudos()"
+           [routerLink]="['/conteudo-educacional', c.id]"
+           class="tv-card tv-card-hover p-4 flex items-center gap-4">
+          <span class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" [ngClass]="(c.tipos[0]?.nome ?? c.titulo) | tomDaMarca">
+            <i class="fas fa-book-open" aria-hidden="true"></i>
+          </span>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold leading-snug truncate">{{ c.titulo }}</p>
+            <p class="text-xs mt-0.5 truncate" style="color: var(--color-tv-muted-fg);">
+              {{ c.criado_em | date:'dd MMM yyyy':'':'pt-BR' }} · {{ c.fonte }}
+            </p>
+          </div>
+          <i class="fas fa-chevron-right text-xs" style="color: var(--color-tv-muted-fg);" aria-hidden="true"></i>
+        </a>
+      </div>
+    </ng-container>
+
+    <!-- Convivente: minhas postagens em comunidades -->
+    <ng-container *ngIf="!carregandoHistorico() && !isCurador()">
+      <div *ngIf="minhasPostagens().length === 0" class="tv-empty tv-card">
+        <img src="/assets/girassol.svg" alt="" class="w-12" aria-hidden="true">
+        <p class="tv-empty-desc">Você ainda não postou em nenhuma comunidade.</p>
+        <a routerLink="/comunidades" class="tv-btn tv-btn-secondary tv-btn-sm">Explorar comunidades</a>
+      </div>
+
+      <div class="space-y-3 tv-stagger">
+        <a *ngFor="let p of minhasPostagens()"
+           [routerLink]="['/comunidades', p.comunidadeId]"
+           class="tv-card tv-card-hover p-4 flex items-center gap-4">
+          <span class="tv-bolinha" [style.background]="p.comunidadeNome | corDaMarca" style="width: 12px; height: 12px;" aria-hidden="true"></span>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold leading-snug truncate">{{ p.titulo || 'Postagem sem título' }}</p>
+            <p class="text-xs mt-0.5 truncate" style="color: var(--color-tv-muted-fg);">
+              em <span style="color: var(--color-tv-primary-ink);">{{ p.comunidadeNome }}</span>
+              · {{ p.data | date:'dd MMM yyyy':'':'pt-BR' }}
+            </p>
+          </div>
+          <span class="inline-flex items-center gap-1 text-xs shrink-0" style="color: var(--color-tv-muted-fg);">
+            <i class="far fa-heart" aria-hidden="true"></i> {{ p.curtidas }}
+          </span>
+        </a>
+      </div>
+    </ng-container>
+  </section>
+</div>
+
+<ng-template #carregando>
+  <div class="tv-loading-row">
+    <span class="tv-dot-loader" aria-hidden="true"><span></span><span></span><span></span></span>
+    Carregando perfil…
+  </div>
+</ng-template>
+
+<app-recortar-imagem *ngIf="imagemParaRecortar() as arquivo"
+                     [arquivo]="arquivo"
+                     [proporcao]="1"
+                     [redondo]="true"
+                     [larguraSaida]="512"
+                     titulo="Ajustar foto de perfil"
+                     (recortado)="aoRecortarFoto($event)"
+                     (cancelado)="imagemParaRecortar.set(null)"></app-recortar-imagem>

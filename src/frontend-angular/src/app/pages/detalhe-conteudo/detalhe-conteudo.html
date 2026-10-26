@@ -1,0 +1,129 @@
+<div class="max-w-3xl mx-auto space-y-6">
+
+  <a routerLink="/conteudo-educacional" class="tv-btn tv-btn-ghost tv-btn-sm -ml-2">
+    <i class="fas fa-arrow-left text-xs" aria-hidden="true"></i> Conteúdos
+  </a>
+
+  <div *ngIf="carregando()" class="tv-loading-row">
+    <span class="tv-dot-loader" aria-hidden="true"><span></span><span></span><span></span></span>
+    Carregando conteúdo…
+  </div>
+
+  <div *ngIf="erro() as msg" class="tv-alert tv-alert-error" role="alert">
+    <i class="fas fa-circle-exclamation mt-[2px]" aria-hidden="true"></i>
+    <span>{{ msg }}</span>
+  </div>
+
+  <div *ngIf="feedback() as msg" class="tv-alert tv-alert-success items-center" role="status" aria-live="polite">
+    <i class="fas fa-check-circle" aria-hidden="true"></i>
+    <span class="flex-1">{{ msg }}</span>
+    <button (click)="limparFeedback()" class="tv-btn tv-btn-ghost tv-btn-icone" aria-label="Fechar"><i class="fas fa-times" aria-hidden="true"></i></button>
+  </div>
+
+  <article *ngIf="conteudo() as c" class="tv-card tv-card-marca overflow-hidden">
+
+    <header class="p-7 sm:p-10 pb-6 space-y-5" style="background: var(--tv-gradiente-suave);">
+      <div class="flex gap-2 flex-wrap">
+        <span *ngFor="let tipo of c.tipos" class="tv-badge max-w-[14rem]" [ngClass]="tipo.nome | tomDaMarca" [title]="tipo.nome">{{ tipo.nome }}</span>
+        <span class="tv-badge tv-badge-success">
+          <i class="fas fa-circle-check text-[9px]" aria-hidden="true"></i>Verificado por curadoria
+        </span>
+      </div>
+
+      <h1 class="tv-page-title" style="font-size: clamp(1.75rem, 4vw, 2.4rem);">{{ c.titulo }}</h1>
+
+      <div class="flex flex-wrap items-center gap-4">
+        <div *ngIf="c.curador" class="flex items-center gap-3 min-w-0">
+          <span class="tv-avatar tv-avatar-md" [ngClass]="c.curador.nome | tomDaMarca">{{ c.curador.nome | iniciais }}</span>
+          <div class="min-w-0">
+            <p class="text-sm font-semibold truncate">{{ c.curador.nome }}</p>
+            <p class="text-xs truncate" style="color: var(--color-tv-muted-fg);">
+              {{ c.curador.especialidade || 'Curadoria' }}
+            </p>
+          </div>
+        </div>
+        <span class="text-sm sm:ml-auto" style="color: var(--color-tv-muted-fg);">
+          <i class="far fa-calendar text-xs" aria-hidden="true"></i>
+          {{ c.criado_em | date:"dd 'de' MMMM 'de' yyyy":'':'pt-BR' }}
+        </span>
+      </div>
+    </header>
+
+    <div class="p-7 sm:p-10 space-y-8">
+      <div class="tv-texto-rico" style="font-size: 17px; line-height: 1.75;" [innerHTML]="c.descricao | textoRico"></div>
+
+      <div class="flex items-start gap-3 p-4 rounded-2xl" style="background: var(--color-tv-secondary);">
+        <i class="fas fa-quote-left mt-1" style="color: var(--color-tv-primary);" aria-hidden="true"></i>
+        <div class="min-w-0">
+          <p class="tv-page-eyebrow">Fonte</p>
+          <p class="text-sm font-semibold">{{ c.fonte }}</p>
+        </div>
+      </div>
+
+      <!-- Ações -->
+      <div class="flex items-center gap-3 pt-5 flex-wrap" style="border-top: 1px solid var(--tv-border-blue);">
+        <p class="text-sm" style="color: var(--color-tv-muted-fg);">Encontrou algo desatualizado ou incorreto?</p>
+        <button *ngIf="!c.minha_denuncia" (click)="abrirModalDenuncia()" class="tv-btn tv-btn-secondary tv-btn-sm ml-auto">
+          <i class="far fa-flag" aria-hidden="true"></i> Denunciar
+        </button>
+        <span *ngIf="c.minha_denuncia" class="tv-badge tv-badge-warning ml-auto">
+          <i class="fas fa-clock text-[9px]" aria-hidden="true"></i>Sua denúncia está em análise
+        </span>
+      </div>
+    </div>
+  </article>
+</div>
+
+<!-- MODAL DENÚNCIA -->
+<div *ngIf="modalAberto()"
+     class="fixed inset-0 z-[60] flex items-center justify-center p-4 tv-fade-in"
+     style="background: rgba(18,18,20,0.5);"
+     (click)="fecharModal()"
+     role="dialog" aria-modal="true" aria-labelledby="denunciaTitle">
+
+  <div class="w-full max-w-md p-6 sm:p-7 space-y-5 tv-card tv-card-marca tv-scale-in"
+       style="box-shadow: var(--tv-shadow-lg);"
+       (click)="$event.stopPropagation()">
+
+    <div class="flex items-start justify-between gap-3">
+      <div class="space-y-1">
+        <p class="tv-page-eyebrow">Reportar</p>
+        <h2 id="denunciaTitle" class="tv-section-title" style="font-size: 1.35rem;">Denunciar conteúdo</h2>
+      </div>
+      <button (click)="fecharModal()" aria-label="Fechar" class="tv-btn tv-btn-ghost tv-btn-icone">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <p class="text-sm" style="color: var(--color-tv-muted-fg);">
+      Conte o que está errado neste conteúdo. Sua denúncia será avaliada pela curadoria.
+    </p>
+
+    <div>
+      <label class="tv-label" for="den-motivo">Motivo <span class="tv-required">*</span></label>
+      <select id="den-motivo" [(ngModel)]="motivo" class="tv-input">
+        <option *ngFor="let m of motivos" [value]="m.valor">{{ m.label }}</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="tv-label" for="den-desc">Descrição (opcional)</label>
+      <textarea id="den-desc" rows="4" [(ngModel)]="descricao" [maxlength]="limites.denunciaDetalhe"
+                placeholder="Detalhes que ajudem a curadoria a entender o problema"
+                class="tv-input"></textarea>
+      <span class="tv-contador">{{ descricao.length }}/{{ limites.denunciaDetalhe }}</span>
+    </div>
+
+    <div *ngIf="erroModal() as msg" class="tv-alert tv-alert-error" role="alert">
+      <i class="fas fa-circle-exclamation mt-[2px]" aria-hidden="true"></i>
+      <span>{{ msg }}</span>
+    </div>
+
+    <div class="flex justify-end gap-3 pt-2">
+      <button (click)="fecharModal()" [disabled]="enviando()" class="tv-btn tv-btn-secondary">Cancelar</button>
+      <button (click)="confirmarDenuncia()" [disabled]="enviando()" class="tv-btn tv-btn-danger">
+        {{ enviando() ? 'Enviando…' : 'Confirmar denúncia' }}
+      </button>
+    </div>
+  </div>
+</div>

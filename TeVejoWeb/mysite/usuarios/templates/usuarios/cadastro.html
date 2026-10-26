@@ -1,0 +1,101 @@
+{% extends "principal/base_auth.html" %}
+{% load static %}
+{% block title %}Cadastrar - Tevejo{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'usuarios/css/cadastro.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+
+  <!-- LADO ESQUERDO -->
+  <div class="auth-left">
+    <img src="{% static 'usuarios/img/logo.png' %}" alt="Tevejo" class="auth-logo">
+  </div>
+
+  <!-- LADO DIREITO -->
+  <div class="auth-right">
+    <h2 class="auth-title">Crie sua conta</h2>
+
+    <!-- MENSAGENS DO DJANGO -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="auth-message is-{{ message.tags }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- FORMULÁRIO -->
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+
+      <!-- ERROS GERAIS -->
+      {% if form.non_field_errors %}
+        <div class="auth-message is-error">
+          {{ form.non_field_errors|striptags }}
+        </div>
+      {% endif %}
+
+      <!-- CAMPOS -->
+      {% for field in form %}
+        <div class="auth-field">
+          <label class="auth-label">{{ field.label }}</label>
+
+          <div class="input-wrapper">
+            {{ field }}
+
+            {% if field.name == "password" or field.name == "password_confirm" %}
+              <i class="fa-solid fa-eye toggle-password"></i>
+            {% endif %}
+          </div>
+
+          {% if field.errors %}
+            <p class="auth-error">{{ field.errors|striptags }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <!-- BOTÃO CADASTRO -->
+      <button type="submit" class="auth-btn-primary">
+        Criar conta
+      </button>
+
+      <!-- LINK LOGIN -->
+      <p class="auth-link">
+        <a href="{% url 'usuarios:login' %}">
+          Já tem uma conta? Faça login!
+        </a>
+      </p>
+
+      <!-- GOOGLE (FUTURO) -->
+      <button class="google-btn" type="button">
+        <i class="fa-brands fa-google"></i>
+        Criar conta com minha conta Google
+      </button>
+    </form>
+  </div>
+
+</div>
+
+<!-- TOGGLE PASSWORD -->
+<script>
+const toggles = document.querySelectorAll('.toggle-password');
+
+toggles.forEach(icon => {
+  icon.addEventListener('click', () => {
+    const input = icon.previousElementSibling;
+
+    if (input.type === "password") {
+      input.type = "text";
+      icon.classList.replace("fa-eye", "fa-eye-slash");
+    } else {
+      input.type = "password";
+      icon.classList.replace("fa-eye-slash", "fa-eye");
+    }
+  });
+});
+</script>
+{% endblock %}

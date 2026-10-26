@@ -1,0 +1,177 @@
+/* =========================================================
+   ESTILOS BASE - HEADER, SIDEBAR, ETC. (do TeVejo original)
+========================================================= */
+:root {
+    --azul-cobalto: #34495e;
+    --turquesa: #1abc9c;
+    --azul-celeste: #3498db;
+    --azul-purpura: #9b59b6;
+    --marrom: #d35400;
+    --azul-bebe: #9cd6e0;
+    --verde-presenca: #5ae05e;
+    --fundo-principal: #e8e8e8;
+    --off-white: #ffffff;
+    --gray-light: #f3f4f6;
+    --gray-medium: #a5a5a5;
+    --gray-border: #ccc;
+    height: auto;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Radio Canada', sans-serif;
+    background: #f2f2f2 url("../imgs/background.jpg") repeat;
+    background-size: 15%;
+    min-height: 100vh;
+    display: flex;
+    color: #222;
+    flex-direction: column;
+}
+
+
+.enter-button {
+    background-color: var(--turquesa);
+    color: #fff;
+    border: none;
+    border-radius: 9999px;
+    padding: 0.5rem 1.25rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.enter-button:hover { background-color: #16a085; }
+
+.main-layout { display: flex; flex: 1; position: relative; }
+
+.content-area {
+    flex: 1;
+    padding: 2rem;
+    background-color: var(--fundo-principal);
+}
+
+.page-title { font-size: 1.875rem; font-weight: 500; color: black; margin-bottom: 1.5rem; }
+.breadcrumb { color: var(--gray-medium); font-weight: 700; margin-bottom: 0.5rem; }
+
+/* =========================================================
+   ESTILOS ESPECÍFICOS DA PÁGINA "POSTAR"
+========================================================= */
+
+.post-form-container {
+    background-color: var(--off-white);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    max-width: 700px;
+}
+
+.community-selector {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    gap: 0.5rem;
+}
+
+.community-selector img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #333;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.form-input {
+    width: 100%;
+    border: 1px solid var(--gray-border);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--azul-celeste);
+}
+
+.char-count {
+    display: block;
+    text-align: right;
+    font-size: 0.875rem;
+    color: var(--gray-medium);
+    margin-bottom: 1rem;
+}
+
+.tag-button {
+    background-color: var(--gray-light);
+    border: 1px solid var(--gray-border);
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    color: #333;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.editor-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--gray-light);
+    border: 1px solid var(--gray-border);
+    border-radius: 0.75rem 0.75rem 0 0;
+    padding: 0.5rem;
+}
+
+.editor-toolbar button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #333;
+}
+
+.editor-toolbar button:hover { color: var(--azul-cobalto); }
+
+.editor-mode {
+    margin-left: auto;
+    font-size: 0.75rem;
+    color: var(--gray-medium);
+}
+
+.form-textarea {
+    width: 100%;
+    height: 150px;
+    border: 1px solid var(--gray-border);
+    border-top: none;
+    border-radius: 0 0 0.75rem 0.75rem;
+    padding: 1rem;
+    font-size: 1rem;
+    resize: vertical;
+    color: #333;
+    background-color: #fff;
+}
+
+.post-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+.post-button {
+    background-color: var(--azul-celeste);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.post-button:hover { background-color: #2b7bc0; }

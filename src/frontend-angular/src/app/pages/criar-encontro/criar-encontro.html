@@ -1,0 +1,115 @@
+<div class="max-w-3xl mx-auto space-y-5">
+  <button type="button" (click)="voltar()" class="tv-btn tv-btn-ghost tv-btn-sm -ml-2">
+    <i class="fas fa-arrow-left text-xs" aria-hidden="true"></i> Voltar para a comunidade
+  </button>
+
+  <section class="tv-card tv-card-marca p-6 sm:p-8 pt-8 space-y-6">
+
+    <header class="pb-5 space-y-1" style="border-bottom: 1px solid var(--tv-border-blue);">
+      <p class="tv-page-eyebrow">Nova atividade</p>
+      <h1 class="tv-page-title">Criar encontro</h1>
+      <p class="tv-page-subtitle">Combine um momento com a sua comunidade, presencial ou online.</p>
+    </header>
+
+    <div *ngIf="mensagemSucesso()" class="tv-alert tv-alert-success" role="status" aria-live="polite">
+      <i class="fas fa-check-circle mt-[2px]" aria-hidden="true"></i>
+      <span>{{ mensagemSucesso() }}</span>
+    </div>
+    <div *ngIf="mensagemErro()" class="tv-alert tv-alert-error" role="alert">
+      <i class="fas fa-circle-exclamation mt-[2px]" aria-hidden="true"></i>
+      <span>{{ mensagemErro() }}</span>
+    </div>
+
+    <form [formGroup]="encontroForm" (ngSubmit)="salvarEncontro()" class="space-y-5" novalidate>
+
+      <!-- Capa -->
+      <div>
+        <p class="tv-label">Imagem de capa (opcional)</p>
+        <div (click)="capaInput.click()" (keydown.enter)="capaInput.click()"
+             tabindex="0" role="button" [attr.aria-label]="previaImagem() ? 'Trocar imagem de capa' : 'Adicionar imagem de capa'"
+             class="relative aspect-[2/1] rounded-2xl overflow-hidden flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors hover:bg-[#F2EDE4]"
+             style="border: 2px dashed rgba(99,90,224,0.3); background: var(--color-tv-input-bg);">
+          <img *ngIf="previaImagem()" [src]="previaImagem()" alt="Prévia da capa" class="absolute inset-0 w-full h-full object-cover">
+          <ng-container *ngIf="!previaImagem()">
+            <i class="fas fa-image text-2xl" style="color: var(--color-tv-azul);" aria-hidden="true"></i>
+            <span class="text-sm font-semibold" style="color: var(--color-tv-muted-fg);">Adicionar uma foto do local ou do tema</span>
+          </ng-container>
+          <button *ngIf="previaImagem()" type="button" (click)="removerImagem(); $event.stopPropagation()"
+                  (keydown.enter)="$event.stopPropagation()"
+                  class="absolute top-3 right-3 tv-btn tv-btn-secondary tv-btn-sm" aria-label="Remover imagem">
+            <i class="fas fa-trash" aria-hidden="true"></i> Remover
+          </button>
+          <input #capaInput type="file" (change)="onFileSelected($event)" accept="image/*" hidden>
+        </div>
+      </div>
+
+      <div>
+        <label class="tv-label" for="ce-titulo">Título <span class="tv-required">*</span></label>
+        <input id="ce-titulo" type="text" formControlName="titulo" [maxlength]="limites.encontroTitulo"
+               class="tv-input" placeholder="Ex: Roda de conversa sobre rotina escolar"
+               [attr.aria-invalid]="invalido('titulo') ? 'true' : null" aria-describedby="ce-titulo-erro">
+        <div class="flex justify-between gap-3">
+          <p id="ce-titulo-erro" class="text-xs mt-1.5" style="color: var(--color-tv-destructive);" *ngIf="invalido('titulo')">
+            O título é obrigatório.
+          </p>
+          <span class="tv-contador ml-auto">{{ tamanho('titulo') }}/{{ limites.encontroTitulo }}</span>
+        </div>
+      </div>
+
+      <div>
+        <label class="tv-label" for="ce-descricao">Descrição <span class="tv-required">*</span></label>
+        <app-editor-texto formControlName="descricao" idCampo="ce-descricao" rotulo="Descrição"
+                          [limite]="limites.encontroDescricao" [linhas]="5"
+                          placeholder="Descreva a pauta, o que levar, acessibilidade do local…"></app-editor-texto>
+        <p class="text-xs mt-1.5" style="color: var(--color-tv-destructive);" *ngIf="invalido('descricao')">
+          A descrição é obrigatória.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div>
+          <label class="tv-label" for="ce-data">Data e horário <span class="tv-required">*</span></label>
+          <input id="ce-data" type="datetime-local" formControlName="data_hr_encontro" class="tv-input"
+                 [min]="agoraLocal"
+                 [attr.aria-invalid]="invalido('data_hr_encontro') ? 'true' : null">
+          <p class="text-xs mt-1.5" style="color: var(--color-tv-destructive);" *ngIf="invalido('data_hr_encontro')">
+            A data e horário são obrigatórios.
+          </p>
+        </div>
+
+        <div>
+          <label class="tv-label" for="ce-endereco">Endereço ou link <span class="tv-required">*</span></label>
+          <input id="ce-endereco" type="text" formControlName="endereco" [maxlength]="limites.encontroEndereco"
+                 class="tv-input" placeholder="Local físico ou link do Meet/Zoom"
+                 [attr.aria-invalid]="invalido('endereco') ? 'true' : null">
+          <p class="text-xs mt-1.5" style="color: var(--color-tv-destructive);" *ngIf="invalido('endereco')">
+            O endereço é obrigatório.
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <label class="tv-label" for="ce-tags">Tags (opcional)</label>
+        <input id="ce-tags" type="text" formControlName="tags" [maxlength]="limites.encontroTags"
+               class="tv-input" placeholder="Separe por vírgulas. Ex: online, famílias, escola">
+        <span class="tv-contador">{{ tamanho('tags') }}/{{ limites.encontroTags }}</span>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-5" style="border-top: 1px solid var(--tv-border-blue);">
+        <button type="button" (click)="voltar()" [disabled]="enviando()" class="tv-btn tv-btn-secondary">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="enviando()" class="tv-btn tv-btn-primary">
+          <i class="fas" [class.fa-spinner]="enviando()" [class.fa-spin]="enviando()" [class.fa-calendar-check]="!enviando()" aria-hidden="true"></i>
+          {{ enviando() ? 'Salvando…' : 'Salvar encontro' }}
+        </button>
+      </div>
+    </form>
+  </section>
+</div>
+
+<app-recortar-imagem *ngIf="imagemParaRecortar() as arquivo"
+                     [arquivo]="arquivo" [proporcao]="2" [larguraSaida]="1200"
+                     titulo="Ajustar imagem do encontro"
+                     (recortado)="aoRecortar($event)"
+                     (cancelado)="imagemParaRecortar.set(null)"></app-recortar-imagem>

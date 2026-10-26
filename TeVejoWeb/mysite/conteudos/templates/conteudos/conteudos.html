@@ -1,0 +1,87 @@
+{% extends 'principal/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'conteudos/css/conteudos.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="conteudos-wrapper">
+    
+    <div class="conteudos-header">
+        <div class="breadcrumb">Conteúdo Educacional</div>
+        
+        <div class="header-flex">
+            <div class="header-info">
+                <h1>Conteúdos Verificados</h1>
+                <p>Materiais revisados por curadores, para apoiar quem convive com o TEA.</p>
+            </div>
+            
+            {% if eh_curador %}
+            <button class="btn-adicionar-conteudo" onclick="window.location.href='{% url 'conteudos:criar' %}'">
+                <i class="fas fa-plus"></i> Novo Conteúdo
+            </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="filtros-container">
+        <h3><i class="fas fa-filter"></i> Filtre por categoria</h3>
+        <div class="filtros-categorias">
+            <a href="{% url 'conteudos:conteudos' %}" class="filtro-categoria {% if not request.GET.tag %}active{% endif %}">Todas</a>
+            {% for tag in tags %}
+                <a href="?tag={{ tag.id }}" class="filtro-categoria {% if request.GET.tag == tag.id|stringformat:'s' %}active{% endif %}">
+                    {{ tag.nome }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="conteudos-lista">
+        {% for conteudo in conteudos %}
+        <div class="conteudo-item">
+            <h3 class="conteudo-titulo">{{ conteudo.titulo }}</h3>
+            <span class="conteudo-fonte"><i class="fas fa-book"></i> Fonte: {{ conteudo.fonte }}</span>
+
+            <div class="curador-box">
+                {% if conteudo.curador.foto %}
+                    <img src="{{ conteudo.curador.foto.url }}" class="curador-foto" alt="Foto do curador">
+                {% else %}
+                    <img src="{% static 'principal/imgs/imagem2.png' %}" class="curador-foto" alt="Avatar padrão">
+                {% endif %}
+                
+                <div class="curador-texto">
+                    <span class="curador-label">Curado por:</span>
+                    <strong>{{ conteudo.curador.nome }}</strong>
+                    <span class="curador-cargo">🎓 Especialista em {{ conteudo.curador.especialidade }}</span>
+                </div>
+            </div>
+
+            <div class="conteudo-descricao">
+                {{ conteudo.descricao|truncatechars:300 }}
+            </div>
+
+            <div class="conteudo-tags">
+                {% for tag in conteudo.tipos.all %}
+                    <span class="tag">{{ tag.nome }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="conteudo-actions">
+                <a href="{% url 'conteudos:ver_conteudo' conteudo.id %}" class="btn-ver-mais">
+                    Ver Conteúdo Completo
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="conteudos-vazio">
+            <div class="empty-icon">
+                <i class="fas fa-inbox"></i>
+            </div>
+            <p>Nenhum conteúdo encontrado nesta categoria.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+</main>
+{% endblock %}

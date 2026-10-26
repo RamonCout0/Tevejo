@@ -1,0 +1,58 @@
+<div class="fixed inset-0 z-[100] flex items-center justify-center p-4"
+     style="background: rgba(18,18,20,0.5);"
+     role="dialog" aria-modal="true" aria-labelledby="termoTitle">
+
+  <div class="w-full max-w-[820px] max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden tv-card tv-card-marca tv-scale-in"
+       style="box-shadow: var(--tv-shadow-lg);">
+
+    <header class="relative p-7 sm:p-8 shrink-0 overflow-hidden"
+            style="border-bottom: 1px solid var(--tv-border-blue); background: var(--tv-gradiente-suave);">
+      <img src="/assets/girassol.svg" alt="" aria-hidden="true"
+           class="absolute -right-6 -top-6 w-28 opacity-80 rotate-12 pointer-events-none">
+      <img src="/assets/logo.svg" alt="TeVejo" class="h-9 w-auto mb-4">
+      <p class="tv-page-eyebrow">Antes de começar</p>
+      <h1 id="termoTitle" class="tv-page-title mt-2" style="font-size: 1.75rem;">
+        Termo de consentimento e responsabilidade
+      </h1>
+      <p class="tv-page-subtitle mt-1">Leia e aceite para acessar a plataforma.</p>
+    </header>
+
+    <div class="flex-1 overflow-y-auto p-7 sm:p-10 text-[15px] leading-relaxed"
+         style="background: var(--color-tv-bg); color: var(--color-tv-foreground);">
+      <div class="space-y-6 max-w-[60ch]">
+        <section>
+          <h2 class="font-semibold text-lg mb-2">1. Ciência sobre o funcionamento</h2>
+          <p>
+            Ao utilizar o TeVejo, você demonstra ciência sobre o funcionamento e as regras do ambiente.
+            Nosso objetivo é garantir um espaço seguro para quem convive com o TEA.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="font-semibold text-lg mb-2">2. Uso de dados</h2>
+          <p>
+            O sistema registra sua aceitação para liberar o acesso completo. Seus dados de perfil são
+            protegidos de acordo com nossas políticas de privacidade.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="font-semibold text-lg mb-2">3. Responsabilidade</h2>
+          <p>
+            Você é responsável pelas informações que publica e por respeitar a comunidade,
+            mantendo o foco educativo e de apoio.
+          </p>
+        </section>
+      </div>
+    </div>
+
+    <footer class="p-6 sm:p-7 flex flex-wrap items-center justify-end gap-3 shrink-0"
+            style="background: var(--color-tv-card); border-top: 1px solid var(--tv-border-blue);">
+      <div *ngIf="erro() as msg" class="tv-alert tv-alert-error mr-auto" role="alert">{{ msg }}</div>
+      <button (click)="aoRecusar()" [disabled]="enviando()" class="tv-btn tv-btn-secondary">Não concordo</button>
+      <button (click)="aoConcordar()" [disabled]="enviando()" class="tv-btn tv-btn-primary">
+        {{ enviando() ? 'Registrando...' : 'Concordo e quero entrar' }}
+      </button>
+    </footer>
+  </div>
+</div>

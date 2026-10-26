@@ -1,0 +1,238 @@
+/* ===============================
+   CONTAINER PRINCIPAL
+   =============================== */
+.auth-wrapper {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+/* ===============================
+   LADO ESQUERDO
+   =============================== */
+.auth-left {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #F3E5C4;
+    padding: 2rem;
+}
+
+.auth-logo {
+    max-width: 80%;
+}
+
+/* ===============================
+   LADO DIREITO
+   =============================== */
+.auth-right {
+    flex: 1;
+    padding: 3rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* ===============================
+   TÍTULO
+   =============================== */
+.auth-title {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+/* ===============================
+   CAMPOS
+   =============================== */
+.auth-field {
+    margin-bottom: 1rem;
+}
+
+.auth-label {
+    display: block;
+    margin-bottom: .3rem;
+    font-size: .95rem;
+    color: #555;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: .75rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    transition: border 0.3s, box-shadow 0.3s;
+}
+
+.input-wrapper input:focus {
+    border-color: #3273dc;
+    box-shadow: 0 0 8px rgba(50, 115, 220, 0.3);
+    outline: none;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #555;
+}
+
+/* ===============================
+   MENSAGENS (BASE ÚNICA)
+   =============================== */
+.auth-message {
+    padding: 12px 15px;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    text-align: center;
+    animation: fadeIn 0.3s ease;
+}
+
+/* SUCESSO */
+.auth-message.is-success {
+    background: #e6f9f1;
+    border-left: 5px solid #00C48C;
+    color: #0f5132;
+}
+
+/* ERRO */
+.auth-message.is-error {
+    background: #fdf2f2;
+    border-left: 5px solid #d9534f;
+    color: #842029;
+}
+
+/* AVISO */
+.auth-message.is-warning {
+    background: #fff3cd;
+    border-left: 5px solid #ffc107;
+    color: #664d03;
+}
+
+/* INFO */
+.auth-message.is-info {
+    background: #e7f1ff;
+    border-left: 5px solid #3273dc;
+    color: #084298;
+}
+
+/* ===============================
+   ERROS DE CAMPO
+   =============================== */
+.auth-error {
+    color: #d9534f;
+    font-size: .8rem;
+    margin-top: .3rem;
+}
+
+/* ===============================
+   BOTÕES
+   =============================== */
+.auth-btn,
+.auth-btn-primary,
+.google-btn {
+    width: 100%;
+    padding: .75rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+    cursor: pointer;
+}
+
+.auth-btn {
+    background: #3273dc;
+    color: #fff;
+    border: none;
+}
+
+.auth-btn-primary {
+    background: #00C48C;
+    color: #fff;
+    border: none;
+}
+
+.google-btn {
+    background: #fff;
+    border: 1px solid #3273dc;
+    color: #3273dc;
+}
+
+.auth-btn:hover,
+.auth-btn-primary:hover,
+.google-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.google-btn i {
+    margin-right: .4rem;
+}
+
+/* ===============================
+   LINKS
+   =============================== */
+.auth-link {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.auth-link a {
+    color: #3273dc;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.auth-link a:hover {
+    color: #245bb5;
+}
+
+/* ===============================
+   ANIMAÇÃO
+   =============================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===============================
+   MOBILE
+   =============================== */
+@media (max-width: 768px) {
+    .auth-wrapper {
+        flex-direction: column;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .auth-left {
+        display: none;
+    }
+
+    .auth-right {
+        width: 100%;
+        padding: 2rem;
+    }
+}

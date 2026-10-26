@@ -1,0 +1,19 @@
+node_modules/
+**/node_modules/
+# Python
+__pycache__/
+*.pyc
+*.sqlite3
+db.sqlite3
+.venv/
+venv/
+staticfiles/
+
+# Variáveis de ambiente locais (use .env.example como modelo)
+.env
+
+# Uploads
+media/
+
+# As migrations FAZEM parte do código: precisam ser versionadas para que
+# todos os ambientes (e o CI/Docker) tenham o mesmo esquema de banco.

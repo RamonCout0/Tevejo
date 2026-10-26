@@ -1,0 +1,131 @@
+@startuml Diagrama_de_Componentes_do_TeVejo_Frontend
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam roundCorner 12
+skinparam nodesep 25
+skinparam ranksep 45
+skinparam defaultTextAlignment center
+
+skinparam rectangle {
+    BackgroundColor<<person>> #1B3A6B
+    FontColor<<person>> white
+    BorderColor<<person>> #0F2647
+
+    BackgroundColor<<container>> #EAF4FD
+    FontColor<<container>> #0B3558
+    BorderColor<<container>> #5FA3DB
+
+    BackgroundColor<<component>> #D9ECFB
+    FontColor<<component>> #0B3558
+    BorderColor<<component>> #5FA3DB
+
+    BackgroundColor<<external_auth>> #DCD3F0
+    FontColor<<external_auth>> #2C1A4D
+    BorderColor<<external_auth>> #8A6FC0
+
+    BackgroundColor<<external_maps>> #D3ECD2
+    FontColor<<external_maps>> #1F4A1E
+    BorderColor<<external_maps>> #6FAE6C
+
+    BackgroundColor<<boundary>> #F5FAFE
+    BorderColor<<boundary>> #5FA3DB
+    BorderThickness<<boundary>> 1
+}
+
+skinparam database {
+    BackgroundColor #2169C8
+    FontColor white
+    BorderColor #0B3558
+}
+
+title Diagrama de Componentes do TeVejo - Frontend
+
+' ===================== ATORES =====================
+rectangle "**Convivente**\n--\nPessoa que convive com\numa pessoa autista." <<person>> as convivente
+
+rectangle "**Curador**\n--\nProfissional da Psicologia." <<person>> as curador
+
+rectangle "**Moderador**\n--\nCriador de uma comunidade ou\nqualquer pessoa convidada pelo\ncriador que se comprometa com a\nresponsabilidade de moderação." <<person>> as moderador
+
+rectangle "**Administrador**\n--\nUsuário de maior hierarquia\nna plataforma." <<person>> as administrador
+
+' ===================== FRONTEND COM COMPONENTES =====================
+rectangle "Aplicação Frontend – Angular\n[container]\nAngular 21 | TypeScript | PrimeNG | HTML | CSS" <<boundary>> as frontend {
+
+    rectangle "**Páginas / Views**\n[Angular Components]\n--\nRenderizam as telas principais\nda aplicação, como Home,\nComunidades, Encontros,\nConteúdos, Perfil, Login\ne Cadastro." <<component>> as paginas
+
+    rectangle "**Serviços HTTP**\n[Angular Services]\n--\nRealizam a comunicação com\no backend por meio de\nrequisições HTTP/JSON." <<component>> as servicos_http
+
+    rectangle "**Interceptors**\n[Angular Interceptor]\n--\nInterceptam requisições e\nrespostas HTTP para anexar\ntokens, tratar erros e\npadronizar comunicações." <<component>> as interceptors
+
+    rectangle "**Guards de Rotas**\n[Angular Guards]\n--\nProtegem rotas e controlam\no acesso conforme autenticação\ne papel do usuário." <<component>> as guards
+
+    rectangle "**Gerenciamento de Estado**\n[Signals]\n--\nControla sessão, usuário\nautenticado, preferências,\nnotificações e dados usados\npela interface." <<component>> as estado
+
+    rectangle "**Componentes Reutilizáveis**\n[Shared Components]\n--\nElementos reaproveitados na UI,\ncomo Navbar, Footer, CardPost,\nModal, FormInput e cards." <<component>> as componentes
+
+    rectangle "**Modelos / Interfaces**\n[TypeScript Interfaces]\n--\nRepresentam os dados usados\nno frontend, como Usuario,\nComunidade, Post, Comentario,\nEncontro, Conteudo e Denuncia." <<component>> as modelos
+
+    rectangle "**Módulos e Rotas**\n[Angular Routing]\n--\nOrganizam a aplicação em áreas\nfuncionais e definem a navegação\nentre as páginas." <<component>> as modulos_rotas
+}
+
+' ===================== BACKEND =====================
+rectangle "**Aplicação Backend**\n[Django REST]\n--\nAPI REST com autenticação,\nautorização e gestão de\nconteúdos da plataforma." <<container>> as backend
+
+' ===================== BANCO DE DADOS =====================
+database "**Banco de Dados**\n[PostgreSQL 16.2]\n--\nArmazena dados dos usuários,\ncomunidades, conteúdos, encontros,\nmoderação e sistema." as banco
+
+' ===================== SISTEMAS EXTERNOS =====================
+rectangle "**API do Google Authenticator**\n--\nAPI externa para proporcionar\numa alternativa de login e\nautenticação de usuário." <<external_auth>> as google_auth
+
+rectangle "**API do Google Maps**\n--\nServiços de mapas,\ngeocodificação e rotas." <<external_maps>> as google_maps
+
+' ===================== RELACIONAMENTOS: ATORES -> FRONTEND =====================
+convivente --> frontend : Acesso a conteúdo\neducacional e comunidades.
+
+curador --> frontend : Realiza a postagem e\nedição dos conteúdos\neducacionais.
+
+moderador --> frontend : Revisa postagens e denúncias\nem uma comunidade. Pode\nrestringir ou banir conviventes.
+
+administrador --> frontend : Pode cadastrar e gerenciar\nusuários e gerir conteúdos\ne comunidades já criados.
+
+' ===================== RELACIONAMENTOS INTERNOS DO FRONTEND =====================
+paginas --> servicos_http : Usa serviços para\nbuscar e enviar dados.
+
+paginas --> componentes : Utiliza componentes\nvisuais reutilizáveis.
+
+paginas --> estado : Consulta e atualiza\no estado da aplicação.
+
+servicos_http --> interceptors : Requisições passam\npelos interceptors.
+
+servicos_http --> modelos : Usa interfaces para\ntipar dados recebidos\ne enviados.
+
+guards --> estado : Verifica autenticação\ne papel do usuário.
+
+modulos_rotas --> guards : Aplica regras de acesso\nnas rotas protegidas.
+
+modulos_rotas --> paginas : Direciona navegação\npara as views.
+
+componentes --> modelos : Exibe dados tipados\npelas interfaces.
+
+' ===================== FRONTEND -> BACKEND =====================
+servicos_http --> backend : Chamada para a API\n(JSON/HTTP)\nRequisições feitas pelo\nfrontend para consumir\nos recursos da API.
+
+' ===================== BACKEND -> BANCO E EXTERNOS =====================
+backend --> banco : Leitura e gravação\nde dados (SQL)\nPersistência de todas as\ninformações da aplicação.
+
+backend ..> google_auth : Comunicação para autenticação\nde usuários via Google\n(JSON/HTTPS)
+
+backend ..> google_maps : Consulta mapas,\ngeocodificação e rotas\n(JSON/HTTPS)
+
+' ===================== LEGENDA =====================
+legend right
+  |= Elemento |= Descrição |
+  |<#1B3A6B>   | **Ator** – Pessoa que usa a plataforma |
+  |<#EAF4FD>   | **Container** – Aplicação ou storage |
+  |<#D9ECFB>   | **Componente** – Parte lógica do frontend |
+  |<#DCD3F0>   | **Sistema Externo** – API de terceiros |
+  |<#D3ECD2>   | **Sistema Externo** – Serviço externo de mapas |
+endlegend
+
+@enduml

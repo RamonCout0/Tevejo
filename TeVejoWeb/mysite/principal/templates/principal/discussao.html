@@ -1,0 +1,72 @@
+{% extends 'principal/base.html' %}
+{% load static %} {% block extra_css %}
+<link rel="stylesheet" href="{% static 'principal/css/discussao.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="main-layout">
+
+    <section class="content-area">
+        
+        <div class="page-header">
+            <div class="breadcrumb">Discussões Públicas ></div>
+            <h1 class="page-title">Discussões em Destaque</h1>
+        </div>
+
+        {% for post in posts %}
+        <article class="post-card">
+            
+            <div class="post-head">
+                <div class="post-author-info">
+                    <a href="{% url 'principal:comunidade' pk=post.comunidade.id %}">
+                        <img src="{% if post.comunidade.icone %}{{ post.comunidade.icone.url }}{% else %}{% static 'principal/imgs/imagem2.png' %}{% endif %}" class="avatar" alt="Icone">
+                    </a>
+
+                    <div class="meta-text">
+                        <a href="{% url 'principal:comunidade' pk=post.comunidade.id %}" class="community-link">
+                            tevejo/{{ post.comunidade.nome }}
+                        </a>
+                        
+                        <span>•</span>
+                        
+                        <span class="user-meta">
+                            Postado por <span class="user-name">{{ post.autor.username }}</span>
+                            há {{ post.dataPostagem|timesince }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="dots">•••</div>
+            </div>
+
+            <div class="post-content-wrapper">
+                <h3 class="post-title-card">{{ post.titulo }}</h3>
+                
+                <p class="post-text">
+                    {{ post.conteudo }}
+                </p>
+            </div>
+
+            <div class="action-bar">
+                <div class="btn-action">
+                    <img src="https://img.icons8.com/ios-glyphs/24/686868/up-squared.png" alt="Like">
+                    <span>{{ post.reacoes_post.count }}</span>
+                </div>
+
+                <div class="btn-action">
+                    <img src="https://img.icons8.com/material-rounded/24/686868/speech-bubble.png" alt="Comment">
+                    <span>{{ post.comentarios.count }} Comentários</span>
+                </div>
+
+                <div class="btn-action">
+                    <img src="https://img.icons8.com/ios-glyphs/24/686868/share.png" alt="Share">
+                    <span>Compartilhar</span>
+                </div>
+            </div>
+
+        </article>
+        {% endfor %}
+
+    </section>
+</main>
+{% endblock %}

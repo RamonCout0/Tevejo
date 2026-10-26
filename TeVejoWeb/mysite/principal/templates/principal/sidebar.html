@@ -1,0 +1,70 @@
+{% load static %}
+{% load grupo_filters %}
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<aside class="sidebar" id="main-sidebar">
+
+    <nav class="sidebar-nav">
+        <a class="sidebar-item {% if active_page == 'discussoes' %}active{% endif %}"
+           href="{% url 'principal:discussoes' %}">
+           <i class="fas fa-comments"></i> Discussões em Destaque
+        </a>
+
+        <a class="sidebar-item {% if active_page == 'conteudos' %}active{% endif %}"
+           href="{% url 'principal:conteudos' %}">
+           <i class="fas fa-book-open"></i> Conteúdo Educacional
+        </a>
+
+        <a class="sidebar-item {% if active_page == 'encontros' %}active{% endif %}"
+           href="{% url 'principal:encontros' %}">
+           <i class="fas fa-users"></i> Encontros
+        </a>
+
+        <div class="sidebar-divider"></div>
+
+        {% if request.user|has_group:"Convivente" %}
+            <span class="sidebar-label">Comunidades</span>
+
+            <a class="sidebar-item {% if active_page == 'criar_comunidade' %}active{% endif %}"
+               href="{% url 'principal:criar_comunidade' %}">
+               <i class="fas fa-plus-circle"></i> Criar Comunidade
+            </a>
+
+            <a class="sidebar-item {% if active_page == 'explorar_comunidades' %}active{% endif %}"
+               href="{% url 'comunidades:explorar_comunidades' %}">
+               <i class="fas fa-search"></i> Explorar Comunidades
+               </a>
+         {% if request.user.is_authenticated and comunidades_moderador %}
+            <a class="sidebar-item {% if active_page == 'gerenciar_comunidades' %}active{% endif %}"
+               href="{% url 'principal:gerenciar_comunidades' %}">
+               <i class="fas fa-cog"></i> Gerenciar Comunidades
+            </a>
+         {% endif %}
+            {% if request.user.is_authenticated and comunidades_usuario %}
+            <div class="sidebar-divider"></div>
+            <span class="sidebar-label">Minhas Comunidades</span>
+            
+            {% for comunidade in comunidades_usuario %}
+            <a class="sidebar-item community {% if comunidade.id == comunidade_id %}active{% endif %}"
+               href="{% url 'principal:comunidade' comunidade.id %}">
+               {% if comunidade.icone %}
+                     <img src="{{ comunidade.icone.url }}" class="community-icon" alt="{{ comunidade.nome }}">
+               {% else %}
+                     <i class="fas fa-users"></i>
+               {% endif %}
+               TeVejo/{{ comunidade.nome }}
+            </a>
+            {% endfor %}
+            {% endif %}
+      {% endif %}
+    </nav>
+
+    <div class="sidebar-footer">
+        <a class="sidebar-item {% if active_page == 'perfil' %}active{% endif %}"
+           href="{% url 'usuarios:perfil' %}">
+           <i class="fas fa-user"></i> Meu Perfil
+        </a>
+    </div>
+
+</aside>

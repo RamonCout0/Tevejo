@@ -1,0 +1,442 @@
+<div class="max-w-6xl mx-auto">
+
+  <div *ngIf="carregando()" class="tv-loading-row">
+    <span class="tv-dot-loader" aria-hidden="true"><span></span><span></span><span></span></span>
+    Carregando comunidade…
+  </div>
+
+  <div *ngIf="erro() as msg" class="tv-alert tv-alert-error mb-6" role="alert">
+    <i class="fas fa-circle-exclamation mt-[2px]" aria-hidden="true"></i>
+    <span>{{ msg }}</span>
+  </div>
+
+  <div *ngIf="sucessoInteracao() as msg" class="tv-alert tv-alert-success mb-6" role="status" aria-live="polite">
+    <i class="fas fa-check-circle mt-[2px]" aria-hidden="true"></i>
+    <span>{{ msg }}</span>
+  </div>
+
+  <ng-container *ngIf="comunidade() as c">
+
+    <!-- Banner com ícone -->
+    <div class="relative aspect-[4/1] mb-14 sm:mb-16">
+      <div class="absolute inset-0 rounded-3xl overflow-hidden"
+           [style.background]="c.banner ? 'none' : 'var(--tv-gradiente-diagonal)'"
+           role="img" [attr.aria-label]="'Banner da comunidade ' + c.nome">
+
+        <img *ngIf="c.banner" [src]="c.banner" alt="" class="absolute inset-0 w-full h-full object-cover">
+        <img *ngIf="!c.banner" src="/assets/girassol.svg" alt=""
+             class="absolute right-2 -bottom-8 w-24 sm:w-40 opacity-30 rotate-12" aria-hidden="true">
+
+        <a routerLink="/comunidades"
+           class="absolute top-4 left-4 inline-flex items-center gap-1.5 text-sm font-semibold px-3.5 py-1.5 rounded-full transition-colors"
+           style="background: rgba(18,18,20,0.35); color: white; backdrop-filter: blur(6px);">
+          <i class="fas fa-arrow-left text-xs" aria-hidden="true"></i> Comunidades
+        </a>
+      </div>
+
+      <!-- Ícone circular sobreposto, com anel no degradê da marca -->
+      <div class="absolute -bottom-10 sm:-bottom-12 left-5 sm:left-8 w-20 h-20 sm:w-28 sm:h-28 rounded-full p-1 shrink-0"
+           style="background: var(--tv-gradiente-diagonal); box-shadow: var(--tv-shadow-md);">
+        <div class="w-full h-full rounded-full overflow-hidden flex items-center justify-center"
+             style="background: var(--color-tv-card); border: 3px solid var(--color-tv-card);">
+          <img *ngIf="c.icone" [src]="c.icone" alt="" class="w-full h-full object-cover">
+          <span *ngIf="!c.icone" class="tv-avatar w-full h-full text-2xl" [ngClass]="c.nome | tomDaMarca">
+            {{ c.nome | iniciais }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] gap-8">
+
+      <!-- Coluna principal -->
+      <div class="space-y-6 min-w-0">
+
+        <div class="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-4">
+          <div class="min-w-0 flex-1 space-y-2">
+            <span class="tv-badge" [ngClass]="c.categoria | tomDaMarca" [title]="c.categoria">{{ c.categoria }}</span>
+            <h1 class="tv-page-title">{{ c.nome }}</h1>
+          </div>
+
+          <div class="flex flex-wrap gap-2 xl:shrink-0 xl:justify-end">
+            <button *ngIf="c.is_moderador"
+                    [routerLink]="['/comunidades', c.id, 'editar']"
+                    class="tv-btn tv-btn-ghost tv-btn-sm">
+              <i class="fas fa-pen" aria-hidden="true"></i> Editar
+            </button>
+
+            <button *ngIf="c.is_moderador"
+                    [routerLink]="['/comunidades', c.id, 'moderacao']"
+                    class="tv-btn tv-btn-ghost tv-btn-sm">
+              <i class="fas fa-shield" aria-hidden="true"></i> Denúncias
+            </button>
+
+            <button *ngIf="c.is_moderador"
+                    [routerLink]="['/comunidades', c.id, 'moderar']"
+                    class="tv-btn tv-btn-ghost tv-btn-sm">
+              <i class="fas fa-user-shield" aria-hidden="true"></i> Membros
+            </button>
+
+            <button *ngIf="(c.is_membro || c.is_moderador) && !c.minha_restricao"
+                    (click)="postar()" class="tv-btn tv-btn-primary tv-btn-sm">
+              <i class="fas fa-plus" aria-hidden="true"></i> Postar
+            </button>
+
+            <button *ngIf="!c.is_membro && !c.is_moderador && !c.fui_banido && podeVerParticipar()"
+                    (click)="participar()"
+                    [disabled]="acaoEmCurso()"
+                    class="tv-btn tv-btn-primary tv-btn-sm">
+              <i class="fas fa-hand-holding-heart" aria-hidden="true"></i>
+              {{ acaoEmCurso() ? 'Entrando…' : 'Participar' }}
+            </button>
+
+            <button *ngIf="c.is_membro && !c.is_moderador"
+                    (click)="sair()" [disabled]="acaoEmCurso()"
+                    class="tv-btn tv-btn-secondary tv-btn-sm" title="Clique para sair da comunidade">
+              <i class="fas fa-check" aria-hidden="true"></i>
+              {{ acaoEmCurso() ? 'Saindo…' : 'Participando' }}
+            </button>
+
+            <span *ngIf="c.fui_banido" class="tv-badge tv-badge-danger">
+              <i class="fas fa-ban text-[9px]" aria-hidden="true"></i> Banido
+            </span>
+          </div>
+        </div>
+
+        <!-- Descrição: largura toda, recolhida em 3 linhas quando é longa -->
+        <div *ngIf="c.descricao" class="-mt-2">
+          <p class="tv-page-subtitle" [class.tv-linhas-3]="!descricaoAberta()">{{ c.descricao }}</p>
+          <button *ngIf="descricaoLonga(c.descricao)" type="button" class="tv-link text-sm mt-1"
+                  (click)="descricaoAberta.set(!descricaoAberta())" [attr.aria-expanded]="descricaoAberta()">
+            {{ descricaoAberta() ? 'Ver menos' : 'Ver mais' }}
+          </button>
+        </div>
+
+        <!-- Aviso restrição -->
+        <div *ngIf="c.minha_restricao as r" class="tv-alert tv-alert-warning">
+          <i class="fas fa-exclamation-triangle mt-[2px]" aria-hidden="true"></i>
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold">Você está restrito nesta comunidade</p>
+            <p class="text-sm mt-1">
+              Não é possível publicar nem comentar até <strong>{{ r.expira_em | date:'dd/MM/yyyy' }}</strong>.
+              <span *ngIf="r.justificativa" class="block mt-1 italic">"{{ r.justificativa }}"</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Compositor de post (membros) -->
+        <div *ngIf="(c.is_membro || c.is_moderador) && !c.minha_restricao"
+             class="tv-card p-4 flex items-center gap-3">
+          <span class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center shrink-0">
+            <img *ngIf="meuPerfil()?.foto as fotoUrl" [src]="fotoUrl" alt="" class="w-full h-full object-cover">
+            <span *ngIf="!meuPerfil()?.foto" class="tv-avatar w-full h-full" [ngClass]="nomeMeu() | tomDaMarca">
+              {{ nomeMeu() | iniciais }}
+            </span>
+          </span>
+          <button (click)="postar()"
+                  class="flex-1 text-left text-[15px] rounded-full px-5 py-3 transition-colors hover:bg-[#F2EDE4]"
+                  style="color: var(--color-tv-muted-fg); background: var(--color-tv-input-bg);">
+            Compartilhe algo com a comunidade…
+          </button>
+          <button (click)="postar()" class="tv-btn tv-btn-primary tv-btn-icone hidden sm:inline-flex" aria-label="Nova postagem">
+            <i class="fas fa-pen" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <!-- Lista de postagens -->
+        <div *ngIf="postagens().length === 0" class="tv-empty tv-card">
+          <img src="/assets/girassol.svg" alt="" class="w-14" aria-hidden="true">
+          <p class="tv-empty-title">Comece a conversa.</p>
+          <p class="tv-empty-desc">Ainda não há postagens nesta comunidade. Que tal ser a primeira pessoa a compartilhar?</p>
+        </div>
+
+        <article *ngFor="let p of postagens()" class="tv-card p-5 sm:p-6 space-y-3">
+          <div class="flex items-center gap-3">
+            <span class="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center shrink-0">
+              <img *ngIf="fotoDe(p.autor_username) as f" [src]="f" alt="" class="w-full h-full object-cover">
+              <span *ngIf="!fotoDe(p.autor_username)" class="tv-avatar w-full h-full text-xs" [ngClass]="p.autor | tomDaMarca">
+                {{ p.autor | iniciais }}
+              </span>
+            </span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold truncate">{{ p.autor }}</p>
+              <p class="text-xs" style="color: var(--color-tv-muted-fg);">
+                {{ p.criado_em | date:"dd 'de' MMMM 'às' HH:mm":'':'pt-BR' }}
+              </p>
+            </div>
+          </div>
+
+          <h3 *ngIf="p.titulo" class="tv-section-title">{{ p.titulo }}</h3>
+
+          <div class="relative">
+            <div class="tv-texto-rico"
+                 [class.max-h-72]="ehLongo(p.conteudo) && !expandido(p.id)"
+                 [class.overflow-hidden]="ehLongo(p.conteudo) && !expandido(p.id)"
+                 [innerHTML]="p.conteudo | textoRico"></div>
+            <div *ngIf="ehLongo(p.conteudo) && !expandido(p.id)"
+                 class="absolute inset-x-0 bottom-0 h-16 pointer-events-none"
+                 style="background: linear-gradient(transparent, var(--color-tv-card));"></div>
+          </div>
+          <button *ngIf="ehLongo(p.conteudo)" (click)="alternarExpandido(p.id)" class="tv-link text-sm">
+            {{ expandido(p.id) ? 'Mostrar menos' : 'Ler mais' }}
+          </button>
+
+          <div class="flex items-center gap-1 pt-2" style="border-top: 1px solid var(--tv-border-blue);">
+            <button (click)="curtir(p)" [disabled]="!!interacaoEmCurso()"
+                    class="tv-btn tv-btn-ghost tv-btn-sm"
+                    [style.color]="p.curtido_por_mim ? '#C2413A' : 'var(--color-tv-muted-fg)'"
+                    [attr.aria-pressed]="p.curtido_por_mim" aria-label="Curtir">
+              <i [class]="p.curtido_por_mim ? 'fas fa-heart' : 'far fa-heart'" aria-hidden="true"></i>
+              {{ p.curtidas_count }}
+            </button>
+            <button (click)="alternarComentarios(p)" class="tv-btn tv-btn-ghost tv-btn-sm"
+                    style="color: var(--color-tv-muted-fg);" [attr.aria-expanded]="comentarioAberto(p.id)">
+              <i class="far fa-comment-dots" aria-hidden="true"></i>
+              {{ p.comentarios_count }} {{ p.comentarios_count === 1 ? 'comentário' : 'comentários' }}
+            </button>
+            <button (click)="alternarDenuncia(p)" class="ml-auto tv-btn tv-btn-ghost tv-btn-icone"
+                    style="color: var(--color-tv-muted-fg);" aria-label="Denunciar publicação" title="Denunciar">
+              <i class="far fa-flag" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <!-- Comentários -->
+          <section *ngIf="comentarioAberto(p.id)" class="space-y-4 pt-3" style="border-top: 1px solid var(--tv-border-blue);">
+
+            <!-- Template reutilizável de um comentário (raiz ou resposta) -->
+            <ng-template #comentTpl let-coment let-p="p" let-ehResposta="ehResposta">
+              <div class="flex gap-2.5">
+                <span class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center shrink-0">
+                  <img *ngIf="fotoDe(coment.autor_username) as f" [src]="f" alt="" class="w-full h-full object-cover">
+                  <span *ngIf="!fotoDe(coment.autor_username)" class="tv-avatar w-full h-full text-[11px]" [ngClass]="coment.autor | tomDaMarca">
+                    {{ coment.autor | iniciais }}
+                  </span>
+                </span>
+                <div class="flex-1 min-w-0">
+                  <div class="rounded-2xl rounded-tl-md px-4 py-2.5" style="background: var(--color-tv-secondary);">
+                    <div class="flex items-center gap-2 mb-0.5 min-w-0">
+                      <strong class="text-[13px] truncate">{{ coment.autor }}</strong>
+                      <span class="text-[11px] shrink-0" style="color: var(--color-tv-muted-fg);">
+                        {{ coment.criado_em | date:'dd/MM HH:mm' }}
+                      </span>
+                    </div>
+                    <div class="tv-texto-rico text-sm" style="font-size: 14px;" [innerHTML]="coment.conteudo | textoRico"></div>
+                  </div>
+
+                  <!-- Ações do comentário -->
+                  <div class="flex items-center gap-4 mt-1 pl-2">
+                    <button (click)="curtirComentario(p, coment)" [disabled]="!!interacaoEmCurso()"
+                            class="inline-flex items-center gap-1.5 text-xs font-semibold transition-colors"
+                            [style.color]="coment.curtido_por_mim ? '#C2413A' : 'var(--color-tv-muted-fg)'"
+                            aria-label="Curtir comentário">
+                      <i [class]="coment.curtido_por_mim ? 'fas fa-heart' : 'far fa-heart'" aria-hidden="true"></i>
+                      {{ coment.curtidas_count }}
+                    </button>
+                    <button (click)="abrirResposta(coment, ehResposta)"
+                            class="text-xs font-semibold transition-colors hover:underline" style="color: var(--color-tv-muted-fg);">
+                      Responder
+                    </button>
+                    <button (click)="alternarDenunciaComentario(coment.id)"
+                            class="text-xs transition-colors" style="color: var(--color-tv-muted-fg);"
+                            aria-label="Denunciar comentário" title="Denunciar">
+                      <i class="far fa-flag" aria-hidden="true"></i>
+                    </button>
+                  </div>
+
+                  <!-- Denúncia inline do comentário -->
+                  <section *ngIf="denunciaComentarioAberta(coment.id)" class="space-y-2 mt-2 p-3 rounded-2xl tv-alert-warning">
+                    <p class="tv-page-eyebrow" style="color: #6B4E0E;">Reportar comentário</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      <select [ngModel]="motivoComentValor(coment.id)" (ngModelChange)="atualizarMotivoComent(coment.id, $event)" class="tv-input"
+                              aria-label="Motivo da denúncia">
+                        <option value="">Selecione o motivo</option>
+                        <option value="Spam">Spam</option>
+                        <option value="Comentário ofensivo">Comentário ofensivo</option>
+                        <option value="Desinformação">Desinformação</option>
+                        <option value="Conteúdo inadequado">Conteúdo inadequado</option>
+                      </select>
+                      <input type="text" [ngModel]="detalheComentValor(coment.id)"
+                             (ngModelChange)="atualizarDetalheComent(coment.id, $event)"
+                             [maxlength]="limites.denunciaDetalhe"
+                             placeholder="Complemento (opcional)" class="tv-input" aria-label="Complemento">
+                    </div>
+                    <div class="flex justify-end gap-2">
+                      <button (click)="alternarDenunciaComentario(coment.id)" class="tv-btn tv-btn-secondary tv-btn-sm">Cancelar</button>
+                      <button (click)="denunciarComentario(p, coment)"
+                              [disabled]="interacaoEmCurso() === 'denunciar-coment-' + coment.id"
+                              class="tv-btn tv-btn-danger tv-btn-sm">Enviar denúncia</button>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </ng-template>
+
+            <!-- Lista de comentários-raiz -->
+            <div *ngFor="let coment of p.comentarios" class="space-y-2">
+              <ng-container *ngTemplateOutlet="comentTpl; context: { $implicit: coment, p: p, ehResposta: false }"></ng-container>
+
+              <div class="pl-10 space-y-2">
+                <!-- Toggle ver/ocultar respostas -->
+                <button *ngIf="coment.respostas_count > 0" (click)="alternarRespostas(coment.id)"
+                        class="inline-flex items-center gap-1.5 text-xs font-semibold transition-colors"
+                        style="color: var(--color-tv-primary-ink);">
+                  <i [class]="respostaVisivel(coment.id) ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"
+                     class="text-[9px]" aria-hidden="true"></i>
+                  {{ respostaVisivel(coment.id)
+                      ? 'Ocultar respostas'
+                      : 'Ver ' + coment.respostas_count + (coment.respostas_count === 1 ? ' resposta' : ' respostas') }}
+                </button>
+
+                <!-- Respostas -->
+                <ng-container *ngIf="respostaVisivel(coment.id)">
+                  <ng-container *ngFor="let resp of coment.respostas">
+                    <ng-container *ngTemplateOutlet="comentTpl; context: { $implicit: resp, p: p, ehResposta: true }"></ng-container>
+                  </ng-container>
+                </ng-container>
+
+                <!-- Compositor de resposta -->
+                <div *ngIf="respostaComposerAberta(coment.id)" class="space-y-2">
+                  <app-editor-texto [ngModel]="respostaValor(coment.id)"
+                                    (ngModelChange)="atualizarResposta(coment.id, $event)"
+                                    [compacto]="true" [linhas]="2" [limite]="limites.comentario"
+                                    rotulo="Resposta" placeholder="Escreva uma resposta…"></app-editor-texto>
+                  <div class="flex justify-end gap-2">
+                    <button (click)="fecharResposta(coment.id)" class="tv-btn tv-btn-secondary tv-btn-sm">Cancelar</button>
+                    <button (click)="responder(p, coment.id)"
+                            [disabled]="interacaoEmCurso() === 'responder-' + coment.id"
+                            class="tv-btn tv-btn-primary tv-btn-sm">
+                      Responder
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Novo comentário-raiz -->
+            <div *ngIf="!c.minha_restricao" class="space-y-2">
+              <app-editor-texto [ngModel]="comentarioValor(p.id)"
+                                (ngModelChange)="atualizarComentario(p.id, $event)"
+                                [compacto]="true" [linhas]="2" [limite]="limites.comentario"
+                                rotulo="Comentário" placeholder="Escreva um comentário…"></app-editor-texto>
+              <div class="flex justify-end">
+                <button (click)="comentar(p)"
+                        [disabled]="interacaoEmCurso() === 'comentar-' + p.id"
+                        class="tv-btn tv-btn-primary tv-btn-sm">
+                  <i class="fas fa-paper-plane" aria-hidden="true"></i> Comentar
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Denúncia inline -->
+          <section *ngIf="denunciaAberta(p.id)" class="space-y-3 p-4 rounded-2xl tv-alert-warning">
+            <p class="tv-page-eyebrow" style="color: #6B4E0E;">Reportar publicação</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <select [ngModel]="motivoValor(p.id)" (ngModelChange)="atualizarMotivo(p.id, $event)" class="tv-input"
+                      aria-label="Motivo da denúncia">
+                <option value="">Selecione o motivo</option>
+                <option value="Spam">Spam</option>
+                <option value="Postagem ofensiva">Postagem ofensiva</option>
+                <option value="Desinformação">Desinformação</option>
+                <option value="Conteúdo inadequado">Conteúdo inadequado</option>
+              </select>
+              <input type="text" [ngModel]="detalheDenunciaValor(p.id)"
+                     (ngModelChange)="atualizarDetalheDenuncia(p.id, $event)"
+                     [maxlength]="limites.denunciaDetalhe"
+                     placeholder="Complemento (opcional)" class="tv-input" aria-label="Complemento">
+            </div>
+            <div class="flex justify-end gap-2">
+              <button (click)="alternarDenuncia(p)" class="tv-btn tv-btn-secondary tv-btn-sm">Cancelar</button>
+              <button (click)="denunciar(p)"
+                      [disabled]="interacaoEmCurso() === 'denunciar-' + p.id"
+                      class="tv-btn tv-btn-danger tv-btn-sm">Enviar denúncia</button>
+            </div>
+          </section>
+        </article>
+      </div>
+
+      <!-- Aside -->
+      <aside class="space-y-4 min-w-0" aria-label="Informações da comunidade">
+
+        <div class="tv-card tv-card-marca p-5 pt-6 space-y-3">
+          <h2 class="tv-page-eyebrow">Sobre</h2>
+          <dl class="space-y-2.5 text-sm">
+            <div class="flex items-center justify-between gap-3">
+              <dt style="color: var(--color-tv-muted-fg);"><i class="fas fa-users w-4 text-xs" aria-hidden="true"></i> Membros</dt>
+              <dd class="font-semibold">{{ c.membros_count }}</dd>
+            </div>
+            <div class="flex items-center justify-between gap-3 min-w-0">
+              <dt class="shrink-0" style="color: var(--color-tv-muted-fg);"><i class="fas fa-tag w-4 text-xs" aria-hidden="true"></i> Categoria</dt>
+              <dd class="min-w-0 flex justify-end">
+                <span class="tv-badge" [ngClass]="c.categoria | tomDaMarca" [title]="c.categoria">{{ c.categoria }}</span>
+              </dd>
+            </div>
+            <div class="flex items-center justify-between gap-3">
+              <dt style="color: var(--color-tv-muted-fg);"><i class="far fa-calendar w-4 text-xs" aria-hidden="true"></i> Criada em</dt>
+              <dd class="font-semibold">{{ c.criado_em | date:'dd/MM/yyyy' }}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="tv-card p-5 space-y-3">
+          <h2 class="tv-page-eyebrow">Moderação</h2>
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="tv-avatar tv-avatar-md" [ngClass]="c.moderador | tomDaMarca">{{ c.moderador | iniciais }}</span>
+            <span class="text-sm font-semibold flex-1 min-w-0 truncate" [title]="c.moderador">{{ c.moderador }}</span>
+            <span class="tv-badge tv-badge-role shrink-0"><i class="fas fa-shield" aria-hidden="true"></i>Mod</span>
+          </div>
+        </div>
+
+        <div *ngIf="c.regras.trim()" class="tv-card p-5 space-y-3">
+          <h2 class="tv-page-eyebrow">Regras da comunidade</h2>
+          <div class="tv-texto-rico text-sm" style="font-size: 14px;" [innerHTML]="c.regras | textoRico"></div>
+        </div>
+
+        <div class="tv-card p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="tv-page-eyebrow">Encontros</h2>
+            <button *ngIf="c.is_moderador"
+                    [routerLink]="['/comunidades', c.id, 'encontros', 'criar']"
+                    class="tv-btn tv-btn-ghost tv-btn-sm">
+              <i class="fas fa-plus" aria-hidden="true"></i> Criar
+            </button>
+          </div>
+
+          <div *ngIf="encontros().length === 0" class="text-center py-4 space-y-2">
+            <i class="far fa-calendar text-xl" style="color: var(--color-tv-celeste);" aria-hidden="true"></i>
+            <p class="text-sm" style="color: var(--color-tv-muted-fg);">Nenhum encontro agendado.</p>
+          </div>
+
+          <ul *ngIf="encontros().length > 0" class="space-y-3">
+            <li *ngFor="let e of encontros(); let ultimo = last" class="space-y-1.5"
+                [class.pb-3]="!ultimo"
+                [style.border-bottom]="ultimo ? 'none' : '1px solid var(--tv-border-blue)'">
+              <div class="flex items-start gap-3">
+                <div class="flex flex-col items-center shrink-0 px-2 py-1.5 rounded-xl text-center"
+                     style="background: var(--tv-gradiente-suave); min-width: 46px;">
+                  <span class="text-[10px] uppercase tracking-wider font-bold leading-none"
+                        style="color: var(--color-tv-primary-ink);">
+                    {{ e.data_hr_encontro | date:'MMM':'':'pt-BR' }}
+                  </span>
+                  <span class="text-lg font-bold leading-tight" style="color: var(--color-tv-primary-ink); font-family: var(--tv-font-display);">
+                    {{ e.data_hr_encontro | date:'dd' }}
+                  </span>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <p class="text-sm font-semibold truncate" [title]="e.titulo">{{ e.titulo }}</p>
+                  <p class="text-xs tv-linhas-2" style="color: var(--color-tv-muted-fg);">
+                    {{ e.data_hr_encontro | date:'HH:mm' }} · {{ e.endereco }}
+                  </p>
+                </div>
+              </div>
+              <p *ngIf="e.descricao" class="text-xs leading-relaxed tv-linhas-2 pl-[58px]"
+                 style="color: var(--color-tv-muted-fg);">
+                {{ e.descricao | textoSimples }}
+              </p>
+            </li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </ng-container>
+</div>

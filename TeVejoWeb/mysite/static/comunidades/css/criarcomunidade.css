@@ -1,0 +1,391 @@
+:root {
+    --azul: #345e9e;
+    --verde: #20c997;
+    --vermelho: #e74c3c;
+    --cinza-claro: #f6f7f8;
+    --translucido: rgba(255, 255, 255, 0.75);
+    --preto: #222;
+    height: auto;
+    }
+
+body {
+    font-family: 'Radio Canada', sans-serif;
+    background: #f2f2f2 url("../imgs/background.jpg") repeat;
+    background-size: 15%;
+    color: black;
+    }
+
+/* WRAPPER PRINCIPAL */
+.criar-comunidade-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 200px);
+  padding: 2rem;
+}
+
+/* MODAL/CARD */
+.criar-comunidade-modal {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  width: 100%;
+  max-width: 900px;
+  overflow: hidden;
+}
+
+/* CABEÇALHO DO MODAL */
+.modal-header {
+  padding: 2rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 0.5rem 0;
+}
+
+.modal-subtitle {
+  font-size: 0.95rem;
+  color: #999;
+  margin: 0;
+}
+
+/* CONTEÚDO DO MODAL */
+.modal-content {
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 2.5rem;
+}
+
+/* FORMULÁRIO - LADO ESQUERDO */
+.form-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* GRUPO DO FORMULÁRIO */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.required {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+/* INPUTS E TEXTAREA */
+.comunidade-form input[type="text"],
+.comunidade-form textarea,
+.comunidade-form select,
+.form-input,
+.form-textarea {
+  padding: 0.75rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease;
+  resize: vertical;
+}
+
+.comunidade-form input[type="text"]:focus,
+.comunidade-form textarea:focus,
+.comunidade-form select:focus,
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #4a90e2;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.comunidade-form textarea {
+  min-height: 100px;
+  max-height: 200px;
+}
+
+.form-textarea {
+  min-height: 100px;
+  max-height: 200px;
+}
+.char-counter {
+  font-size: 0.8rem;
+  color: #999;
+  text-align: right;
+}
+
+/* UPLOAD DE FOTO */
+.photo-upload-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.photo-upload-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: white;
+  border: 2px dashed #d0d0d0;
+  border-radius: 4px;
+  color: #666;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.photo-upload-btn:hover {
+  border-color: #4a90e2;
+  color: #4a90e2;
+  background: #f5f9ff;
+}
+
+.upload-info {
+  font-size: 0.85rem;
+  color: #999;
+  margin: 0;
+}
+
+.upload-info span {
+  font-weight: 600;
+  color: #666;
+}
+
+/* ERRO NOS CAMPOS */
+.field-error {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin: 0.25rem 0 0 0;
+}
+
+.alert-error {
+  background: #fdf2f2;
+  border-left: 4px solid #e74c3c;
+  padding: 1rem;
+  color: #c0392b;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.alert-message {
+  background: #d4edda;
+  border-left: 4px solid #28a745;
+  padding: 1rem;
+  color: #155724;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+/* PREVIEW - LADO DIREITO */
+.form-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.preview-section {
+  width: 100%;
+  max-width: 320px;
+}
+
+.community-preview {
+  background: #f5f5f5;
+  border-radius: 100%;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.preview-info {
+  text-align: center;
+}
+
+.preview-name {
+  font-weight: 700;
+  color: #333;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.preview-members {
+  font-size: 0.85rem;
+  color: #999;
+  margin-bottom: 0.5rem;
+}
+
+.preview-desc {
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.4;
+  max-height: 60px;
+  overflow: hidden;
+}
+
+/* RODAPÉ DO MODAL COM BOTÕES */
+.modal-footer {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.btn-cancel {
+  padding: 0.7rem 1.5rem;
+  background: #e8e8e8;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.btn-cancel:hover {
+  background: #d5d5d5;
+}
+
+.btn-create {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 2rem;
+  background: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.btn-create:hover {
+  background: #3a7bc8;
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+}
+
+.btn-create:active {
+  transform: scale(0.98);
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+  .modal-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .preview-section {
+    order: -1;
+    max-width: 220px;
+    margin: 0 auto 1rem auto;
+  }
+
+  .modal-header {
+    padding: 1.5rem;
+  }
+
+  .modal-content {
+    padding: 1.5rem;
+  }
+
+  .modal-footer {
+    padding: 1rem 1.5rem;
+    flex-direction: column-reverse;
+  }
+
+  .btn-cancel,
+  .btn-create {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .criar-comunidade-modal {
+    border-radius: 8px;
+  }
+
+  .modal-header {
+    padding: 1rem;
+  }
+
+  .modal-title {
+    font-size: 1.25rem;
+  }
+
+  .modal-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .modal-content {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .form-group {
+    gap: 0.4rem;
+  }
+
+  .comunidade-form input[type="text"],
+  .comunidade-form textarea {
+    font-size: 16px; /* Previne zoom automático em mobile */
+  }
+
+  .preview-section {
+    max-width: 180px;
+  }
+
+  .community-preview {
+    margin-bottom: 0.75rem;
+  }
+
+  .preview-name {
+    font-size: 0.95rem;
+  }
+
+  .modal-footer {
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+
+  .btn-cancel,
+  .btn-create {
+    padding: 0.65rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+

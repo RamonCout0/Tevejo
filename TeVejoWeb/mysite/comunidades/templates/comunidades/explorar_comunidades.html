@@ -1,0 +1,125 @@
+{% extends 'principal/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'comunidades/css/explorar_comunidades.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="explorar-container">
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb-wrapper">
+        <span class="breadcrumb-item">
+            <i class="fas fa-home"></i> Explorar Comunidades
+        </span>
+    </div>
+
+    <!-- HEADER DA PÁGINA -->
+    <div class="explorar-header">
+        <h1 class="explorar-title">Explorar Comunidades</h1>
+    </div>
+
+    <!-- FILTRO -->
+    <div class="filter-section">
+        <div class="filter-wrapper">
+            <i class="fas fa-filter filter-icon"></i>
+            <input 
+                type="text" 
+                class="filter-input" 
+                placeholder="Filtrar Comunidades"
+                id="filtro-comunidades"
+            >
+        </div>
+    </div>
+
+    <!-- GRID DE COMUNIDADES -->
+    <div class="comunidades-grid">
+        {% for comunidade in comunidades %}
+        <div class="comunidade-card">
+            <!-- AVATAR E HEADER -->
+            <div class="card-header">
+                <a href="{% url 'principal:comunidade' comunidade.id %}" class="card-link">
+                    <div class="comunidade-avatar">
+                        {% if comunidade.icone %}
+                            <img src="{{ comunidade.icone.url }}" alt="{{ comunidade.nome }}">
+                        {% else %}
+                            <div class="avatar-placeholder">
+                               <img style="width: 50%; height: auto;" src="{% static 'comunidades/imgs/default.png' %}">
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-header-info">
+                        <h3 class="comunidade-nome">{{ comunidade.nome }}</h3>
+                        <div class="comunidade-stats">
+                            <span class="stat-item">
+                                <i class="fas fa-users"></i>
+                                {{ comunidade.conviventes.count }} membros
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- DESCRIÇÃO -->
+            <p class="comunidade-descricao">{{ comunidade.descricao|truncatechars:100 }}</p>
+
+            <!-- TAGS/CATEGORIAS -->
+            {% if comunidade.categoria %}
+            <div class="comunidade-tags">
+                <span class="tag">{{ comunidade.categoria }}</span>
+            </div>
+            {% endif %}
+
+            <!-- BOTÃO DE AÇÃO -->
+            <div class="card-footer">
+                {% if request.user.is_authenticated %}
+                    {% if request.user in comunidade.conviventes.all %}
+                        <button class="btn btn-membro disabled">
+                            <i class="fas fa-check"></i> Membro
+                        </button>
+                    {% elif comunidade.id %}
+                        <a href="{% url 'comunidades:participar' comunidade.id %}" 
+                           class="btn btn-participar">
+                           <i class="fas fa-plus"></i> Participar
+                        </a>
+                    {% else %}
+                        <button class="btn btn-participar disabled">
+                           <i class="fas fa-plus"></i> Participar
+                        </button>
+                    {% endif %}
+                {% else %}
+                    <button class="btn btn-participar disabled">
+                       <i class="fas fa-plus"></i> Faça Login
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <p>Nenhuma comunidade encontrada</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    // Filtro em tempo real
+    document.getElementById('filtro-comunidades').addEventListener('keyup', function(e) {
+        const filtro = e.target.value.toLowerCase();
+        const cards = document.querySelectorAll('.comunidade-card');
+        
+        cards.forEach(card => {
+            const nome = card.querySelector('.comunidade-nome').textContent.toLowerCase();
+            const descricao = card.querySelector('.comunidade-descricao').textContent.toLowerCase();
+            
+            if (nome.includes(filtro) || descricao.includes(filtro)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

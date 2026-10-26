@@ -1,0 +1,102 @@
+<div class="max-w-6xl mx-auto space-y-6">
+
+  <a routerLink="/conteudo-educacional" class="tv-btn tv-btn-ghost tv-btn-sm -ml-2">
+    <i class="fas fa-arrow-left text-xs" aria-hidden="true"></i> Conteúdos
+  </a>
+
+  <div class="space-y-1">
+    <h1 class="tv-page-title">Novo conteúdo</h1>
+    <p class="tv-page-subtitle pt-1">Preencha as informações para disponibilizar o material às famílias.</p>
+  </div>
+
+  <form (submit)="onSubmit()" class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6" novalidate>
+
+    <div class="space-y-6 min-w-0">
+
+      <div class="tv-card p-6 space-y-5">
+        <div>
+          <label class="tv-label" for="pc-titulo">Título do conteúdo <span class="tv-required">*</span></label>
+          <input id="pc-titulo" type="text" [(ngModel)]="tituloConteudo" name="titulo"
+                 [maxlength]="limites.conteudoTitulo" class="tv-input"
+                 placeholder="Ex: Guia de alimentação para crianças autistas">
+          <span class="tv-contador">{{ tituloConteudo.length }}/{{ limites.conteudoTitulo }}</span>
+        </div>
+
+        <div>
+          <label class="tv-label" for="pc-fonte">Fonte / autoria <span class="tv-required">*</span></label>
+          <input id="pc-fonte" type="text" [(ngModel)]="fonteConteudo" name="fonte"
+                 [maxlength]="limites.conteudoFonte" class="tv-input"
+                 placeholder="Ex: Associação Brasileira de Autismo">
+          <span class="tv-contador">{{ fonteConteudo.length }}/{{ limites.conteudoFonte }}</span>
+        </div>
+
+        <div>
+          <p class="tv-label">Categorias relacionadas <span class="tv-required">*</span></p>
+          <div class="flex flex-wrap gap-2" role="group" aria-label="Categorias">
+            <button type="button"
+                    *ngFor="let tag of tags()"
+                    (click)="toggleTag(tag)"
+                    [class.tv-chip-active]="tag.selecionada"
+                    [attr.aria-pressed]="tag.selecionada"
+                    class="tv-chip max-w-[14rem]" [title]="tag.nome">
+              <i *ngIf="tag.selecionada" class="fas fa-check text-[10px]" aria-hidden="true"></i>
+              <span class="truncate">{{ tag.nome }}</span>
+            </button>
+            <p *ngIf="tags().length === 0" class="text-sm" style="color: var(--color-tv-muted-fg);">
+              Nenhuma categoria ainda. Crie a primeira ao lado.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tv-card p-6 space-y-3">
+        <label class="tv-label" for="pc-descricao">Descrição / conteúdo <span class="tv-required">*</span></label>
+        <app-editor-texto [(ngModel)]="descricaoConteudo" name="descricao"
+                          idCampo="pc-descricao" rotulo="Descrição"
+                          [limite]="limites.conteudoDescricao" [linhas]="12"
+                          placeholder="Escreva aqui o conteúdo ou um resumo do material…"></app-editor-texto>
+      </div>
+
+      <div *ngIf="erro() as msg" class="tv-alert tv-alert-error" role="alert">
+        <i class="fas fa-circle-exclamation mt-[2px]" aria-hidden="true"></i>
+        <span>{{ msg }}</span>
+      </div>
+
+      <div class="flex justify-end gap-3">
+        <a routerLink="/conteudo-educacional" class="tv-btn tv-btn-secondary">Cancelar</a>
+        <button type="submit" [disabled]="enviando()" class="tv-btn tv-btn-primary">
+          <i class="fas fa-check" aria-hidden="true"></i>
+          {{ enviando() ? 'Publicando…' : 'Publicar conteúdo' }}
+        </button>
+      </div>
+    </div>
+
+    <aside class="space-y-4" aria-label="Categorias e dicas">
+      <div class="tv-card tv-card-marca p-6 pt-7 space-y-3">
+        <p class="tv-page-eyebrow">Nova categoria</p>
+        <p class="text-sm" style="color: var(--color-tv-muted-fg);">
+          Não encontrou a categoria certa? Crie uma nova; ela já entra selecionada.
+        </p>
+        <label class="tv-label" for="pc-nova-tag">Nome da categoria</label>
+        <input id="pc-nova-tag" type="text" [(ngModel)]="novaTag" name="novaTag"
+               [maxlength]="limites.tagNome" class="tv-input" placeholder="Ex: Alimentação"
+               (keydown.enter)="$event.preventDefault(); criarTag()">
+        <button type="button" (click)="criarTag()" [disabled]="criandoTag()"
+                class="tv-btn tv-btn-secondary tv-btn-sm w-full">
+          <i class="fas fa-plus" aria-hidden="true"></i>
+          {{ criandoTag() ? 'Criando…' : 'Criar categoria' }}
+        </button>
+      </div>
+
+      <div class="tv-card p-6 space-y-3" style="background: var(--tv-gradiente-suave), var(--color-tv-card);">
+        <p class="tv-page-eyebrow">Dicas de escrita</p>
+        <ul class="tv-list text-sm">
+          <li>Use <strong>negrito</strong> para o que é mais importante.</li>
+          <li>Grife trechos que as famílias precisam lembrar.</li>
+          <li>Organize passos em listas numeradas.</li>
+          <li>Sempre cite a fonte original do material.</li>
+        </ul>
+      </div>
+    </aside>
+  </form>
+</div>

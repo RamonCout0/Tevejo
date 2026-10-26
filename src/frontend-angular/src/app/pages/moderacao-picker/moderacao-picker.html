@@ -1,0 +1,65 @@
+<div class="max-w-3xl mx-auto space-y-6">
+
+  <div class="space-y-1">
+    <h1 class="tv-page-title">Moderação</h1>
+    <p class="tv-page-subtitle pt-1">Escolha uma comunidade e o que você quer moderar.</p>
+  </div>
+
+  <div *ngIf="comunidadesModeradas().length === 0" class="tv-empty tv-card">
+    <span class="tv-empty-icon"><i class="fas fa-shield" aria-hidden="true"></i></span>
+    <p class="tv-empty-title">Você ainda não modera nenhuma comunidade.</p>
+    <p class="tv-empty-desc">Quando você criar uma comunidade, ela aparece aqui para você cuidar dela.</p>
+    <a routerLink="/criar-comunidade" class="tv-btn tv-btn-secondary tv-btn-sm">Criar comunidade</a>
+  </div>
+
+  <ul class="space-y-4 tv-stagger" *ngIf="comunidadesModeradas().length > 0">
+    <li *ngFor="let c of comunidadesModeradas()" class="tv-card overflow-hidden">
+
+      <div class="p-5 flex items-center gap-4 min-w-0" style="border-bottom: 1px solid var(--tv-border-blue);">
+        <div class="w-12 h-12 rounded-full p-[3px] shrink-0" style="background: var(--tv-gradiente-diagonal);">
+          <div class="w-full h-full rounded-full overflow-hidden flex items-center justify-center"
+               style="background: var(--color-tv-card); border: 2px solid var(--color-tv-card);">
+            <img *ngIf="c.icone" [src]="c.icone" alt="" class="w-full h-full object-cover">
+            <span *ngIf="!c.icone" class="tv-avatar w-full h-full text-xs" [ngClass]="c.nome | tomDaMarca">{{ c.nome | iniciais }}</span>
+          </div>
+        </div>
+        <div class="min-w-0 flex-1">
+          <p class="tv-section-title truncate" [title]="c.nome">{{ c.nome }}</p>
+          <p class="text-sm" style="color: var(--color-tv-muted-fg);">
+            {{ c.membros_count }} {{ c.membros_count === 1 ? 'membro' : 'membros' }}
+          </p>
+        </div>
+        <a [routerLink]="['/comunidades', c.id]" class="tv-btn tv-btn-ghost tv-btn-sm shrink-0">Ver</a>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3">
+        <a [routerLink]="['/comunidades', c.id, 'moderacao']"
+           class="group flex items-center gap-3 p-5 transition-colors hover:bg-[var(--color-tv-sidebar-accent)]">
+          <span class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 tv-badge-danger"><i class="far fa-flag" aria-hidden="true"></i></span>
+          <span class="min-w-0">
+            <span class="block text-sm font-semibold">Denúncias</span>
+            <span class="block text-xs" style="color: var(--color-tv-muted-fg);">Analisar postagens reportadas</span>
+          </span>
+        </a>
+        <a [routerLink]="['/comunidades', c.id, 'moderar']"
+           class="group flex items-center gap-3 p-5 transition-colors hover:bg-[var(--color-tv-sidebar-accent)] sm:border-l"
+           style="border-color: var(--tv-border-blue);">
+          <span class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 tv-tom-5"><i class="fas fa-user-shield" aria-hidden="true"></i></span>
+          <span class="min-w-0">
+            <span class="block text-sm font-semibold">Membros</span>
+            <span class="block text-xs" style="color: var(--color-tv-muted-fg);">Restringir ou banir</span>
+          </span>
+        </a>
+        <a [routerLink]="['/comunidades', c.id, 'editar']"
+           class="group flex items-center gap-3 p-5 transition-colors hover:bg-[var(--color-tv-sidebar-accent)] sm:border-l"
+           style="border-color: var(--tv-border-blue);">
+          <span class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 tv-tom-0"><i class="fas fa-pen" aria-hidden="true"></i></span>
+          <span class="min-w-0">
+            <span class="block text-sm font-semibold">Editar</span>
+            <span class="block text-xs" style="color: var(--color-tv-muted-fg);">Informações e imagens</span>
+          </span>
+        </a>
+      </div>
+    </li>
+  </ul>
+</div>

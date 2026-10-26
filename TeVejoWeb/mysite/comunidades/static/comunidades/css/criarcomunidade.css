@@ -1,0 +1,351 @@
+:root {
+  --azul: #345e9e;
+  --verde: #20c997;
+  --vermelho: #e74c3c;
+  --cinza-claro: #f6f7f8;
+  --translucido: rgba(255, 255, 255, 0.75);
+  --preto: #222;
+}
+
+/* WRAPPER PRINCIPAL */
+.criar-comunidade-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Mudado de center para start para evitar cortes em telas pequenas */
+  min-height: calc(100vh - 150px);
+  padding: 2rem;
+}
+
+/* MODAL/CARD */
+.criar-comunidade-modal {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  width: 100%;
+  max-width: 900px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+/* CABEÇALHO DO MODAL */
+.modal-header {
+  padding: 2rem;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #fff;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+}
+
+.modal-subtitle {
+  font-size: 0.95rem;
+  color: #999;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* CONTEÚDO DO MODAL */
+.modal-content {
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Dividido igualmente ou ajustado conforme necessidade */
+  gap: 2.5rem;
+}
+/* Ajuste para dar mais espaço ao form no desktop se preferir */
+@media (min-width: 992px) {
+    .modal-content {
+        grid-template-columns: 1.1fr 0.9fr;
+    }
+}
+
+/* FORMULÁRIO - LADO ESQUERDO */
+.form-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* GRUPO DO FORMULÁRIO */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.required {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+/* INPUTS E TEXTAREA */
+.comunidade-form input[type="text"],
+.comunidade-form textarea,
+.comunidade-form select,
+.form-input,
+.form-textarea {
+  padding: 0.75rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease;
+  resize: vertical;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.comunidade-form input[type="text"]:focus,
+.comunidade-form textarea:focus,
+.comunidade-form select:focus {
+  outline: none;
+  border-color: #4a90e2;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.form-textarea {
+  min-height: 100px;
+  max-height: 200px;
+}
+.char-counter {
+  font-size: 0.8rem;
+  color: #999;
+  text-align: right;
+}
+
+/* UPLOAD DE FOTO */
+.photo-upload-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.photo-upload-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: white;
+  border: 2px dashed #d0d0d0;
+  border-radius: 6px;
+  color: #666;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  width: 100%;
+}
+
+.photo-upload-btn:hover {
+  border-color: #4a90e2;
+  color: #4a90e2;
+  background: #f5f9ff;
+}
+
+.upload-info {
+  font-size: 0.85rem;
+  color: #999;
+  margin: 0;
+}
+.upload-info span { font-weight: 600; color: #666; }
+
+/* ALERTAS */
+.alert-message {
+  background: #d4edda;
+  border-left: 4px solid #28a745;
+  padding: 1rem;
+  color: #155724;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  grid-column: 1 / -1; /* Ocupa toda a largura no grid */
+}
+
+/* PREVIEW - LADO DIREITO */
+.form-right {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 1rem;
+}
+
+.preview-section {
+  width: 100%;
+  max-width: 280px;
+  text-align: center;
+}
+
+.community-preview {
+  background: #f5f5f5;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 1rem auto;
+  width: 150px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.preview-info { text-align: center; }
+.preview-name {
+  font-weight: 700;
+  color: #333;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+  word-break: break-word;
+}
+.preview-members { font-size: 0.85rem; color: #999; margin-bottom: 0.5rem; }
+.preview-desc {
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.4;
+  max-height: 80px;
+  overflow: hidden;
+  word-wrap: break-word;
+}
+
+/* RODAPÉ DO MODAL */
+.modal-footer {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  background-color: #fff;
+}
+
+.btn-cancel {
+  padding: 0.7rem 1.5rem;
+  background: #e8e8e8;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+.btn-cancel:hover { background: #d5d5d5; }
+
+.btn-create {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 2rem;
+  background: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+.btn-create:hover {
+  background: #3a7bc8;
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+}
+
+/* --- RESPONSIVIDADE OTIMIZADA --- */
+
+@media (max-width: 900px) {
+    .criar-comunidade-wrapper {
+        padding: 1rem; /* Reduz padding do wrapper */
+    }
+}
+
+@media (max-width: 768px) {
+  /* Remove margens e ajusta o wrapper para ocupar largura total */
+  .criar-comunidade-wrapper {
+    padding: 0; /* Remove padding lateral pois o container do base já tem */
+    min-height: auto;
+    display: block;
+  }
+
+  .criar-comunidade-modal {
+    border-radius: 8px;
+    box-shadow: none; /* Remove sombra pesada no mobile */
+    border: 1px solid #eee;
+  }
+
+  /* Stack do conteúdo */
+  .modal-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Move o preview para o topo, mas menor */
+  .form-right {
+    order: -1;
+    padding-top: 0;
+    justify-content: center;
+  }
+
+  .preview-section {
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .community-preview {
+    width: 100px; /* Preview menor no mobile para não ocupar tela toda */
+    height: 100px;
+    margin-bottom: 0.5rem;
+  }
+
+  .modal-header {
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  /* Botões empilhados */
+  .modal-footer {
+    padding: 1rem 1.5rem;
+    flex-direction: column-reverse; /* Criar fica em cima */
+  }
+
+  .btn-cancel,
+  .btn-create {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-title { font-size: 1.25rem; }
+  .modal-content { padding: 1rem; }
+  .modal-header { padding: 1rem; }
+  
+  .comunidade-form input[type="text"],
+  .comunidade-form textarea {
+    font-size: 16px; /* Evita zoom automático do iOS */
+  }
+}

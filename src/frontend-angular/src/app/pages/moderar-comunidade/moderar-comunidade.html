@@ -1,0 +1,193 @@
+<div class="max-w-4xl mx-auto space-y-6">
+
+  <a [routerLink]="['/comunidades', comunidade()?.id]" class="tv-btn tv-btn-ghost tv-btn-sm -ml-2 max-w-full">
+    <i class="fas fa-arrow-left text-xs" aria-hidden="true"></i>
+    <span class="truncate">{{ comunidade()?.nome || 'Comunidade' }}</span>
+  </a>
+
+  <div class="space-y-1">
+    <h1 class="tv-page-title">Moderar conviventes</h1>
+    <p class="tv-page-subtitle pt-1">
+      Aplique ações de moderação para preservar um ambiente acolhedor.
+    </p>
+  </div>
+
+  <div *ngIf="feedback() as msg" class="tv-alert tv-alert-success items-center"
+       role="status" aria-live="polite">
+    <i class="fas fa-check-circle mt-[2px]" aria-hidden="true"></i>
+    <span class="flex-1">{{ msg }}</span>
+    <button (click)="limparFeedback()" aria-label="Fechar mensagem" class="hover:opacity-70">
+      <i class="fas fa-times" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <div *ngIf="erro() as msg" class="tv-alert tv-alert-error" role="alert">
+    <i class="fas fa-circle-exclamation mt-[2px]" aria-hidden="true"></i>
+    <span>{{ msg }}</span>
+  </div>
+
+  <div *ngIf="carregando()" class="tv-page-card tv-loading-row" role="status" aria-live="polite">
+    <span class="tv-dot-loader" aria-hidden="true"><span></span><span></span><span></span></span>
+    <span>Carregando conviventes…</span>
+  </div>
+
+  <div *ngIf="!carregando() && membrosVisiveis().length === 0 && !erro()" class="tv-empty tv-card">
+    <img src="/assets/girassol.svg" alt="" class="w-14" aria-hidden="true">
+    <p class="tv-empty-title">Nenhum convivente para moderar.</p>
+    <p class="tv-empty-desc">Quando outras pessoas entrarem na comunidade, elas aparecem aqui.</p>
+  </div>
+
+  <div class="space-y-3 tv-stagger">
+    <article *ngFor="let m of membrosVisiveis()" class="tv-card overflow-hidden">
+
+      <div class="p-5 flex flex-wrap items-center gap-4">
+        <span class="tv-avatar w-12 h-12 text-base" [ngClass]="(m.nome || m.username) | tomDaMarca">
+          {{ (m.nome || m.username) | iniciais }}
+        </span>
+
+        <div class="flex-1 min-w-0">
+          <h3 class="tv-section-title truncate" style="font-size: 1rem;">
+            {{ m.nome || m.username }}
+          </h3>
+          <p class="text-xs" style="color: var(--color-tv-texto-suave);">&#64;{{ m.username }}</p>
+
+          <div class="flex flex-wrap gap-2 mt-2 items-center">
+            <span *ngIf="m.restricao_ativa" class="tv-badge tv-badge-warning">
+              <i class="fas fa-clock" aria-hidden="true"></i>
+              Restrito até {{ m.restricao_ativa.expira_em | date:'dd/MM/yyyy' }}
+            </span>
+
+            <button *ngIf="m.acoes_count > 0"
+                    type="button"
+                    (click)="toggleHistorico(m)"
+                    class="tv-chip"
+                    style="padding: 0.25rem 0.7rem; font-size: 12px;">
+              <i class="fas text-[10px]" [class.fa-chevron-down]="!historicoDe(m.id)" [class.fa-chevron-up]="historicoDe(m.id)" aria-hidden="true"></i>
+              {{ historicoDe(m.id) ? 'Ocultar histórico' : 'Ver histórico (' + m.acoes_count + ')' }}
+            </button>
+
+            <span *ngIf="m.acoes_count === 0" class="text-xs italic" style="color: var(--color-tv-texto-suave);">
+              Sem histórico
+            </span>
+          </div>
+        </div>
+
+        <div class="flex gap-2 shrink-0">
+          <button (click)="abrirModal(m, 'restringir')" class="tv-btn tv-btn-secondary tv-btn-sm">
+            <i class="fas fa-clock" aria-hidden="true"></i>
+            Restringir
+          </button>
+          <button (click)="abrirModal(m, 'banir')" class="tv-btn tv-btn-danger tv-btn-sm">
+            <i class="fas fa-ban" aria-hidden="true"></i>
+            Banir
+          </button>
+        </div>
+      </div>
+
+      <!-- HISTÓRICO EXPANDIDO -->
+      <div *ngIf="historicoDe(m.id) as h" class="px-5 py-4"
+           style="background: var(--color-tv-secondary); border-top: 1px solid var(--tv-border-blue);">
+        <div *ngIf="h.carregando" class="text-sm" style="color: var(--color-tv-texto-suave);">
+          Carregando histórico…
+        </div>
+        <div *ngIf="h.erro as msg" class="text-sm" style="color: var(--color-tv-destructive);">{{ msg }}</div>
+
+        <div *ngIf="h.acoes && h.acoes.length === 0" class="text-sm italic" style="color: var(--color-tv-texto-suave);">
+          Nenhuma ação registrada.
+        </div>
+
+        <ul *ngIf="h.acoes && h.acoes.length > 0" class="space-y-2">
+          <li *ngFor="let a of h.acoes" class="p-3 text-sm rounded-xl"
+              style="background: var(--color-tv-card); border: 1px solid var(--tv-border-blue);">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-semibold inline-flex items-center gap-1.5"
+                    [style.color]="a.tipo === 'banir' ? '#8F2A24' : '#6B4E0E'">
+                <i class="fas" [class.fa-ban]="a.tipo === 'banir'" [class.fa-clock]="a.tipo === 'restringir'" aria-hidden="true"></i>
+                {{ a.tipo_display }}
+              </span>
+              <span class="text-xs" style="color: var(--color-tv-texto-suave);">
+                {{ a.criado_em | date:'dd/MM/yyyy HH:mm' }}
+              </span>
+            </div>
+            <div *ngIf="a.tipo === 'restringir' && a.expira_em" class="text-xs mt-1" style="color: var(--color-tv-texto);">
+              Duração: {{ a.duracao_dias }} dia(s) — até {{ a.expira_em | date:'dd/MM/yyyy' }}
+            </div>
+            <div *ngIf="a.justificativa" class="text-xs italic mt-1 [overflow-wrap:anywhere]" style="color: var(--color-tv-texto);">
+              "{{ a.justificativa }}"
+            </div>
+            <div *ngIf="a.moderador" class="text-[11px] mt-1" style="color: var(--color-tv-texto-suave);">
+              por {{ a.moderador }}
+            </div>
+          </li>
+        </ul>
+      </div>
+    </article>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div *ngIf="modal() as state"
+     class="fixed inset-0 z-[60] flex items-center justify-center p-4 tv-fade-in"
+     style="background: rgba(18, 18, 20, 0.5); backdrop-filter: blur(4px);"
+     (click)="fecharModal()"
+     role="dialog" aria-modal="true" aria-labelledby="modModalTitle">
+
+  <div class="w-full max-w-md p-6 sm:p-7 pt-8 space-y-5 tv-card tv-card-marca tv-scale-in"
+       style="box-shadow: var(--tv-shadow-lg);"
+       (click)="$event.stopPropagation()">
+
+    <div class="flex items-start justify-between gap-3">
+      <div class="space-y-1">
+        <p class="tv-page-eyebrow">Moderação</p>
+        <h2 id="modModalTitle" class="tv-section-title" style="font-size: 1.35rem;">
+          {{ state.tipo === 'banir' ? 'Banir convivente' : 'Restringir convivente' }}
+        </h2>
+      </div>
+      <button (click)="fecharModal()" aria-label="Fechar" class="tv-btn tv-btn-ghost tv-btn-icone">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <p class="text-sm" style="color: var(--color-tv-texto);">
+      Aplicar em
+      <span class="font-semibold" style="color: var(--color-tv-ink);">
+        {{ state.membro.nome || state.membro.username }}
+      </span>
+    </p>
+
+    <div *ngIf="state.tipo === 'restringir'">
+      <label class="tv-label" for="mod-dias">
+        Duração (dias) <span class="tv-required">*</span>
+      </label>
+      <input id="mod-dias" type="number" min="1" max="365" [(ngModel)]="duracaoDias" class="tv-input">
+    </div>
+
+    <div>
+      <label class="tv-label" for="mod-just">
+        Justificativa
+        <span *ngIf="state.tipo === 'banir'" class="tv-required">*</span>
+      </label>
+      <textarea id="mod-just" rows="4" [(ngModel)]="justificativa" [maxlength]="limites.justificativa"
+                [placeholder]="state.tipo === 'banir' ? 'Obrigatória para banimento' : 'Opcional'"
+                class="tv-input"></textarea>
+      <span class="tv-contador">{{ justificativa.length }}/{{ limites.justificativa }}</span>
+    </div>
+
+    <div *ngIf="erroModal() as msg" class="tv-alert tv-alert-error" role="alert">
+      <i class="fas fa-circle-exclamation mt-[2px]" aria-hidden="true"></i>
+      <span>{{ msg }}</span>
+    </div>
+
+    <div class="flex justify-end gap-3 pt-2">
+      <button (click)="fecharModal()" [disabled]="aplicando()" class="tv-btn tv-btn-secondary">
+        Cancelar
+      </button>
+      <button (click)="confirmar()" [disabled]="aplicando()"
+              [class.tv-btn-danger]="state.tipo === 'banir'"
+              [class.tv-btn-primary]="state.tipo === 'restringir'"
+              class="tv-btn">
+        {{ aplicando() ? 'Aplicando…' : 'Confirmar' }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,53 @@
+@startuml Diagrama_Containers_TeVejo
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Diagrama de Containers do TeVejo
+
+' ================= Estilos personalizados (cores iguais à imagem) =================
+AddElementTag("frontendBox", $bgColor="#EAF2FF", $borderColor="#3B82F6", $fontColor="#0B1B2B")
+AddElementTag("backendBox",  $bgColor="#EAF7E9", $borderColor="#4CAF50", $fontColor="#0B1B2B")
+AddElementTag("dbBox",       $bgColor="#FFF1DC", $borderColor="#F5A623", $fontColor="#0B1B2B")
+AddElementTag("extAuth",     $bgColor="#EDE7F6", $borderColor="#8B5CF6", $fontColor="#0B1B2B")
+AddElementTag("extMaps",     $bgColor="#E9F7EF", $borderColor="#4CAF50", $fontColor="#0B1B2B")
+AddRelTag("dashedRel", $lineStyle=DashedLine())
+
+LAYOUT_LEFT_RIGHT()
+
+' ================= Atores =================
+Person(convivente, "Convivente", "Pessoa que convive com uma pessoa autista.")
+Person(curador, "Curador", "Profissional da Psicologia.")
+Person(moderador, "Moderador", "Criador de uma comunidade ou qualquer pessoa convidada pelo criador que se compromete com a responsabilidade de moderação.")
+Person(administrador, "Administrador", "Usuário de maior hierarquia na plataforma.")
+
+' ================= Sistema do TeVejo =================
+System_Boundary(tevejo, "Sistema do TeVejo") {
+
+    Container(frontend, "Aplicação Frontend", "Angular 21", $descr="**Principais responsabilidades**\n• Interface web responsiva.\n• Exibir conteúdos e comunidades.\n• Permitir interação dos usuários (posts, comentários, curtidas, denúncias, etc).\n• Gerenciar autenticação e sessão.\n• Comunicar-se com a API do backend.\n\n**Ferramentas / Tecnologias**\n• Angular 21\n• TypeScript\n• Angular Router\n• PrimeNG\n• HTML5 / CSS3", $tags="frontendBox")
+
+    Container(backend, "Aplicação Backend", "Django REST 5.2", $descr="**Principais responsabilidades**\n• Implementar regras de negócio.\n• Gerenciar usuários, comunidades, conteúdos, interações e moderação.\n• Autenticação e autorização (JWT).\n• Integrar com serviços externos.\n• Fornecer API REST para o frontend.\n\n**Ferramentas / Tecnologias**\n• Django 5.2 (REST Framework)\n• Python 3.12+\n• SimpleJWT (autenticação JWT)\n• drf-yasg (documentação Swagger)\n• django-cors-headers", $tags="backendBox")
+
+    ContainerDb(db, "Banco de Dados", "PostgreSQL 16.2", "Armazena todos os dados da plataforma.", $tags="dbBox")
+}
+
+' ================= Sistemas externos =================
+System_Ext(googleAuth, "API do Google Authenticator", "Serviço externo para login e autenticação de usuários via Google.", $tags="extAuth")
+System_Ext(googleMaps, "API do Google Maps", "Serviços de mapas, geocodificação e rotas para os encontros.", $tags="extMaps")
+
+' ================= Relacionamentos: atores -> Frontend =================
+Rel(convivente, frontend, "Acesso a conteúdo educacional e comunidades.")
+Rel(curador, frontend, "Realiza a postagem e edição dos conteúdos educacionais.")
+Rel(moderador, frontend, "Revisa postagens e denúncias em uma comunidade. Pode restringir ou banir conviventes de uma comunidade.")
+Rel(administrador, frontend, "Pode cadastrar e gerenciar conviventes, moderadores, curadores e os outros administradores. Pode gerir conteúdos educacionais e comunidades já criados.")
+
+' ================= Comunicação principal (HTTP/JSON e SQL) =================
+Rel(frontend, backend, "Requisições e respostas", "HTTP/JSON")
+Rel(backend, db, "Leitura e gravação de dados", "SQL")
+
+' ================= Comunicação externa (via Backend) =================
+Rel(backend, googleAuth, "Comunicação para autenticação de usuários", "JSON/HTTPS", $tags="dashedRel")
+Rel(backend, googleMaps, "Consulta mapas, geocodificação e rotas", "JSON/HTTPS", $tags="dashedRel")
+
+SHOW_LEGEND()
+
+@enduml

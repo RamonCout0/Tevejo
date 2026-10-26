@@ -1,0 +1,84 @@
+<div class="min-h-screen flex" style="background: var(--color-tv-bg);">
+
+  <!-- MARCA (desktop) -->
+  <div class="hidden lg:block w-[480px] xl:w-[540px] shrink-0" style="border-right: 1px solid var(--tv-border-blue);">
+    <app-hero-marca></app-hero-marca>
+  </div>
+
+  <!-- FORMULÁRIO -->
+  <div class="flex-1 flex items-center justify-center px-5 py-10 relative">
+    <div class="tv-faixa-marca absolute inset-x-0 top-0 lg:hidden"></div>
+
+    <div *ngIf="enviando()" class="tv-loader-girassol" role="status" aria-live="polite">
+      <img src="/assets/girassol.svg" alt="" aria-hidden="true">
+      <p>Estamos abrindo a porta…</p>
+    </div>
+
+    <div *ngIf="!enviando()" class="w-full max-w-md tv-slide-up">
+      <a routerLink="/" class="lg:hidden flex justify-center mb-8" aria-label="TeVejo, página inicial">
+        <img src="/assets/logo.svg" alt="TeVejo" class="h-12 w-auto">
+      </a>
+
+      <div class="tv-card p-7 sm:p-9 space-y-7" style="box-shadow: var(--tv-shadow-lg);">
+        <div class="space-y-2">
+          <h2 class="tv-page-title">Bom te ver de volta</h2>
+          <p class="tv-page-subtitle">Entre com seu usuário ou e-mail.</p>
+        </div>
+
+        <form class="space-y-4" (submit)="onSubmit(); $event.preventDefault();" novalidate>
+          <div>
+            <label class="tv-label" for="login-user">Usuário ou e-mail <span class="tv-required">*</span></label>
+            <input id="login-user" type="text" name="username" autocomplete="username" maxlength="150"
+                   [(ngModel)]="username" required class="tv-input"
+                   placeholder="seu@email.com"
+                   [attr.aria-invalid]="erro() ? 'true' : null">
+          </div>
+
+          <div>
+            <label class="tv-label" for="login-pass">Senha <span class="tv-required">*</span></label>
+            <div class="relative">
+              <input id="login-pass" [type]="mostrarSenha() ? 'text' : 'password'" name="password"
+                     autocomplete="current-password" maxlength="128"
+                     [(ngModel)]="password" required class="tv-input pr-12"
+                     placeholder="Sua senha"
+                     [attr.aria-invalid]="erro() ? 'true' : null">
+              <button type="button" (click)="mostrarSenha.set(!mostrarSenha())"
+                      class="absolute inset-y-0 right-1 my-1 tv-btn tv-btn-ghost tv-btn-icone"
+                      style="color: var(--color-tv-muted-fg);"
+                      [attr.aria-label]="mostrarSenha() ? 'Ocultar senha' : 'Mostrar senha'"
+                      [attr.aria-pressed]="mostrarSenha()">
+                <i [class]="mostrarSenha() ? 'fas fa-eye-slash' : 'fas fa-eye'" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="erro() as msg" class="tv-alert tv-alert-error" role="alert">
+            <i class="fas fa-circle-exclamation mt-[2px]" aria-hidden="true"></i>
+            <span>{{ msg }}</span>
+          </div>
+
+          <button type="submit" class="tv-btn tv-btn-primary tv-btn-lg w-full">
+            Entrar <i class="fas fa-arrow-right text-xs" aria-hidden="true"></i>
+          </button>
+
+          <div class="flex items-center gap-3 text-xs" style="color: var(--color-tv-muted-fg);">
+            <div class="flex-1 h-px" style="background: var(--tv-border-blue);"></div>
+            ou
+            <div class="flex-1 h-px" style="background: var(--tv-border-blue);"></div>
+          </div>
+
+          <div class="flex justify-center min-h-[44px]" #googleButton></div>
+        </form>
+
+        <p class="text-sm text-center" style="color: var(--color-tv-muted-fg);">
+          Ainda não tem conta?
+          <a routerLink="/cadastro" class="tv-link">Criar uma conta</a>
+        </p>
+      </div>
+
+      <p class="text-xs text-center leading-relaxed mt-6 px-4" style="color: var(--color-tv-muted-fg);">
+        Ao entrar, você confirma que leu o termo de consentimento e responsabilidade do TeVejo.
+      </p>
+    </div>
+  </div>
+</div>

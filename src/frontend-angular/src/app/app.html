@@ -1,0 +1,202 @@
+<div class="flex h-screen overflow-hidden tv-padrao" style="background-color: var(--color-tv-bg);">
+
+  <!-- ===== SIDEBAR DESKTOP ===== -->
+  <aside *ngIf="mostrarShell()"
+         class="hidden lg:flex flex-col w-64 shrink-0 h-full relative"
+         style="background: var(--color-tv-sidebar); border-right: 1px solid var(--tv-border-blue);"
+         aria-label="Navegação principal">
+    <div class="tv-faixa-marca absolute inset-x-0 top-0"></div>
+
+    <div class="flex items-center px-6 h-20 shrink-0">
+      <a routerLink="/" class="flex items-center" aria-label="TeVejo, página inicial">
+        <img src="/assets/logo.svg" class="h-11 w-auto" alt="TeVejo">
+      </a>
+    </div>
+
+    <ng-container *ngTemplateOutlet="sidebarNav"></ng-container>
+  </aside>
+
+  <!-- ===== DRAWER MOBILE ===== -->
+  <ng-container *ngIf="mostrarShell()">
+    <div *ngIf="drawerAberto() && !guiaAtivo()"
+         (click)="fecharDrawer()"
+         class="fixed inset-0 z-40 lg:hidden tv-fade-in"
+         style="background: rgba(18,18,20,0.45);"
+         aria-hidden="true"></div>
+
+    <aside id="sidebar-mobile"
+           class="fixed inset-y-0 left-0 z-50 w-72 flex flex-col lg:hidden transition-transform duration-200 ease-out"
+           [style.background]="'var(--color-tv-sidebar)'"
+           [class.translate-x-0]="drawerAberto()"
+           [class.-translate-x-full]="!drawerAberto()"
+           [attr.aria-hidden]="!drawerAberto()"
+           aria-label="Navegação principal">
+      <div class="tv-faixa-marca absolute inset-x-0 top-0"></div>
+
+      <div class="flex items-center justify-between px-5 h-20 shrink-0">
+        <img src="/assets/logo.svg" class="h-10 w-auto" alt="TeVejo">
+        <button (click)="fecharDrawer()" class="tv-btn tv-btn-ghost tv-btn-icone" aria-label="Fechar menu">
+          <i class="fas fa-times" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <ng-container *ngTemplateOutlet="sidebarNav"></ng-container>
+    </aside>
+  </ng-container>
+
+  <!-- ===== ÁREA PRINCIPAL ===== -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+    <!-- HEADER -->
+    <header *ngIf="mostrarShell()"
+            class="relative flex items-center justify-between gap-3 px-5 lg:px-10 h-16 shrink-0"
+            style="background: rgba(255,252,247,0.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--tv-border-blue);">
+      <div class="tv-faixa-marca absolute inset-x-0 top-0 lg:hidden"></div>
+
+      <div class="flex items-center gap-3 min-w-0">
+        <button (click)="alternarDrawer()"
+                [attr.aria-expanded]="drawerAberto()"
+                aria-controls="sidebar-mobile"
+                aria-label="Abrir menu"
+                class="lg:hidden tv-btn tv-btn-ghost tv-btn-icone">
+          <i class="fas fa-bars text-base" aria-hidden="true"></i>
+        </button>
+        <a routerLink="/" class="lg:hidden" aria-label="TeVejo, página inicial">
+          <img src="/assets/logo.svg" class="h-8 w-auto" alt="TeVejo">
+        </a>
+        <p *ngIf="perfil() as p" class="hidden lg:block text-sm truncate" style="color: var(--color-tv-muted-fg);">
+          Olá, <strong style="color: var(--color-tv-foreground);">{{ primeiroNome(p.nome || p.username) }}</strong>! Que bom te ver por aqui.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <ng-container *ngIf="username(); else semUser">
+          <a routerLink="/perfil"
+             class="flex items-center gap-2 rounded-full p-0.5 pr-3 transition-colors hover:bg-[var(--color-tv-sidebar-accent)]"
+             aria-label="Meu perfil">
+            <span class="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center"
+                  style="box-shadow: 0 0 0 2px var(--color-tv-card), 0 0 0 4px rgba(99,90,224,0.25);">
+              <img *ngIf="perfil()?.foto" [src]="perfil()!.foto" alt="" class="w-full h-full object-cover">
+              <span *ngIf="!perfil()?.foto" class="tv-avatar w-full h-full text-xs"
+                    [ngClass]="(perfil()?.nome || username()) | tomDaMarca">
+                {{ (perfil()?.nome || username()) | iniciais }}
+              </span>
+            </span>
+            <span class="hidden sm:inline text-sm font-semibold max-w-[14ch] truncate">
+              {{ primeiroNome(perfil()?.nome || username()) }}
+            </span>
+          </a>
+        </ng-container>
+        <ng-template #semUser>
+          <a routerLink="/login" class="tv-btn tv-btn-ghost tv-btn-sm">Entrar</a>
+          <a routerLink="/cadastro" class="tv-btn tv-btn-primary tv-btn-sm">Criar conta</a>
+        </ng-template>
+      </div>
+    </header>
+
+    <!-- CONTEÚDO -->
+    <main class="flex-1 overflow-y-auto tv-fade-in" id="main-content"
+          [class.px-5]="mostrarShell()" [class.lg:px-10]="mostrarShell()"
+          [class.py-8]="mostrarShell()" [class.lg:py-10]="mostrarShell()">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
+
+<!-- Guia condutor (CDU026) e ajuda (CDU027) -->
+<ng-container *ngIf="mostrarShell()">
+  <app-botao-ajuda></app-botao-ajuda>
+  <app-convite-guia></app-convite-guia>
+</ng-container>
+<app-guia-tour></app-guia-tour>
+
+<!-- ===== NAV (template compartilhado entre sidebar desktop e drawer) ===== -->
+<ng-template #sidebarNav>
+  <nav class="flex-1 overflow-y-auto py-2 px-3 space-y-1">
+    <p class="tv-page-eyebrow px-3 pt-2 pb-1">Explorar</p>
+
+    <a routerLink="/" routerLinkActive="active-sidebar" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-item">
+      <span class="sidebar-icon" style="color: #F2B705;"><i class="fas fa-house" aria-hidden="true"></i></span>
+      <span>Início</span>
+    </a>
+    <a routerLink="/discussoes" routerLinkActive="active-sidebar" class="sidebar-item" data-guia="menu-discussoes">
+      <span class="sidebar-icon" style="color: #1FB8A3;"><i class="fas fa-comments" aria-hidden="true"></i></span>
+      <span>Discussões públicas</span>
+    </a>
+    <a routerLink="/conteudo-educacional" routerLinkActive="active-sidebar" class="sidebar-item" data-guia="menu-conteudos">
+      <span class="sidebar-icon" style="color: #22A6BF;"><i class="fas fa-book-open" aria-hidden="true"></i></span>
+      <span>Conteúdos</span>
+    </a>
+    <a routerLink="/comunidades" routerLinkActive="active-sidebar" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-item" data-guia="menu-comunidades">
+      <span class="sidebar-icon" style="color: #3D8BD6;"><i class="fas fa-users" aria-hidden="true"></i></span>
+      <span>Comunidades</span>
+    </a>
+    <a routerLink="/encontros" routerLinkActive="active-sidebar" class="sidebar-item" data-guia="menu-encontros">
+      <span class="sidebar-icon" style="color: #5979E1;"><i class="far fa-calendar" aria-hidden="true"></i></span>
+      <span>Encontros</span>
+    </a>
+    <a routerLink="/ajuda" routerLinkActive="active-sidebar" class="sidebar-item">
+      <span class="sidebar-icon" style="color: #635AE0;"><i class="far fa-circle-question" aria-hidden="true"></i></span>
+      <span>Ajuda e dúvidas</span>
+    </a>
+
+    <ng-container *ngIf="isConvivente() || podeModerar()">
+      <p class="tv-page-eyebrow px-3 pt-5 pb-1">Participar</p>
+      <a *ngIf="isConvivente()" routerLink="/criar-comunidade" routerLinkActive="active-sidebar" class="sidebar-item">
+        <span class="sidebar-icon" style="color: #635AE0;"><i class="fas fa-circle-plus" aria-hidden="true"></i></span>
+        <span>Criar comunidade</span>
+      </a>
+      <a *ngIf="podeModerar()" routerLink="/moderacao" routerLinkActive="active-sidebar" class="sidebar-item">
+        <span class="sidebar-icon" style="color: #635AE0;"><i class="fas fa-shield" aria-hidden="true"></i></span>
+        <span>Moderação</span>
+      </a>
+    </ng-container>
+
+    <ng-container *ngIf="username() && minhasComunidades().length > 0">
+      <p class="tv-page-eyebrow px-3 pt-5 pb-1">Minhas comunidades</p>
+      <a *ngFor="let c of minhasComunidades()"
+         [routerLink]="['/comunidades', c.id]"
+         routerLinkActive="active-sidebar"
+         [title]="c.nome"
+         class="sidebar-item">
+        <span class="sidebar-icon">
+          <span class="tv-bolinha" [style.background]="c.nome | corDaMarca"></span>
+        </span>
+        <span class="truncate">{{ c.nome }}</span>
+      </a>
+    </ng-container>
+  </nav>
+
+  <!-- Rodapé: usuário logado ou convite -->
+  <div class="p-3 shrink-0" style="border-top: 1px solid var(--tv-border-blue);">
+    <ng-container *ngIf="username(); else convite">
+      <div class="flex items-center gap-3 p-2 rounded-2xl" style="background: var(--color-tv-secondary);" data-guia="usuario">
+        <a routerLink="/perfil" class="flex items-center gap-3 min-w-0 flex-1" aria-label="Meu perfil">
+          <span class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center shrink-0">
+            <img *ngIf="perfil()?.foto" [src]="perfil()!.foto" alt="" class="w-full h-full object-cover">
+            <span *ngIf="!perfil()?.foto" class="tv-avatar w-full h-full text-sm"
+                  [ngClass]="(perfil()?.nome || username()) | tomDaMarca">
+              {{ (perfil()?.nome || username()) | iniciais }}
+            </span>
+          </span>
+          <span class="min-w-0">
+            <span class="block text-sm font-semibold truncate">{{ perfil()?.nome || username() }}</span>
+            <span class="block text-xs" style="color: var(--color-tv-muted-fg);">
+              {{ isCurador() ? 'Curador(a)' : 'Convivente' }}
+            </span>
+          </span>
+        </a>
+        <button (click)="logout()" class="tv-btn tv-btn-ghost tv-btn-icone" title="Sair" aria-label="Sair">
+          <i class="fas fa-arrow-right-from-bracket" aria-hidden="true"></i>
+        </button>
+      </div>
+    </ng-container>
+    <ng-template #convite>
+      <div class="p-4 rounded-2xl text-center space-y-3" style="background: var(--tv-gradiente-suave);">
+        <img src="/assets/girassol.svg" alt="" class="w-10 mx-auto" aria-hidden="true">
+        <p class="text-sm leading-snug">Entre para participar das comunidades e encontros.</p>
+        <a routerLink="/cadastro" class="tv-btn tv-btn-primary tv-btn-sm w-full">Criar conta</a>
+      </div>
+    </ng-template>
+  </div>
+</ng-template>

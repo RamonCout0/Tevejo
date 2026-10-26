@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tevejo - Conteúdos Verificados</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Radio+Canada:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="PostarConteudo.css">
+
+
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <img class="logo" src="imagens/logo.png" alt="Logo TeVejo">
+    </div>
+
+    <div class="header-center">
+        <div class="search-bar">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" placeholder=" “Auto Regulação Nível 3”" class="search-input">
+        </div>
+    </div>
+
+    <div class="header-right">
+      <button class="notif-btn">🔔 55 Notificações</button>
+      <img src="imagens/perfil.png" class="avatar" alt="Usuário">
+    </div>
+  </header>
+
+  <main class="layout">
+
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+          <a class="sidebar-item"><i class="fas fa-comments"></i> Discussões em Destaque</a>
+          <a class="sidebar-item active"><i class="fas fa-book-open"></i> Conteúdo Educacional</a>
+          <a class="sidebar-item"><i class="fas fa-users"></i> Encontros</a>
+
+          <div class="sidebar-divider"></div>
+
+          <span class="sidebar-label">Comunidades</span>
+          <a class="sidebar-item"><i class="fas fa-plus-circle"></i> Criar Comunidade</a>
+          <a class="sidebar-item"><i class="fas fa-cog"></i> Gerenciar Comunidades</a>
+          <a class="sidebar-item community"><i class="fas fa-users"></i> tevejo/MãesDeNatal</a>
+      </nav>
+
+      <div class="sidebar-footer">
+          <a class="sidebar-item"><i class="fas fa-user"></i> Meu Perfil</a>
+      </div>
+    </aside>
+
+    <!-- CONTEÚDO CENTRAL -->
+    <section class="main-content">
+      <div class="breadcrumb">
+        <a href="conteudosVerificados.html">Conteúdos Verificados</a> > Postar Conteúdo
+      </div>
+
+      <h1>Postar Conteúdo</h1>
+      <h2>Compartilhe materiais educacionais verificados com a comunidade</h2>
+
+      <!-- FORMULÁRIO DE POSTAR CONTEÚDO -->
+      <div class="postar-container">
+        <form id="form-postar-conteudo">
+          <div class="form-group">
+            <label class="form-label required">Título do Conteúdo</label>
+            <input type="text" class="form-input" placeholder="Digite o título do conteúdo (máx. 300 caracteres)" maxlength="300">
+            <div class="char-counter" style="text-align: right; font-size: 0.8rem; color: #666; margin-top: 5px;">0/300</div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label required">Fonte do Conteúdo</label>
+            <input type="text" class="form-input" placeholder="Digite a fonte do conteúdo">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label required">Tags</label>
+            <div class="tags-container">
+              <div class="tag">Família</div>
+              <div class="tag">Educacional</div>
+              <div class="tag">Autismo Nível 1</div>
+              <div class="tag">Autismo Nível 2</div>
+              <div class="tag">Autismo Nível 3</div>
+              <div class="tag">Infantil</div>
+              <div class="tag">Veja Adulto</div>
+              <div class="tag">Ciência Especializada</div>
+              <div class="tag">Instituição de Ensino</div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Texto</label>
+            <div class="editor-toolbar">
+              <button class="editor-btn" type="button"><strong>B</strong></button>
+              <button class="editor-btn" type="button"><i>X</i></button>
+              <button class="editor-btn" type="button">T</button>
+              <button class="editor-btn" type="button">O</button>
+              <button class="editor-btn" type="button">E</button>
+              <button class="editor-btn" type="button">S</button>
+              <button class="editor-btn" type="button">N</button>
+              <button class="editor-btn" type="button">M</button>
+              <button class="editor-btn markdown-toggle" type="button">Mudar para o editor Markdown</button>
+            </div>
+            <textarea class="form-textarea" placeholder="Digite o conteúdo aqui..."></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Adicionar Imagem(s)</label>
+            <div class="image-upload">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <div class="image-upload-text">Selecione as imagens para upload</div>
+              <input type="file" id="file-input" multiple style="display: none;">
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn-voltar" onclick="window.location.href='conteudosVerificados.html'">Voltar</button>
+            <button type="submit" class="btn-postar">Postar Conteúdo</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Contador de caracteres para o título
+    const tituloInput = document.querySelector('.form-input');
+    const charCounter = document.querySelector('.char-counter');
+    
+    tituloInput.addEventListener('input', function() {
+      const currentLength = this.value.length;
+      charCounter.textContent = `${currentLength}/300`;
+      
+      if (currentLength > 300) {
+        charCounter.style.color = 'var(--vermelho)';
+      } else {
+        charCounter.style.color = '#666';
+      }
+    });
+    
+    // Seleção de tags
+    const tags = document.querySelectorAll('.tag');
+    tags.forEach(tag => {
+      tag.addEventListener('click', function() {
+        this.classList.toggle('selected');
+      });
+    });
+    
+    // Upload de imagem
+    const imageUpload = document.querySelector('.image-upload');
+    const fileInput = document.getElementById('file-input');
+    
+    imageUpload.addEventListener('click', function() {
+      fileInput.click();
+    });
+    
+    fileInput.addEventListener('change', function() {
+      if (this.files.length > 0) {
+        imageUpload.innerHTML = `
+          <i class="fas fa-check-circle" style="color: var(--verde);"></i>
+          <div class="image-upload-text">${this.files.length} imagem(ns) selecionada(s)</div>
+        `;
+      }
+    });
+    
+    // Envio do formulário
+    document.getElementById('form-postar-conteudo').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Conteúdo postado com sucesso!');
+      // Aqui você pode adicionar a lógica para enviar os dados para o servidor
+    });
+  </script>
+</body>
+</html>

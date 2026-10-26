@@ -1,0 +1,272 @@
+:root {
+      --azul: #345e9e;
+      --verde: #20c997;
+      --vermelho: #e74c3c;
+      --cinza-claro: #f6f7f8;
+      --translucido: rgba(255, 255, 255, 0.75);
+      --preto: #222;
+      height: auto;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+    font-family: 'Radio Canada', sans-serif;
+    color: #222;
+    background: #f2f2f2 url("../imgs/background.jpg") repeat;
+    background-size: 15%;
+
+    }
+
+    
+    /* LAYOUT */
+    .layout {
+      display: flex;
+      grid-template-columns: 250px 1fr;
+      gap: 20px;
+      padding: 20px;
+    }
+
+
+    /* MAIN CONTENT */
+    .main-content {
+      padding: 0 20px;
+    }
+
+    .breadcrumb {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin-bottom: 30px;
+      color: #666;
+      font-weight: 400;
+    }
+
+    /* FILTROS */
+    .filtros-container {
+      margin-bottom: 30px;
+       .btn-adicionar-conteudo {
+    background: var(--azul);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.btn-adicionar-conteudo:hover {
+    background: #2a4d80;
+    transform: scale(1.05);
+}
+    }
+
+    .filtros-categorias {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .filtro-categoria {
+      padding: 8px 16px;
+      background: #e8eefc;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filtro-categoria:hover {
+      background: #d4dff9;
+    }
+
+    .filtro-categoria.ativo {
+      background: var(--azul);
+      color: white;
+    }
+
+    .filtro-instituicao {
+      padding: 8px 16px;
+      background: #e8eefc;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      display: inline-block;
+    }
+
+    /* CONTEÚDOS */
+    .conteudo-item {
+      background: var(--translucido);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 4px rgba(24, 24, 24, 0.169);
+      transition: all 0.3s;
+    }
+    .conteudo-item:hover {
+      transform: scale(1.01);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.614);
+    }
+
+    .conteudo-titulo {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    .conteudo-fonte {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 15px;
+    }
+
+    .conteudo-descricao {
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .conteudo-acoes {
+      display: flex;
+      gap: 15px;
+    }
+
+    .btn-conteudo {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-ver {
+      background: var(--azul);
+      color: white;
+    }
+
+    .btn-salvar {
+      background: #fff;
+      border: 1px solid #ddd;
+    }
+
+    .btn-conteudo:hover {
+      transform: scale(1.05);
+    }
+
+    /* POSTAR CONTEÚDO */
+    .postar-container {
+      background: var(--translucido);
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 40px;
+      box-shadow: 0 1px 4px rgba(24, 24, 24, 0.169);
+    }
+
+    .postar-titulo {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-family: 'Radio Canada', sans-serif;
+      font-size: 0.95rem;
+    }
+
+    .form-textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .tag {
+      padding: 4px 10px;
+      background: #e8eefc;
+      border-radius: 16px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .tag:hover {
+      background: #d4dff9;
+    }
+
+    .editor-toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .editor-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 5px;
+    }
+
+    .btn-postar {
+      background: var(--azul);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-postar:hover {
+      background: #2a4d80;
+    }
+
+    /* RESPONSIVO */
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        display: none;
+      }
+   
+    }

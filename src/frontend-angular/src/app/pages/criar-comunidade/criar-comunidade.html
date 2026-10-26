@@ -1,0 +1,188 @@
+<div class="max-w-5xl mx-auto">
+
+  <button type="button" (click)="cancelar()" class="tv-btn tv-btn-ghost tv-btn-sm -ml-2 mb-4">
+    <i class="fas fa-arrow-left text-xs" aria-hidden="true"></i> Voltar
+  </button>
+
+  <div class="space-y-1 mb-8">
+    <h1 class="tv-page-title">{{ modoEdicao() ? 'Editar comunidade' : 'Criar comunidade' }}</h1>
+    <p class="tv-page-subtitle pt-1">
+      {{ modoEdicao() ? 'Altere as informações e as imagens da comunidade.' : 'Preencha as informações e veja a prévia ao lado.' }}
+    </p>
+  </div>
+
+  <div *ngIf="carregando()" class="tv-loading-row">
+    <span class="tv-dot-loader" aria-hidden="true"><span></span><span></span><span></span></span>
+    Carregando comunidade…
+  </div>
+
+  <form *ngIf="!carregando()" (submit)="onSubmit(); $event.preventDefault();" novalidate class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] gap-10">
+
+    <!-- FORM -->
+    <div class="tv-card p-6 sm:p-7 space-y-5 min-w-0">
+
+      <div class="space-y-5" data-guia="cc-nome">
+      <div>
+        <label class="tv-label" for="cc-nome">Nome da comunidade <span class="tv-required">*</span></label>
+        <input id="cc-nome" type="text" [(ngModel)]="nome" name="nome" [maxlength]="limites.comunidadeNome" required
+               placeholder="Ex: Famílias de Natal" class="tv-input">
+        <span class="tv-contador">{{ nome.length }}/{{ limites.comunidadeNome }}</span>
+      </div>
+
+      <div>
+        <label class="tv-label" for="cc-desc">Descrição <span class="tv-required">*</span></label>
+        <textarea id="cc-desc" [(ngModel)]="descricao" name="descricao" [maxlength]="limites.comunidadeDescricao" rows="4" required
+                  placeholder="O que essa comunidade discute? Quem pode entrar?"
+                  class="tv-input"></textarea>
+        <span class="tv-contador">{{ descricao.length }}/{{ limites.comunidadeDescricao }}</span>
+      </div>
+      </div>
+
+      <fieldset data-guia="cc-categoria">
+        <legend class="tv-label">Categoria <span class="tv-required">*</span></legend>
+        <p class="text-xs mb-2" style="color: var(--color-tv-muted-fg);">
+          Escolha o assunto principal: é por ele que as pessoas vão encontrar a comunidade.
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" role="radiogroup" aria-label="Categoria">
+          <label *ngFor="let cat of categorias"
+                 class="flex items-center gap-3 p-3 rounded-2xl cursor-pointer transition-colors"
+                 [style.border]="categoria === cat.nome ? '2px solid var(--color-tv-primary)' : '1px solid var(--tv-border-blue)'"
+                 [style.background]="categoria === cat.nome ? 'var(--color-tv-sidebar-accent)' : 'var(--color-tv-card)'"
+                 [style.padding]="categoria === cat.nome ? '11px' : '12px'">
+            <input type="radio" name="categoria" class="sr-only" [value]="cat.nome" [(ngModel)]="categoria">
+            <span class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" [ngClass]="cat.nome | tomDaMarca">
+              <i class="fas" [ngClass]="cat.icone" aria-hidden="true"></i>
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="block text-sm font-semibold">{{ cat.nome }}</span>
+              <span class="block text-xs truncate" style="color: var(--color-tv-muted-fg);">{{ cat.descricao }}</span>
+            </span>
+            <i *ngIf="categoria === cat.nome" class="fas fa-circle-check" style="color: var(--color-tv-primary);" aria-hidden="true"></i>
+          </label>
+        </div>
+        <p *ngIf="modoEdicao() && categoria && !ehCategoriaDaLista()" class="tv-alert tv-alert-warning mt-2 text-sm">
+          <i class="fas fa-circle-info mt-[2px]" aria-hidden="true"></i>
+          <span>A categoria atual ("{{ categoria }}") não está mais na lista. Escolha uma das opções acima.</span>
+        </p>
+      </fieldset>
+
+      <div>
+        <label class="tv-label" for="cc-reg">Regras (opcional)</label>
+        <app-editor-texto [(ngModel)]="regras" name="regras" idCampo="cc-reg" rotulo="Regras"
+                          [limite]="limites.comunidadeRegras" [linhas]="4"
+                          placeholder="Ex.:&#10;- Respeito acima de tudo&#10;- Sem julgamentos"></app-editor-texto>
+      </div>
+
+      <div class="space-y-5" data-guia="cc-imagens">
+      <div>
+        <label class="tv-label">Ícone</label>
+        <div (click)="fileInput.click()" (keydown.enter)="fileInput.click()"
+             tabindex="0" role="button" [attr.aria-label]="imagePreview() ? 'Trocar ícone' : 'Adicionar ícone'"
+             class="relative rounded-2xl h-28 flex flex-col items-center justify-center cursor-pointer transition-colors hover:bg-[#F2EDE4]"
+             style="border: 2px dashed rgba(99,90,224,0.3); background: var(--color-tv-input-bg);">
+          <img *ngIf="imagePreview()" [src]="imagePreview()" alt="prévia" class="w-20 h-20 rounded-full object-cover">
+          <ng-container *ngIf="!imagePreview()">
+            <i class="fas fa-camera text-lg" style="color: var(--color-tv-azul);" aria-hidden="true"></i>
+            <p class="text-xs mt-1 font-semibold" style="color: var(--color-tv-muted-fg);">Adicionar ícone (recorte redondo)</p>
+          </ng-container>
+          <button *ngIf="imagePreview()" type="button" (click)="removerImagem('icone', $event)" (keydown.enter)="$event.stopPropagation()"
+                  class="absolute top-2 right-2 tv-btn tv-btn-ghost tv-btn-sm" aria-label="Remover ícone">
+            <i class="fas fa-trash" aria-hidden="true"></i> Remover
+          </button>
+          <input type="file" #fileInput (change)="onIconeSelected($event)" accept="image/*" hidden>
+        </div>
+      </div>
+
+      <div>
+        <label class="tv-label">Banner</label>
+        <div (click)="bannerInput.click()" (keydown.enter)="bannerInput.click()"
+             tabindex="0" role="button" [attr.aria-label]="bannerPreview() ? 'Trocar banner' : 'Adicionar banner'"
+             class="relative rounded-2xl aspect-[4/1] flex flex-col items-center justify-center cursor-pointer overflow-hidden transition-colors hover:bg-[#F2EDE4]"
+             style="border: 2px dashed rgba(99,90,224,0.3); background: var(--color-tv-input-bg);">
+          <img *ngIf="bannerPreview()" [src]="bannerPreview()" alt="prévia do banner" class="absolute inset-0 w-full h-full object-cover">
+          <button *ngIf="bannerPreview()" type="button" (click)="removerImagem('banner', $event)" (keydown.enter)="$event.stopPropagation()"
+                  class="absolute top-2 right-2 tv-btn tv-btn-secondary tv-btn-sm" aria-label="Remover banner">
+            <i class="fas fa-trash" aria-hidden="true"></i> Remover
+          </button>
+          <ng-container *ngIf="!bannerPreview()">
+            <i class="fas fa-image text-lg" style="color: var(--color-tv-azul);" aria-hidden="true"></i>
+            <p class="text-xs mt-1 font-semibold" style="color: var(--color-tv-muted-fg);">Adicionar banner (formato 4:1)</p>
+          </ng-container>
+          <input type="file" #bannerInput (change)="onBannerSelected($event)" accept="image/*" hidden>
+        </div>
+      </div>
+      </div>
+
+      <div *ngIf="erro() as msg" class="tv-alert tv-alert-error" role="alert">
+        <i class="fas fa-circle-exclamation mt-[2px]" aria-hidden="true"></i>
+        <span>{{ msg }}</span>
+      </div>
+
+      <div class="flex justify-end gap-3 pt-2">
+        <button type="button" (click)="cancelar()" class="tv-btn tv-btn-secondary">Cancelar</button>
+        <button type="submit" [disabled]="enviando() || excluindo()" class="tv-btn tv-btn-primary" data-guia="cc-criar">
+          <ng-container *ngIf="modoEdicao(); else rotuloCriar">
+            {{ enviando() ? 'Salvando…' : 'Salvar alterações' }}
+          </ng-container>
+          <ng-template #rotuloCriar>{{ enviando() ? 'Criando…' : 'Criar comunidade' }}</ng-template>
+        </button>
+      </div>
+
+      <!-- CDU012 - Fluxo Alternativo I: excluir comunidade -->
+      <section *ngIf="modoEdicao()" class="p-5 space-y-3 mt-4 rounded-2xl tv-alert-error" style="display: block;"
+               aria-labelledby="zonaPerigo">
+        <h2 id="zonaPerigo" class="font-semibold"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> Excluir comunidade</h2>
+        <p class="text-sm" style="color: var(--color-tv-muted-fg);">
+          Remove a comunidade com todas as postagens, comentários e encontros. Não dá para desfazer.
+        </p>
+        <button type="button" (click)="excluir()" [disabled]="excluindo() || enviando()" class="tv-btn tv-btn-danger tv-btn-sm">
+          <i class="fas fa-trash" aria-hidden="true"></i>
+          {{ excluindo() ? 'Excluindo…' : 'Excluir comunidade' }}
+        </button>
+      </section>
+    </div>
+
+    <!-- PREVIEW -->
+    <aside class="lg:sticky lg:top-4 h-fit space-y-3 min-w-0" aria-label="Pré-visualização">
+      <p class="tv-page-eyebrow">Pré-visualização</p>
+
+      <div class="tv-card overflow-hidden" style="box-shadow: var(--tv-shadow-md);">
+        <div class="aspect-[4/1] relative" style="background: var(--tv-gradiente-diagonal);">
+          <img *ngIf="bannerPreview()" [src]="bannerPreview()" class="absolute inset-0 w-full h-full object-cover" alt="">
+        </div>
+
+        <div class="p-5 pt-0 space-y-3 relative min-w-0">
+          <div class="relative z-10 w-20 h-20 rounded-full p-[3px] -mt-10" style="background: var(--tv-gradiente-diagonal); box-shadow: var(--tv-shadow-md);">
+            <div class="w-full h-full rounded-full overflow-hidden flex items-center justify-center"
+                 style="background: var(--color-tv-card); border: 2px solid var(--color-tv-card);">
+              <img *ngIf="imagePreview()" [src]="imagePreview()" class="w-full h-full object-cover" alt="">
+              <span *ngIf="!imagePreview()" class="tv-avatar w-full h-full text-lg" [ngClass]="(nome || 'TeVejo') | tomDaMarca">
+                {{ (nome || 'TeVejo') | iniciais }}
+              </span>
+            </div>
+          </div>
+
+          <span *ngIf="categoria" class="tv-badge" [ngClass]="categoria | tomDaMarca">{{ categoria }}</span>
+          <h3 class="tv-section-title" style="font-size: 1.3rem;">{{ nome || 'Nome da comunidade' }}</h3>
+          <p class="text-sm leading-relaxed" style="color: var(--color-tv-muted-fg);">
+            {{ descricao || 'A descrição aparece aqui.' }}
+          </p>
+          <div *ngIf="regras.trim()" class="pt-3 space-y-1" style="border-top: 1px solid var(--tv-border-blue);">
+            <p class="tv-page-eyebrow">Regras</p>
+            <div class="tv-texto-rico tv-linhas-4" style="font-size: 14px;" [innerHTML]="regras | textoRico"></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </form>
+</div>
+
+<app-recortar-imagem *ngIf="recorte() as r"
+                     [arquivo]="r.arquivo"
+                     [proporcao]="r.campo === 'banner' ? 4 : 1"
+                     [redondo]="r.campo === 'icone'"
+                     [larguraSaida]="r.campo === 'banner' ? 1600 : 400"
+                     [titulo]="r.campo === 'banner' ? 'Ajustar banner' : 'Ajustar ícone'"
+                     (recortado)="aoRecortar($event)"
+                     (cancelado)="recorte.set(null)"></app-recortar-imagem>

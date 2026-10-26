@@ -1,0 +1,82 @@
+<div class="tv-editor rounded-2xl overflow-hidden transition-shadow focus-within:shadow-[0_0_0_4px_rgba(99,90,224,0.16)]"
+     [class.opacity-60]="desabilitado()"
+     style="border: 1px solid var(--tv-border-blue); background: var(--color-tv-card);">
+
+  <!-- Barra de formatação (mousedown.preventDefault mantém o texto selecionado) -->
+  <div class="flex flex-wrap items-center gap-0.5 px-2 py-1.5"
+       style="background: var(--color-tv-secondary); border-bottom: 1px solid var(--tv-border-blue);"
+       role="toolbar" [attr.aria-label]="'Formatação de ' + rotulo()">
+
+    <button type="button" class="tv-btn tv-btn-ghost tv-btn-icone tv-editor-botao" [class.tv-editor-ativo]="ativos().bold"
+            (mousedown)="$event.preventDefault()" (click)="aplicar('bold')"
+            title="Negrito (Ctrl+B)" aria-label="Negrito" [attr.aria-pressed]="!!ativos().bold" [disabled]="desabilitado()">
+      <i class="fas fa-bold" aria-hidden="true"></i>
+    </button>
+    <button type="button" class="tv-btn tv-btn-ghost tv-btn-icone tv-editor-botao" [class.tv-editor-ativo]="ativos().italic"
+            (mousedown)="$event.preventDefault()" (click)="aplicar('italic')"
+            title="Itálico (Ctrl+I)" aria-label="Itálico" [attr.aria-pressed]="!!ativos().italic" [disabled]="desabilitado()">
+      <i class="fas fa-italic" aria-hidden="true"></i>
+    </button>
+    <button type="button" class="tv-btn tv-btn-ghost tv-btn-icone tv-editor-botao" [class.tv-editor-ativo]="ativos().underline"
+            (mousedown)="$event.preventDefault()" (click)="aplicar('underline')"
+            title="Sublinhado (Ctrl+U)" aria-label="Sublinhado" [attr.aria-pressed]="!!ativos().underline" [disabled]="desabilitado()">
+      <i class="fas fa-underline" aria-hidden="true"></i>
+    </button>
+    <button type="button" class="tv-btn tv-btn-ghost tv-btn-icone tv-editor-botao" [class.tv-editor-ativo]="ativos().highlight"
+            (mousedown)="$event.preventDefault()" (click)="aplicar('highlight')"
+            title="Grifar (marca-texto)" aria-label="Grifar" [attr.aria-pressed]="!!ativos().highlight" [disabled]="desabilitado()">
+      <i class="fas fa-highlighter" style="color: #C9A227;" aria-hidden="true"></i>
+    </button>
+
+    <ng-container *ngIf="!compacto()">
+      <button type="button" class="tv-btn tv-btn-ghost tv-btn-icone tv-editor-botao" [class.tv-editor-ativo]="ativos().strike"
+              (mousedown)="$event.preventDefault()" (click)="aplicar('strike')"
+              title="Riscado" aria-label="Riscado" [attr.aria-pressed]="!!ativos().strike" [disabled]="desabilitado()">
+        <i class="fas fa-strikethrough" aria-hidden="true"></i>
+      </button>
+
+      <span class="w-px h-5 mx-1" style="background: var(--tv-border-blue);" aria-hidden="true"></span>
+
+      <button type="button" class="tv-btn tv-btn-ghost tv-btn-icone tv-editor-botao" [class.tv-editor-ativo]="ativos().bulletList"
+              (mousedown)="$event.preventDefault()" (click)="aplicar('bulletList')"
+              title="Lista" aria-label="Lista com marcadores" [attr.aria-pressed]="!!ativos().bulletList" [disabled]="desabilitado()">
+        <i class="fas fa-list-ul" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="tv-btn tv-btn-ghost tv-btn-icone tv-editor-botao" [class.tv-editor-ativo]="ativos().orderedList"
+              (mousedown)="$event.preventDefault()" (click)="aplicar('orderedList')"
+              title="Lista numerada" aria-label="Lista numerada" [attr.aria-pressed]="!!ativos().orderedList" [disabled]="desabilitado()">
+        <i class="fas fa-list-ol" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="tv-btn tv-btn-ghost tv-btn-icone tv-editor-botao" [class.tv-editor-ativo]="ativos().blockquote"
+              (mousedown)="$event.preventDefault()" (click)="aplicar('blockquote')"
+              title="Citação" aria-label="Citação" [attr.aria-pressed]="!!ativos().blockquote" [disabled]="desabilitado()">
+        <i class="fas fa-quote-left" aria-hidden="true"></i>
+      </button>
+    </ng-container>
+
+    <button type="button" class="tv-btn tv-btn-ghost tv-btn-icone tv-editor-botao" [class.tv-editor-ativo]="ativos().link"
+            (mousedown)="$event.preventDefault()" (click)="aplicar('link')"
+            [title]="ativos().link ? 'Remover link' : 'Inserir link'"
+            [attr.aria-label]="ativos().link ? 'Remover link' : 'Inserir link'" [disabled]="desabilitado()">
+      <i class="fas" [class.fa-link]="!ativos().link" [class.fa-link-slash]="ativos().link" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <!-- Área de edição (o Tiptap monta o campo editável aqui dentro) -->
+  <div #area></div>
+</div>
+
+<div class="flex items-start justify-between gap-3 mt-1">
+  <p *ngIf="avisoLimite(); else dica" class="text-xs font-semibold" style="color: var(--color-tv-destructive);" role="alert">
+    O texto chegou ao limite de {{ limite() }} caracteres.
+  </p>
+  <ng-template #dica>
+    <p *ngIf="!compacto()" class="text-xs leading-relaxed" style="color: var(--color-tv-muted-fg);">
+      Dica: selecione um trecho e use os botões para <strong>destacar</strong>,
+      <mark style="background: rgba(245,209,112,0.7); color: inherit; padding: 0 2px;">grifar</mark> ou criar listas.
+    </p>
+  </ng-template>
+  <span [class]="classeContador()" class="ml-auto shrink-0" aria-live="polite">
+    {{ usados() }}/{{ limite() }}
+  </span>
+</div>

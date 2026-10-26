@@ -1,0 +1,403 @@
+{% extends 'principal/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'usuarios/css/perfil.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="perfil-container">
+  
+  <div class="perfil-header">
+    <div class="perfil-foto-wrapper">
+      <div class="perfil-foto-container">
+        {% if perfil.foto %}
+          <img src="{{ perfil.foto.url }}" alt="Foto de {{ perfil.nome }}" class="perfil-foto" id="foto-preview">
+        {% else %}
+          <div class="perfil-foto-placeholder">
+             <img src="{% static 'principal/imgs/imagem2.png' %}" alt="Foto padrão" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+          </div>
+        {% endif %}
+        
+        <button class="edit-foto-btn" title="Editar foto" onclick="document.getElementById('foto-input').click();">
+          <i class="fas fa-camera"></i>
+        </button>
+        <input type="file" id="foto-input" accept="image/*" onchange="salvarFoto(this);">
+      </div>
+    </div>
+
+    <div class="perfil-info">
+      <div class="perfil-nome-wrapper">
+          <h1 class="perfil-nome">
+            {{ perfil.username }}
+            {% if is_curador %}
+              <i class="fas fa-check-circle verified-icon" title="Curador Verificado"></i>
+            {% endif %}
+          </h1>
+      </div>
+
+      {% if is_curador %}
+        <div class="badge-curador">Curador</div>
+        <div class="especialidade-text">Especialista em {{ especialidade }}</div>
+      {% endif %}
+
+      <div class="perfil-bio-container">
+        <div class="bio-header">
+            <span class="perfil-bio-label">Biografia</span>
+            <button class="edit-bio-btn-link" onclick="abrirEditarBiografia();">
+                <i class="fas fa-pencil-alt"></i> Editar
+            </button>
+        </div>
+        
+        <div class="perfil-bio" id="perfil-bio-display">
+          {% if perfil.biografia %}
+            <div class="bio-text">{{ perfil.biografia }}</div>
+          {% else %}
+            <div class="bio-text empty">Conte um pouco sobre você...</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="perfil-content">
+    
+    {% if is_curador %}
+      <div class="content-section">
+        <div class="section-header">
+          <h2 class="section-title"><i class="fas fa-book"></i> Conteúdos Educacionais</h2>
+          <div class="search-wrapper">
+             <i class="fas fa-search"></i>
+             <input type="text" id="filter-conteudos" placeholder="Pesquisar conteúdo...">
+          </div>
+        </div>
+        
+        <div class="carousel-wrapper">
+            {% if conteudos %}
+              <div class="horizontal-scroll" id="conteudos-carousel">
+                {% for conteudo in conteudos %}
+                  <a href="{% url 'conteudos:ver_conteudo' id=conteudo.id %}" class="scroll-item conteudo-item" data-titulo="{{ conteudo.titulo|lower }}">
+                    <div class="conteudo-card">
+                      <span class="conteudo-titulo">{{ conteudo.titulo }}</span>
+                      <span class="conteudo-fonte">
+                        <i class="fas fa-link"></i> {{ conteudo.fonte|truncatechars:25 }}
+                      </span>
+                    </div>
+                  </a>
+                {% endfor %}
+                <div id="no-results-conteudos" class="sem-resultados">Nenhum conteúdo encontrado.</div>
+              </div>
+              
+              {% if conteudos|length > 3 %}
+                <button class="carousel-btn prev" onclick="scrollCarousel('conteudos-carousel', -300)">❮</button>
+                <button class="carousel-btn next" onclick="scrollCarousel('conteudos-carousel', 300)">❯</button>
+              {% endif %}
+            
+            {% else %}
+              <div class="vazio">
+                <div class="vazio-icon"><i class="fas fa-folder-open"></i></div>
+                <p>Nenhum conteúdo publicado ainda.</p>
+              </div>
+            {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><i class="fas fa-users"></i> Comunidades</h2>
+        <div class="search-wrapper">
+             <i class="fas fa-search"></i>
+             <input type="text" id="filter-comunidades" placeholder="Pesquisar comunidade...">
+        </div>
+      </div>
+      
+      <div class="carousel-wrapper">
+        {% if comunidades %}
+          <div class="horizontal-scroll" id="comunidades-carousel">
+            {% for comunidade in comunidades %}
+              <a href="{% url 'principal:comunidade' pk=comunidade.id %}" class="scroll-item comunidade-item" data-titulo="{{ comunidade.nome|lower }}">
+                <div class="comunidade-card">
+                  <div class="comunidade-icone-wrapper">
+                    {% if comunidade.icone %}
+                        <img src="{{ comunidade.icone.url }}" alt="{{ comunidade.nome }}">
+                    {% else %}
+                        <div class="placeholder-icon"><i class="fas fa-users"></i></div>
+                    {% endif %}
+                  </div>
+                  
+                  <div class="comunidade-info">
+                    <span class="comunidade-nome">{{ comunidade.nome }}</span>
+                    <p class="comunidade-descricao">{{ comunidade.descricao|truncatewords:8 }}</p>
+                  </div>
+                </div>
+              </a>
+            {% endfor %}
+            <div id="no-results-comunidades" class="sem-resultados">Nenhuma comunidade encontrada.</div>
+          </div>
+
+          {% if comunidades|length > 3 %}
+            <button class="carousel-btn prev" onclick="scrollCarousel('comunidades-carousel', -300)">❮</button>
+            <button class="carousel-btn next" onclick="scrollCarousel('comunidades-carousel', 300)">❯</button>
+          {% endif %}
+        
+        {% else %}
+          <div class="vazio">
+            <div class="vazio-icon"><i class="fas fa-user-friends"></i></div>
+            <p>Você não participa de nenhuma comunidade.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-editar-bio">
+  <div class="modal-content">
+    <div class="modal-header-custom">
+        <h2>Editar Biografia</h2>
+        <button class="close-modal" onclick="fecharEditarBiografia()">&times;</button>
+    </div>
+    <textarea id="bio-textarea" maxlength="500" placeholder="Escreva sobre você...">{{ perfil.biografia }}</textarea>
+    <div class="char-counter">
+      <span id="char-count">{{ perfil.biografia|length }}</span>/500
+    </div>
+    <div class="modal-buttons">
+      <button class="btn btn-cancelar" onclick="fecharEditarBiografia()">Cancelar</button>
+      <button class="btn btn-salvar" onclick="salvarBiografia()">
+        <span id="save-btn-text">Salvar</span>
+        <span id="save-loader" class="loading-spinner"></span>
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Função para abrir modal de edição de biografia
+  function abrirEditarBiografia() {
+    document.getElementById('modal-editar-bio').classList.add('active');
+    document.getElementById('bio-textarea').focus();
+  }
+
+  // Função para fechar modal de edição de biografia
+  function fecharEditarBiografia() {
+    document.getElementById('modal-editar-bio').classList.remove('active');
+  }
+
+  // Atualizar contador de caracteres
+  document.getElementById('bio-textarea').addEventListener('input', function() {
+    document.getElementById('char-count').textContent = this.value.length;
+  });
+
+  // Fechar modal ao clicar fora
+  document.getElementById('modal-editar-bio').addEventListener('click', function(e) {
+    if (e.target === this) {
+      fecharEditarBiografia();
+    }
+  });
+
+  // Função para salvar foto
+  function salvarFoto(input) {
+    if (!input.files || !input.files[0]) return;
+
+    const formData = new FormData();
+    formData.append('foto', input.files[0]);
+
+    const btn = input.previousElementSibling;
+    btn.innerHTML = '<span class="loading"></span>';
+
+    fetch('{% url "usuarios:editar_foto" %}', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-CSRFToken': getCookie('csrftoken')
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        const preview = document.getElementById('foto-preview');
+        if (preview) {
+          preview.src = data.foto_url;
+        } else {
+          location.reload();
+        }
+        mostrarNotificacao(data.message, 'success');
+      } else {
+        mostrarNotificacao(data.error || 'Erro ao atualizar foto', 'error');
+      }
+      btn.innerHTML = '<i class="fas fa-camera"></i>';
+    })
+    .catch(error => {
+      mostrarNotificacao('Erro ao enviar foto', 'error');
+      btn.innerHTML = '<i class="fas fa-camera"></i>';
+    });
+
+    input.value = '';
+  }
+
+  // Função para salvar biografia
+  function salvarBiografia() {
+    const biografia = document.getElementById('bio-textarea').value.trim();
+    
+    if (biografia.length < 5) {
+      mostrarNotificacao('Biografia deve ter pelo menos 5 caracteres', 'error');
+      return;
+    }
+
+    const saveBtn = document.querySelector('.btn-salvar');
+    const saveBtnText = document.getElementById('save-btn-text');
+    const saveLoader = document.getElementById('save-loader');
+    
+    saveBtn.disabled = true;
+    saveBtnText.style.display = 'none';
+    saveLoader.style.display = 'inline-block';
+
+    const formData = new FormData();
+    formData.append('biografia', biografia);
+
+    fetch('{% url "usuarios:editar_biografia" %}', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-CSRFToken': getCookie('csrftoken')
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        const bioDisplay = document.querySelector('.bio-text');
+        bioDisplay.textContent = data.biografia || 'Sem biografia definida';
+        if (!data.biografia) {
+          bioDisplay.style.color = '#999';
+          bioDisplay.style.fontStyle = 'italic';
+        } else {
+          bioDisplay.style.color = '#555';
+          bioDisplay.style.fontStyle = 'normal';
+        }
+        fecharEditarBiografia();
+        mostrarNotificacao(data.message, 'success');
+      } else {
+        mostrarNotificacao(data.error || 'Erro ao atualizar biografia', 'error');
+      }
+      saveBtn.disabled = false;
+      saveBtnText.style.display = 'inline';
+      saveLoader.style.display = 'none';
+    })
+    .catch(error => {
+      mostrarNotificacao('Erro ao salvar biografia', 'error');
+      saveBtn.disabled = false;
+      saveBtnText.style.display = 'inline';
+      saveLoader.style.display = 'none';
+    });
+  }
+
+  // Função auxiliar para obter CSRF token
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  // Função para mostrar notificações
+  function mostrarNotificacao(mensagem, tipo) {
+    const container = document.querySelector('.perfil-container');
+    const classe = tipo === 'success' ? 'success-message' : 'error-message';
+    const notif = document.createElement('div');
+    notif.className = classe;
+    notif.innerHTML = mensagem;
+    container.insertBefore(notif, container.firstChild);
+    
+    setTimeout(() => {
+      notif.style.animation = 'slideIn 0.3s reverse';
+      setTimeout(() => notif.remove(), 300);
+    }, 4000);
+  }
+
+  // ==================== FILTROS ====================
+  
+  // Filtro de Comunidades
+  const filterComunidades = document.getElementById('filter-comunidades');
+  if (filterComunidades) {
+    filterComunidades.addEventListener('input', function() {
+      const query = this.value.toLowerCase();
+      const items = document.querySelectorAll('.comunidade-item');
+      let visibleCount = 0;
+      
+      items.forEach(item => {
+        const titulo = item.getAttribute('data-titulo');
+        if(titulo.includes(query)) {
+            item.style.display = '';
+            visibleCount++;
+        } else {
+            item.style.display = 'none';
+        }
+      });
+      
+      // Mostrar mensagem se nenhum resultado
+      const noResults = document.getElementById('no-results-comunidades');
+      if (noResults) {
+          noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+      }
+    });
+  }
+  
+  // Filtro de Conteúdos (Novo)
+  const filterConteudos = document.getElementById('filter-conteudos');
+  if (filterConteudos) {
+    filterConteudos.addEventListener('input', function() {
+      const query = this.value.toLowerCase();
+      const items = document.querySelectorAll('.conteudo-item');
+      let visibleCount = 0;
+      
+      items.forEach(item => {
+        const titulo = item.getAttribute('data-titulo');
+        if(titulo.includes(query)) {
+            item.style.display = '';
+            visibleCount++;
+        } else {
+            item.style.display = 'none';
+        }
+      });
+      
+      // Mostrar mensagem se nenhum resultado
+      const noResults = document.getElementById('no-results-conteudos');
+      if (noResults) {
+          noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+      }
+    });
+  }
+
+  // ==================== CAROUSEL ====================
+  // Ajustado o scroll para 280 (largura do card) + gap
+  function carouselConteudos(direction) {
+    const carousel = document.getElementById('conteudos-carousel');
+    if (!carousel) return;
+    const scrollAmount = 280 + 24; // largura + gap
+    const scrollLeft = carousel.scrollLeft;
+    const newScroll = direction === 'next' ? scrollLeft + scrollAmount : scrollLeft - scrollAmount;
+    carousel.scrollTo({ left: newScroll, behavior: 'smooth' });
+  }
+
+  function carouselComunidades(direction) {
+    const carousel = document.getElementById('comunidades-carousel');
+    if (!carousel) return;
+    const scrollAmount = 280 + 24; // largura + gap
+    const scrollLeft = carousel.scrollLeft;
+    const newScroll = direction === 'next' ? scrollLeft + scrollAmount : scrollLeft - scrollAmount;
+    carousel.scrollTo({ left: newScroll, behavior: 'smooth' });
+  }
+</script>
+{% endblock %}

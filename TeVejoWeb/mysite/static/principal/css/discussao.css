@@ -1,0 +1,87 @@
+:root {
+    --bg: #efefef;
+    --gray: #a3a3a3;
+    --cobalto: #34495e;
+    --verde: #20c997;
+    height: auto;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    font-family:'Radio Canada',sans-serif;
+    background: var(--bg);
+    color:#333;
+    background: #f2f2f2 url("../imgs/background.jpg") repeat;
+    background-size: 15%;
+}
+
+
+/* LAYOUT PRINCIPAL */
+.main-layout {
+    display:flex;
+    margin-top:0; /* cola no header */
+    min-height: calc(100vh - 64px); /* full viewport menos header */
+}
+
+/* CONTEÚDO */
+.content-area {
+    flex:1;
+    padding: 2px;
+    background-color: transparent;
+    position: relative;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+
+
+/* CARDS DE POST */
+.post-card {
+    background: rgba(255,255,255,0.5);
+    border-radius: 12px;
+    padding:16px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.post-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+
+/* CARDS DE COMENTÁRIOS */
+.comment-card {
+    background: rgba(255,255,255,0.65);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 12px 0 16px 40px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    backdrop-filter: blur(2px);
+}
+
+.comment-author { font-weight:600; font-size:0.875rem; margin-bottom:4px; color:#333; }
+.comment-text { font-size:0.875rem; line-height:1.5; color:#444; }
+
+/* TÍTULOS E DIVISORES */
+h1,h2,h3 { color:#222; margin-bottom:0.5rem; }
+.thin-divider { border-top:1px solid rgba(255,255,255,0.7); margin:0.875rem 0; }
+.breadcrumb { font-size:0.875rem; color:gray; font-weight:600; margin-bottom:0.5rem; }
+.page-title { font-size:1.625rem; margin:0.5rem 0 0.875rem; }
+.content-divider { border-top:1px solid #ddd; margin-bottom:10px; }
+
+/* POSTES */
+.post-head { display:flex; justify-content:space-between; align-items:center; }
+.post-author { display:flex; align-items:center; }
+.avatar { width:36px; height:36px; border-radius:50%; }
+.author { margin-left:8px; font-size:0.9375rem; }
+.dots { font-size:20px; color:#666; cursor:pointer; }
+.post-text { font-style:italic; margin:8px 0; font-size:1.0625rem; line-height:1.4; max-width:800px; }
+.tag-row { display:flex; gap:8px; margin:8px 0; }
+.tag { padding:3px 10px; border-radius:8px; font-size:0.75rem; font-weight:600; color:white; }
+.nivel2 { background:#54e3c1; color:#064; }
+.nivel3 { background:#5a7ce0; }
+.especial { background:#f5a623; color:#402; }
+.instituicao { background:#d9e06a; color:#333; }
+
+/* REAÇÕES */
+.action-bar { display:flex; gap:14px; color:#555; font-size:0.875rem; }
+.icon-set { display:flex; align-items:center; gap:4px; }
+.react { width:18px; height:18px; opacity:0.85; }

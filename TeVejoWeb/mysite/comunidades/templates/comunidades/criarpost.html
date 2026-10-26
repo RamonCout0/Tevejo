@@ -1,0 +1,55 @@
+{% extends 'principal/base.html' %}
+{% load static %}
+
+{% block title %}Criar Post - {{ comunidade.nome }}{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'comunidades/css/criarpost.css' %}">
+
+    <div class="page-container">
+        <div class="post-card">
+            
+            <div class="card-header">
+                {% if comunidade.icone %}
+                    <img src="{{ comunidade.icone.url }}" alt="Ícone" class="community-avatar">
+                {% else %}
+                    <img src="https://ui-avatars.com/api/?name={{ comunidade.nome }}&background=random&size=64" alt="Ícone" class="community-avatar">
+                {% endif %}
+                <div class="community-name">
+                    <span>Postar em </span> TeVejo/{{ comunidade.nome }}
+                </div>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="titulo" class="input-label">Título</label>
+                    <input type="text" id="titulo" name="titulo" class="modern-input" maxlength="50" placeholder="Um título interessante..." required>
+                    <div style="text-align: right; font-size: 0.8rem; color: #999; margin-top: 4px;">máx 50 caracteres</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="input-label">Conteúdo</label>
+                    
+                    <div class="editor-toolbar">
+                        <button type="button" class="tool-btn" title="Negrito">B</button>
+                        <button type="button" class="tool-btn" title="Itálico">I</button>
+                        <button type="button" class="tool-btn" title="Link">Link</button>
+                        <button type="button" class="tool-btn" title="Imagem">Img</button>
+                    </div>
+
+                    <textarea name="conteudo" class="post-textarea" placeholder="O que você quer compartilhar hoje?" required></textarea>
+                </div>
+
+                <div class="action-row">
+                    <a href="/comunidade/{{ comunidade.id }}/" class="btn-cancel">Cancelar</a>
+                    
+                    <button type="submit" class="btn-submit">Postar</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+{% endblock %}

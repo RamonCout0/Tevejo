@@ -1,0 +1,85 @@
+<div class="max-w-4xl mx-auto space-y-8">
+
+  <!-- Boas-vindas -->
+  <section class="relative overflow-hidden rounded-3xl p-7 sm:p-9 tv-card-marca"
+           style="background: var(--tv-gradiente-suave), var(--color-tv-card); border: 1px solid var(--tv-border-blue);">
+    <img src="/assets/girassol.svg" alt="" aria-hidden="true"
+         class="absolute -right-8 -top-6 w-40 sm:w-52 opacity-90 rotate-12 pointer-events-none">
+    <div class="relative max-w-xl space-y-3">
+      <p class="tv-page-eyebrow" style="color: var(--color-tv-primary-ink);">Discussões públicas</p>
+      <h1 class="tv-page-title" style="font-size: 2rem;">O que as comunidades estão conversando</h1>
+      <p class="tv-page-subtitle">
+        Dúvidas, conquistas e experiências de quem convive com o autismo. Entre em uma comunidade para participar.
+      </p>
+      <div class="flex flex-wrap gap-2 pt-2">
+        <a routerLink="/comunidades" class="tv-btn tv-btn-primary">
+          <i class="fas fa-users" aria-hidden="true"></i> Explorar comunidades
+        </a>
+        <a routerLink="/conteudo-educacional" class="tv-btn tv-btn-secondary">
+          <i class="fas fa-book-open" aria-hidden="true"></i> Ver conteúdos
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="flex items-end justify-between gap-4">
+    <h2 class="tv-section-title">Conversas recentes</h2>
+    <button (click)="carregar()" class="tv-btn tv-btn-ghost tv-btn-sm" [disabled]="carregando()" aria-label="Atualizar discussões">
+      <i class="fas fa-rotate-right" [class.animate-spin]="carregando()" aria-hidden="true"></i> Atualizar
+    </button>
+  </div>
+
+  <div *ngIf="carregando()" class="tv-loading-row tv-card">
+    <span class="tv-dot-loader" aria-hidden="true"><span></span><span></span><span></span></span>
+    Carregando discussões…
+  </div>
+
+  <div *ngIf="erro() as msg" class="tv-alert tv-alert-error" role="alert">
+    <i class="fas fa-circle-exclamation mt-[2px]" aria-hidden="true"></i>
+    <span>{{ msg }}</span>
+  </div>
+
+  <div *ngIf="!carregando() && !erro() && itens().length === 0" class="tv-empty tv-card">
+    <img src="/assets/girassol.svg" alt="" class="w-14" aria-hidden="true">
+    <p class="tv-empty-title">Tudo silencioso por aqui.</p>
+    <p class="tv-empty-desc">Seja a primeira pessoa a iniciar uma conversa em alguma comunidade.</p>
+    <a routerLink="/comunidades" class="tv-btn tv-btn-secondary tv-btn-sm">Explorar comunidades</a>
+  </div>
+
+  <div *ngIf="!carregando()" class="space-y-4 tv-stagger">
+    <a *ngFor="let item of itens()"
+       [routerLink]="['/comunidades', item.comunidade.id]"
+       class="block tv-card tv-card-hover p-5 sm:p-6">
+
+      <div class="flex items-center gap-2 mb-3 min-w-0">
+        <span class="tv-badge" [ngClass]="item.comunidade.nome | tomDaMarca" [title]="item.comunidade.nome">
+          <i class="fas fa-users" aria-hidden="true"></i>{{ item.comunidade.nome }}
+        </span>
+        <span class="text-xs shrink-0" style="color: var(--color-tv-muted-fg);">
+          {{ item.postagem.criado_em | date:"dd 'de' MMM":'':'pt-BR' }}
+        </span>
+      </div>
+
+      <h3 class="tv-section-title mb-1.5 tv-linhas-2">{{ item.postagem.titulo }}</h3>
+
+      <p class="text-[15px] leading-relaxed tv-linhas-3 mb-4" style="color: var(--color-tv-muted-fg);">
+        {{ item.postagem.conteudo | textoSimples }}
+      </p>
+
+      <div class="flex items-center justify-between gap-3 text-sm" style="color: var(--color-tv-muted-fg);">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="tv-avatar tv-avatar-sm" [ngClass]="item.postagem.autor | tomDaMarca">{{ item.postagem.autor | iniciais }}</span>
+          <span class="truncate font-medium" style="color: var(--color-tv-foreground);">{{ item.postagem.autor }}</span>
+        </div>
+        <div class="flex items-center gap-4 shrink-0">
+          <span class="inline-flex items-center gap-1.5" [attr.aria-label]="item.postagem.curtidas_count + ' curtidas'">
+            <i class="far fa-heart" aria-hidden="true"></i>{{ item.postagem.curtidas_count }}
+          </span>
+          <span class="inline-flex items-center gap-1.5" [attr.aria-label]="item.postagem.comentarios_count + ' comentários'">
+            <i class="far fa-comment-dots" aria-hidden="true"></i>{{ item.postagem.comentarios_count }}
+          </span>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>

@@ -1,0 +1,156 @@
+/* SIDEBAR */
+    :root {
+    --preto: #222;
+    --azul: #345e9e;
+    --verde: #20c997;
+    --vermelho: #e74c3c;
+    --cinza-claro: #f6f7f8;
+    --translucido: rgba(255, 255, 255, 0.75);
+    --preto: #222;
+    }
+
+
+    .sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* mantém o rodapé no fundo */
+    background: #fff; /* mantém o branco atrás */
+    border-radius: 0 10px 10px 0;
+    padding: 14px;
+    box-shadow: 2px 0 6px rgba(0,0,0,0.05);
+    margin-top: -20px;
+    margin-left: -20px;
+    height: calc(100vh - 20px);
+    }
+
+    .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* aumenta o espaço entre opções principais */
+    }
+
+    /* OPÇÕES DO SIDEBAR */
+    .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* aumenta espaçamento ícone/texto */
+    padding: 10px 13px; /* mais área clicável */
+    border-radius: 10px;
+    transition: all 0.2s;
+    cursor: pointer;
+    font-size: 0.90rem; /* texto maior */
+    font-weight: 500;
+    }
+
+    .sidebar-item i {
+    width: 24px;
+    text-align: center;
+    font-size: 1.0rem; /* ícone maior */
+    color: var(--preto);
+    }
+
+    .sidebar-item:hover {
+    background: #e8f0ff;
+    transform: scale(1.03);
+    }
+
+    .sidebar-item.active {
+    background: #dce6ff;
+    font-weight: 600;
+    }
+
+    /* SEPARADORES */
+    .sidebar-divider {
+    border-top: 1px solid #e0e0e0;
+    margin: 16px 0; /* mais espaço entre seções */
+    }
+
+    .sidebar-label {
+    font-size: 0.9rem;
+    color: #555;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    }
+
+    /* RODAPÉ DO SIDEBAR (Meu Perfil) */
+    .sidebar-footer {
+    margin-top: auto; /* força ficar embaixo */
+    }
+
+    .sidebar-footer .sidebar-item {
+    padding: 10px 16px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    }
+    .sidebar-footer .sidebar-item i {
+    font-size: 1.1rem;
+    }
+
+
+    /* Rodapé do sidebar */
+    .sidebar-footer {
+    margin-top: auto; /* empurra para baixo */
+    }
+
+    /* ========================================
+       COMUNIDADES NO SIDEBAR
+       ======================================== */
+
+    /* Item de comunidade com avatar */
+    .sidebar-item.community {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    position: relative;
+    }
+
+    .sidebar-item.community:hover {
+    background-color: rgba(32, 201, 151, 0.1);
+    transform: translateX(4px);
+    }
+
+    .sidebar-item.community.active {
+    background-color: rgba(32, 201, 151, 0.2);
+    font-weight: 600;
+    }
+
+    /* Avatar da comunidade no sidebar */
+    .community-avatar-small {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
+    background: linear-gradient(135deg, #2d7c9e, #7cb9d1) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+    }
+
+    .community-avatar-small img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 24px !important;
+    max-height: 24px !important;
+    object-fit: cover !important;
+    border-radius: 5px !important;
+    }
+
+    /* Nome da comunidade no sidebar */
+    .community-name {
+    flex: 1;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--preto);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+    }

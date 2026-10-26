@@ -1,0 +1,104 @@
+{% extends "principal/base_auth.html" %}
+{% load static %}
+{% block title %}Entrar - Tevejo{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'usuarios/css/login.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+
+  <!-- LADO ESQUERDO -->
+  <div class="auth-left">
+    <img src="{% static 'usuarios/img/logo.png' %}" alt="Tevejo" class="auth-logo">
+  </div>
+
+  <!-- LADO DIREITO -->
+  <div class="auth-right">
+    <h2 class="auth-title">Faça seu login</h2>
+
+    <!-- MENSAGENS DO DJANGO (SUCCESS / INFO / ERROR) -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="auth-message is-{{ message.tags }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- FORMULÁRIO -->
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <!-- ERROS GERAIS DO FORM (ex: credenciais inválidas) -->
+      {% if form.non_field_errors %}
+        <div class="auth-message is-error">
+          {{ form.non_field_errors|striptags }}
+        </div>
+      {% endif %}
+
+      <!-- CAMPOS -->
+      {% for field in form %}
+        <div class="auth-field">
+          <label class="auth-label">{{ field.label }}</label>
+
+          <div class="input-wrapper">
+            {{ field }}
+            {% if field.name == "password" %}
+              <i class="fa-solid fa-eye toggle-password"></i>
+            {% endif %}
+          </div>
+
+          {% if field.errors %}
+            <p class="auth-error">{{ field.errors|striptags }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <!-- BOTÃO LOGIN -->
+      <button type="submit" class="auth-btn">
+        Fazer login
+      </button>
+
+      <!-- LINKS AUXILIARES -->
+      <p class="auth-link">
+        <a href="#">Esqueceu a senha?</a>
+      </p>
+
+      <p class="auth-link">
+        <a href="{% url 'usuarios:cadastro' %}">
+          Novo por aqui? Crie sua conta!
+        </a>
+      </p>
+
+      <!-- GOOGLE LOGIN (visual apenas por enquanto) -->
+      <button class="google-btn" type="button">
+        <i class="fa-brands fa-google"></i>
+        Fazer login com minha conta Google
+      </button>
+    </form>
+  </div>
+
+</div>
+
+<!-- TOGGLE PASSWORD -->
+<script>
+const togglePassword = document.querySelector('.toggle-password');
+
+if (togglePassword) {
+  togglePassword.addEventListener('click', () => {
+    const input = togglePassword.previousElementSibling;
+
+    if (input.type === "password") {
+      input.type = "text";
+      togglePassword.classList.replace("fa-eye", "fa-eye-slash");
+    } else {
+      input.type = "password";
+      togglePassword.classList.replace("fa-eye-slash", "fa-eye");
+    }
+  });
+}
+</script>
+{% endblock %}

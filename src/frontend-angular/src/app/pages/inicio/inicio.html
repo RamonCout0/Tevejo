@@ -1,0 +1,56 @@
+<div class="max-w-5xl mx-auto space-y-8">
+
+  <!-- Boas-vindas -->
+  <section class="relative overflow-hidden rounded-3xl p-7 sm:p-10 tv-card-marca"
+           style="background: var(--tv-gradiente-suave), var(--color-tv-card); border: 1px solid var(--tv-border-blue);">
+    <img src="/assets/girassol.svg" alt="" aria-hidden="true"
+         class="absolute -right-8 -top-6 w-40 sm:w-56 opacity-90 rotate-12 pointer-events-none">
+    <div class="relative max-w-2xl space-y-3">
+      <p class="tv-page-eyebrow" style="color: var(--color-tv-primary-ink);">
+        {{ logado() ? 'Olá, ' + primeiroNome() + '!' : 'Bem-vindo(a), visitante!' }}
+      </p>
+      <h1 class="tv-page-title" style="font-size: 2.2rem;">
+        O que você está <span class="tv-texto-gradiente">procurando?</span>
+      </h1>
+      <p class="tv-page-subtitle">
+        O TeVejo acolhe, informa e conecta famílias, cuidadores, educadores e pessoas autistas.
+        Escolha um caminho para começar.
+      </p>
+      <div *ngIf="!logado()" class="flex flex-wrap gap-2 pt-2">
+        <a routerLink="/cadastro" class="tv-btn tv-btn-primary">
+          <i class="fas fa-user-plus" aria-hidden="true"></i> Criar conta
+        </a>
+        <a routerLink="/login" class="tv-btn tv-btn-secondary">
+          <i class="fas fa-arrow-right-to-bracket" aria-hidden="true"></i> Entrar
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Caminhos -->
+  <section class="space-y-4" aria-labelledby="titulo-caminhos">
+    <h2 id="titulo-caminhos" class="tv-section-title">Por onde você quer começar?</h2>
+
+    <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <li *ngFor="let c of caminhos()">
+        <a [routerLink]="c.rota"
+           class="tv-card tv-card-hover h-full p-6 flex flex-col gap-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-tv-primary)]">
+          <span class="w-12 h-12 rounded-2xl flex items-center justify-center text-lg shrink-0" [ngClass]="c.tom">
+            <i [class]="c.icone" aria-hidden="true"></i>
+          </span>
+          <span class="space-y-1.5 flex-1">
+            <span class="block font-semibold text-[17px] leading-snug">{{ c.titulo }}</span>
+            <span class="block text-sm leading-relaxed" style="color: var(--color-tv-muted-fg);">{{ c.descricao }}</span>
+          </span>
+          <span class="text-sm font-semibold inline-flex items-center gap-1.5" style="color: var(--color-tv-primary-ink);">
+            {{ c.acao }} <i class="fas fa-arrow-right text-xs" aria-hidden="true"></i>
+          </span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <p class="text-sm text-center pb-6" style="color: var(--color-tv-muted-fg);">
+    Ficou com dúvida? O Gui, no canto da tela, te ajuda a qualquer momento. 💛
+  </p>
+</div>

@@ -1,0 +1,70 @@
+<div class="max-w-4xl mx-auto space-y-8">
+
+  <!-- Topo -->
+  <section class="relative overflow-hidden rounded-3xl p-7 sm:p-9 tv-card-marca"
+           style="background: var(--tv-gradiente-suave), var(--color-tv-card); border: 1px solid var(--tv-border-blue);">
+    <div class="relative flex flex-col sm:flex-row sm:items-center gap-6">
+      <img src="/assets/personagens/gui.svg" alt="Gui, o guia do TeVejo" class="w-16 sm:w-20 shrink-0 tv-guia-mascote">
+      <div class="space-y-2 flex-1 min-w-0">
+        <p class="tv-page-eyebrow" style="color: var(--color-tv-primary-ink);">Central de ajuda</p>
+        <h1 class="tv-page-title" style="font-size: 2rem;">Como podemos te ajudar?</h1>
+        <p class="tv-page-subtitle">Respostas rápidas para as dúvidas mais comuns sobre o TeVejo.</p>
+      </div>
+      <button *ngIf="logado()" type="button" class="tv-btn tv-btn-primary self-start sm:self-center" (click)="guia.iniciar()">
+        <i class="fas fa-route" aria-hidden="true"></i> Fazer o guia
+      </button>
+    </div>
+
+    <div class="relative mt-6">
+      <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-tv-muted-fg);" aria-hidden="true"></i>
+      <label class="sr-only" for="busca-ajuda">Buscar nas dúvidas frequentes</label>
+      <input id="busca-ajuda" type="search" maxlength="80"
+             [ngModel]="busca()" (ngModelChange)="busca.set($event)"
+             placeholder="Escreva sua dúvida, por exemplo: foto, encontro, denúncia…"
+             class="tv-input" style="padding-left: 44px; border-radius: 9999px; background: var(--color-tv-card);">
+    </div>
+  </section>
+
+  <!-- Nada encontrado -->
+  <div *ngIf="grupos().length === 0" class="tv-empty tv-card">
+    <img src="/assets/personagens/gui.svg" alt="" class="w-12" aria-hidden="true">
+    <p class="tv-empty-title">Não achei nada com "{{ busca() }}".</p>
+    <p class="tv-empty-desc">Tente outra palavra ou faça o guia passo a passo.</p>
+  </div>
+
+  <!-- Perguntas por grupo -->
+  <section *ngFor="let grupo of grupos()" class="space-y-3" [attr.aria-label]="grupo.nome">
+    <h2 class="tv-section-title">{{ grupo.nome }}</h2>
+
+    <div class="space-y-3">
+      <article *ngFor="let p of grupo.perguntas" class="tv-card overflow-hidden">
+        <h3>
+          <button type="button" class="w-full flex items-center gap-4 p-5 text-left transition-colors hover:bg-[var(--color-tv-sidebar-accent)]"
+                  (click)="alternar(p.id)" [attr.aria-expanded]="aberta() === p.id" [attr.aria-controls]="'resposta-' + p.id">
+            <span class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 tv-tom-5">
+              <i class="fas fa-question" aria-hidden="true"></i>
+            </span>
+            <span class="flex-1 font-semibold text-[15px]">{{ p.pergunta }}</span>
+            <i class="fas text-sm transition-transform" style="color: var(--color-tv-muted-fg);"
+               [class.fa-chevron-down]="aberta() !== p.id" [class.fa-chevron-up]="aberta() === p.id" aria-hidden="true"></i>
+          </button>
+        </h3>
+
+        <div *ngIf="aberta() === p.id" [id]="'resposta-' + p.id"
+             class="grid grid-cols-1 sm:grid-cols-[200px_minmax(0,1fr)] gap-5 px-5 pb-6 tv-fade-in">
+          <app-ilustracao-ajuda [cena]="p.cena" class="max-w-[260px] sm:max-w-none"></app-ilustracao-ajuda>
+          <div class="space-y-3 min-w-0">
+            <p *ngFor="let paragrafo of p.resposta" class="text-[15px] leading-relaxed">{{ paragrafo }}</p>
+            <a *ngIf="p.link" [routerLink]="p.link.rota" class="tv-btn tv-btn-secondary tv-btn-sm">
+              {{ p.link.texto }} <i class="fas fa-arrow-right text-xs" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <p class="text-sm text-center pb-6" style="color: var(--color-tv-muted-fg);">
+    Não encontrou o que precisava? Pergunte em uma comunidade: sempre tem alguém disposto a ajudar. 💛
+  </p>
+</div>

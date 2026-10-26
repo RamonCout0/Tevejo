@@ -1,0 +1,69 @@
+<div class="fixed inset-0 z-[70] flex items-center justify-center p-4"
+     style="background: rgba(18,18,20,0.55);"
+     role="dialog" aria-modal="true" aria-labelledby="recorteTitulo">
+
+  <div class="w-full p-6 space-y-5"
+       [style.max-width]="proporcao() > 1.5 ? '760px' : '400px'"
+       style="background: var(--color-tv-card); border: 1px solid var(--tv-border-blue);
+              border-radius: var(--tv-radius-lg); box-shadow: 0 20px 60px -20px rgba(18,18,20,0.35);">
+
+    <div class="space-y-1">
+      <h2 id="recorteTitulo" class="text-lg font-semibold" style="color: var(--color-tv-foreground);">
+        {{ titulo() }}
+      </h2>
+      <p class="text-sm" style="color: var(--color-tv-muted-fg);">
+        Arraste para posicionar e use o zoom para ajustar o tamanho.
+      </p>
+    </div>
+
+    <!-- Área de recorte: o que aparece aqui é exatamente o que será salvo -->
+    <div #area
+         class="relative w-full mx-auto overflow-hidden select-none touch-none outline-none"
+         [class.cursor-grab]="carregada()"
+         [style.aspect-ratio]="proporcao()"
+         [style.max-width]="proporcao() > 1.5 ? null : '320px'"
+         style="background: var(--color-tv-muted); border-radius: var(--tv-radius);"
+         tabindex="0"
+         aria-label="Área de recorte. Use as setas para mover e + ou - para o zoom."
+         (pointerdown)="iniciarArraste($event)"
+         (pointermove)="arrastar($event)"
+         (pointerup)="finalizarArraste()"
+         (pointercancel)="finalizarArraste()"
+         (wheel)="aoRolar($event)"
+         (keydown)="aoTeclar($event)">
+
+      <img [src]="url()" alt="" draggable="false"
+           (load)="aoCarregar($event)" (error)="aoFalhar()"
+           class="absolute max-w-none pointer-events-none"
+           [style.visibility]="carregada() ? 'visible' : 'hidden'"
+           [style.left.px]="x()" [style.top.px]="y()"
+           [style.width.px]="largura()" [style.height.px]="altura()">
+
+      <!-- Máscara: escurece o que fica de fora do recorte -->
+      <div *ngIf="redondo()" class="absolute inset-0 rounded-full pointer-events-none"
+           style="box-shadow: 0 0 0 9999px rgba(18,18,20,0.55); border: 2px solid rgba(255,255,255,0.85);"></div>
+      <div *ngIf="!redondo()" class="absolute inset-0 pointer-events-none"
+           style="border: 2px solid rgba(255,255,255,0.85); border-radius: var(--tv-radius);"></div>
+
+      <p *ngIf="!carregada() && !erro()" class="absolute inset-0 flex items-center justify-center text-sm"
+         style="color: var(--color-tv-muted-fg);">Carregando imagem…</p>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <i class="fas fa-image text-xs" style="color: var(--color-tv-muted-fg);" aria-hidden="true"></i>
+      <input type="range" class="flex-1" [min]="zoomMin" [max]="zoomMax" step="0.01"
+             [value]="zoom()" (input)="aoMudarZoom($event)" [disabled]="!carregada()"
+             aria-label="Zoom" style="accent-color: var(--color-tv-primary);">
+      <i class="fas fa-image text-base" style="color: var(--color-tv-muted-fg);" aria-hidden="true"></i>
+    </div>
+
+    <div *ngIf="erro() as msg" class="tv-alert tv-alert-error" role="alert">{{ msg }}</div>
+
+    <div class="flex justify-end gap-3">
+      <button type="button" (click)="cancelar()" class="tv-btn tv-btn-secondary">Cancelar</button>
+      <button type="button" (click)="confirmar()" [disabled]="!carregada()" class="tv-btn tv-btn-primary">
+        <i class="fas fa-crop-simple" aria-hidden="true"></i> Aplicar
+      </button>
+    </div>
+  </div>
+</div>

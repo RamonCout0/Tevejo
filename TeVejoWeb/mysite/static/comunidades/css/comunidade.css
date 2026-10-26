@@ -1,0 +1,282 @@
+    :root {
+    --azul: #345e9e;
+    --verde: #20c997;
+    --vermelho: #e74c3c;
+    --cinza-claro: #f6f7f8;
+    --translucido: rgba(255, 255, 255, 0.75);
+    --preto: #222;
+    height: auto;
+    }
+
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    }
+
+    body {
+    font-family: 'Radio Canada', sans-serif;
+    background: #f2f2f2 url("../imgs/background.jpg") repeat;
+    background-size: 15%;
+    color: black;
+    }
+
+    
+
+    /* LAYOUT */
+    .layout {
+    display: flex;
+    grid-template-columns: 250px 1fr 320px;
+    gap: 20px;
+    padding: 20px;
+    }
+
+    
+
+    /* BANNER */
+    .banner-wrapper {
+    border: none;
+    background: transparent;
+    margin-bottom: 50px;
+    }
+
+    .banner-inner {
+    position: relative;
+    border-radius: 8px;
+    overflow: visible;
+    transition: all 0.3s;
+    }
+    .banner-inner:hover {
+    transform: scale(1.01);
+    }
+
+    .banner-img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    }
+
+    .banner-avatar {
+    position: absolute;
+    left: 12px;
+    top: 100%;
+    transform: translateY(-50%);
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    border: 4px solid #fff;
+    background: #fff;
+    transition: all 0.3s;
+    }
+    .banner-avatar:hover {
+    transform: translateY(-50%) scale(1.1);
+    }
+
+    .banner-content {
+    position: absolute;
+    left: 110px;
+    bottom: -50px;
+    }
+    .banner-title {
+    font-size: 26px;
+    font-weight: 700;
+    }
+    .banner-members {
+    font-size: 14px;
+    }
+
+    .banner-actions {
+    position: absolute;
+    top: 130px;
+    right: 14px;
+    display: flex;
+    gap: 8px;
+    }
+
+    .btn {
+    padding: 6px 10px;
+    border-radius: 18px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    }
+    .btn:hover {
+    transform: scale(1.06);
+    }
+    .btn.red { background: #ef4b3c; color: #fff; }
+    .btn.neutral { background: #fff; border: 1px solid #ddd; }
+    .btn.outline-blue { background: #4aa6ff; color: #fff; }
+
+    /* POSTS */
+    .posts { margin-top: 70px; }
+
+    .post {
+    background: var(--translucido);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgba(24, 24, 24, 0.169);
+    transition: all 0.3s;
+    }
+    .post:hover {
+    transform: scale(1.01);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.614);
+    }
+
+    .post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    }
+    .post-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    }
+    .post-text { margin: 8px 0; }
+
+    .tag {
+    display: inline-block;   /* ajusta à largura do texto */
+    padding: 3px 10px;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.8rem;
+    margin-top: 6px;        /* separa do texto do post */
+    white-space: nowrap;     /* impede quebra de linha dentro da tag */
+    }
+    .nivel1 { background: #5ab9ea; }
+    .nivel2 { background: #1abc9c; }
+    .nivel3 { background: #5a7ce0; }
+
+    /* ======= RIGHT PANEL ======= */
+    .right-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    }
+
+    .card {
+    background: rgba(217, 214, 214, 0.514);
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    .card h2, .card h3 {
+    margin-bottom: 10px;
+    color: #333;
+    }
+
+    .card ol {
+    margin-left: 18px;
+    }
+
+    .card p, .card li {
+    font-size: 14px;
+    margin-bottom: 6px;
+    }
+
+    /* === BLOCO ATUALIZADO - CARD DE ENCONTRO === */
+    .card.event {
+    background: rgba(217, 214, 214, 0.514);
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    margin-top: 16px;
+    font-family: 'Radio Canada', sans-serif;
+    }
+
+    .card.event h3 {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    color: #333;
+    }
+
+    /* Ícone ao lado do título "Próximo Encontro" */
+    .card.event h3::before {
+    content: "\f0c0"; /* ícone de usuários */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: #007bff;
+    margin-right: 8px;
+    font-size: 1.1rem;
+    }
+
+    .card.event p {
+    color: #555;
+    margin: 6px 0;
+    line-height: 1.4;
+    }
+
+    /* Ícones inline antes de cada tipo de info */
+    .card.event p:nth-of-type(1)::before {
+    content: "\f086"; /* ícone de conversa */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 6px;
+    color: #f57c00;
+    }
+
+    .card.event p:nth-of-type(3)::before {
+    content: "\f073"; /* ícone de calendário */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 6px;
+    color: #007bff;
+    }
+
+    .card.event p:nth-of-type(4)::before {
+    content: "\f0ac"; /* ícone de globo */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 6px;
+    color: #28a745;
+    }
+
+    .card.event p:nth-of-type(5)::before {
+    content: "\f007"; /* ícone de pessoa */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 6px;
+    color: #e83e8c;
+    }
+
+    /* Botões */
+    .card.event .btn-outline {
+    border: 1px solid #ccc;
+    background: #fe3c3cdd;
+    color: #ffffff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-right: 8px;
+    }
+
+    .card.event .btn-outline:hover {
+    transform: scale(1.06);
+    box-shadow: 0 0 8px rgba(254, 60, 60, 0.5);
+    }
+
+    .card.event .btn.blue {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    }
+
+    .card.event .btn.blue:hover {
+    background: #0056b3;
+    }
+    
+    /* RESPONSIVO */
+    @media (max-width: 980px) {
+    .layout { grid-template-columns: 1fr; }
+    .right-panel { order: -1; }
+    }
+

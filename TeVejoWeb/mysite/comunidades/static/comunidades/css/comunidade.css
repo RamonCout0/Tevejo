@@ -1,0 +1,307 @@
+/* ===============================
+   VARIÁVEIS GLOBAIS
+   =============================== */
+:root {
+  --azul: #345e9e;
+  --verde: #20c997;
+  --vermelho: #e74c3c;
+  --cinza-claro: #f6f7f8;
+  --translucido: rgba(255, 255, 255, 0.75);
+  --preto: #222;
+  --radius: 12px;
+}
+
+/* ===============================
+   LAYOUT
+   =============================== */
+.layout {
+  display: flex;
+  gap: 20px;
+  padding: 0; /* Padding controlado pelo base.html na verdade, mas zero aqui para alinhar */
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+.main-content {
+    flex: 1;
+    min-width: 0; /* Impede overflow em flex items */
+}
+
+.breadcrumb {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+/* ===============================
+   BANNER (REESTRUTURADO)
+   =============================== */
+.banner-wrapper {
+  margin-bottom: 2rem; /* Espaço antes dos posts */
+  position: relative;
+}
+
+.banner-inner {
+  position: relative;
+  border-radius: var(--radius);
+  background: white; /* Fundo branco para segurar o layout */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  padding-bottom: 1rem; /* Espaço para conteúdo */
+  overflow: hidden;
+}
+
+/* Imagem */
+.banner-image-container {
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+}
+
+.banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Agrupamento de Info */
+/* No Desktop: Absolute para sobrepor. No Mobile: Static para empilhar */
+.banner-info-group {
+    position: relative;
+    padding: 0 1rem;
+}
+
+/* Avatar */
+.avatar-wrapper {
+    position: absolute;
+    top: -40px; /* Sobe por cima do banner */
+    left: 20px;
+}
+
+.banner-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  background: #fff;
+  object-fit: cover;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Texto do Banner */
+.banner-content {
+  margin-left: 110px; /* Espaço do avatar */
+  padding-top: 0.5rem;
+}
+
+.banner-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--preto);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.banner-members {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Ações (Botões) */
+.banner-actions {
+  position: absolute;
+  bottom: 10px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alert-icon {
+  font-size: 1.2rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: 0.2s;
+}
+.alert-icon:hover { opacity: 1; transform: scale(1.1); }
+
+
+/* ===============================
+   BOTÕES
+   =============================== */
+.btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: none;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn:hover { transform: translateY(-1px); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+.btn.red { background: #eb9635; color: #fff; }
+.btn.neutral { background: #fff; border: 1px solid #ddd; color: #333; }
+.btn.btn-participar { background: #3273dc; color: #fff; }
+.btn.btn-participar:hover { background: #2366d1; }
+.btn.btn-membro { background: #f5f5f5; border: 1px solid #ddd; color: #333; }
+.btn.btn-membro:hover { background: #ffebeb; color: #e74c3c; border-color: #e74c3c; }
+
+
+/* ===============================
+   POSTS
+   =============================== */
+.posts {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.post {
+  background: white;
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.post-header {
+  margin-bottom: 1rem;
+}
+
+.post-user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.post-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.post-meta {
+    display: flex;
+    flex-direction: column;
+}
+.post-meta .user { font-weight: 700; color: #333; font-size: 0.95rem; }
+.post-meta .date { font-size: 0.8rem; color: #888; }
+
+.post-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: #222; }
+.post-text { font-size: 0.95rem; line-height: 1.6; color: #444; margin-bottom: 1rem; }
+
+.post-actions {
+  display: flex;
+  gap: 15px;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 10px;
+}
+
+.post-action {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 0.85rem; color: #666; font-weight: 600; cursor: pointer;
+}
+.post-action i { font-size: 1rem; }
+.post-action.like:hover { color: var(--vermelho); }
+.post-action.comment:hover { color: var(--azul); }
+
+
+/* ===============================
+   LATERAL DIREITA
+   =============================== */
+.right-panel {
+    width: 300px;
+    flex-shrink: 0;
+}
+
+.card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  margin-bottom: 1.5rem;
+}
+
+.card h2, .card h3 {
+  margin-bottom: 1rem; color: #333; font-size: 1.1rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 0.5rem;
+}
+
+.desc-text { font-size: 0.9rem; line-height: 1.5; color: #555; margin-bottom: 1rem; }
+.meta-info p { font-size: 0.85rem; color: #777; margin-bottom: 0.3rem; display: flex; align-items: center; gap: 5px; }
+
+.regras-list { padding-left: 1.2rem; font-size: 0.9rem; color: #555; }
+.regras-list li { margin-bottom: 0.5rem; }
+
+/* Empty state */
+.empty-posts { text-align: center; color: #000000; padding: 2rem; }
+.empty-posts i { font-size: 2rem; margin-bottom: 0.5rem; }
+
+/* ===============================
+   RESPONSIVO (A MÁGICA ACONTECE AQUI)
+   =============================== */
+
+@media (max-width: 900px) {
+    /* 1. Layout vira coluna */
+    .layout {
+        flex-direction: column;
+    }
+
+    /* 2. Painel direito vai para baixo e ocupa largura total */
+    .right-panel {
+        width: 100%;
+        order: 2; /* Posts primeiro, info depois (ou mude para -1 para info primeiro) */
+    }
+
+    /* 3. Banner Responsivo (Resetando posições absolutas) */
+    .banner-wrapper {
+        margin-bottom: 1rem;
+    }
+
+    .banner-info-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding-bottom: 1rem;
+    }
+
+    .avatar-wrapper {
+        position: relative; /* Remove o absolute */
+        top: -30px; /* Sobe um pouco na imagem */
+        left: auto;
+        margin-bottom: -20px; /* Compensa o espaço */
+    }
+
+    .banner-avatar {
+        width: 100px; height: 100px; /* Avatar maior no mobile */
+    }
+
+    .banner-content {
+        margin-left: 0; /* Remove margem lateral */
+        margin-bottom: 1rem;
+    }
+
+    .banner-actions {
+        position: relative; /* Remove absolute */
+        bottom: auto; right: auto;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .btn {
+        padding: 8px 16px; /* Botões mais fáceis de tocar */
+    }
+}
+
+@media (max-width: 480px) {
+    .banner-title { font-size: 1.25rem; }
+    .post { padding: 1rem; }
+}

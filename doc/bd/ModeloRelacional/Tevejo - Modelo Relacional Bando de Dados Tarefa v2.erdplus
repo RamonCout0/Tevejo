@@ -1,0 +1,950 @@
+{
+  "diagramType": 2,
+  "data": {
+    "nodes": [
+      {
+        "id": "ed938c6b-da8e-4766-85ff-9888bbfab845",
+        "type": "Table",
+        "position": {
+          "x": 360.18227683366524,
+          "y": 122.93407980191175
+        },
+        "data": {
+          "label": "Perfil",
+          "isConnectable": false,
+          "columns": [
+            {
+              "id": "6002276b-30df-4cad-8930-e7502b8cd0cc",
+              "name": "nome",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isUnique": false,
+              "isPrimaryKey": false,
+              "isOptional": false
+            },
+            {
+              "id": "8be68df5-abd1-446d-a8fc-930356828aa8",
+              "name": "foto_perfil",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isUnique": false,
+              "isPrimaryKey": false,
+              "isOptional": true
+            },
+            {
+              "id": "d6aa22f6-4faa-44df-b325-9d1c319df5c7",
+              "name": "biografia",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isUnique": false,
+              "isPrimaryKey": false,
+              "isOptional": true
+            },
+            {
+              "id": "e69474ce-3f7f-4c0e-a67b-31b682ee334b",
+              "name": "id_perfil",
+              "type": "INT",
+              "position": 0,
+              "isUnique": false,
+              "isPrimaryKey": true,
+              "isOptional": false
+            }
+          ],
+          "isSelected": false
+        },
+        "measured": {
+          "width": 240,
+          "height": 126
+        },
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "33cfdcc7-0bb6-4127-99fe-d413ddc114d0",
+        "type": "Table",
+        "position": {
+          "x": -2.557901183058675,
+          "y": 276.59593797056584
+        },
+        "data": {
+          "label": "Curador",
+          "isConnectable": false,
+          "columns": [
+            {
+              "id": "412426ed-002d-4524-9ae1-73183fecd76d",
+              "name": "id_curador",
+              "type": "INT",
+              "position": 0,
+              "isPrimaryKey": true,
+              "isOptional": false
+            },
+            {
+              "id": "9d0adfdc-2543-4845-a5d9-da3bb704b1a1",
+              "name": "especialidade",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "dfdda793-d4ba-4e12-a947-92d909d1242a",
+              "name": "email",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "a994f2ab-7bb3-45ca-a384-f962d0739f38",
+              "name": "senha",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "fk_437e4c74-7fbc-4070-9bdf-f4ae10d93584",
+              "name": "fk_Perfil",
+              "type": "None",
+              "isForeignKey": true,
+              "foreignKeyProps": {
+                "foreignKeyGroupId": "e14dc574-15ee-4dcb-aacb-efa153c8d76e",
+                "sourceTableId": "ed938c6b-da8e-4766-85ff-9888bbfab845",
+                "columns": [
+                  {
+                    "id": "fk_e69474ce-3f7f-4c0e-a67b-31b682ee334b",
+                    "name": "id_perfil",
+                    "type": "INT"
+                  }
+                ]
+              }
+            }
+          ],
+          "isSelected": false
+        },
+        "measured": {
+          "width": 240,
+          "height": 152
+        },
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "991b5b2d-45c4-4d58-aa97-3fd9837eaf6c",
+        "type": "Table",
+        "position": {
+          "x": 665.964943369418,
+          "y": 389.31803740259966
+        },
+        "data": {
+          "label": "Convivente",
+          "isConnectable": false,
+          "columns": [
+            {
+              "id": "76da5549-34a0-44db-ba6b-7cc16816e3a4",
+              "name": "id_convivente",
+              "type": "INT",
+              "position": 0,
+              "isUnique": false,
+              "isPrimaryKey": true,
+              "isOptional": false
+            },
+            {
+              "id": "6dc5efc5-6441-4e3b-bc99-878e2a7dee01",
+              "name": "data_cadastro",
+              "type": "DATE",
+              "position": 0,
+              "isUnique": false,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "041d0f0d-e2df-41ae-9456-cc214cb77e18",
+              "name": "email",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isUnique": false,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "c327899f-a049-4c43-875e-45b729aab1e3",
+              "name": "senha",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isUnique": false,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "fk_1429f07b-9293-4960-aee3-c1b3f7ce9407",
+              "name": "fk_Perfil",
+              "type": "None",
+              "isForeignKey": true,
+              "foreignKeyProps": {
+                "foreignKeyGroupId": "881d22f3-a065-4537-a009-51ab4bfbe833",
+                "sourceTableId": "ed938c6b-da8e-4766-85ff-9888bbfab845",
+                "columns": [
+                  {
+                    "id": "fk_e69474ce-3f7f-4c0e-a67b-31b682ee334b",
+                    "name": "id_perfil",
+                    "type": "INT"
+                  }
+                ]
+              }
+            }
+          ],
+          "isSelected": false
+        },
+        "measured": {
+          "width": 240,
+          "height": 152
+        },
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "73a1d123-fdf4-4939-aed2-a27928977266",
+        "type": "Table",
+        "position": {
+          "x": 680.8447173953545,
+          "y": -22.94147488330963
+        },
+        "data": {
+          "label": "Administrador",
+          "isConnectable": false,
+          "columns": [
+            {
+              "id": "a7526306-3297-4eb8-b8ff-bd08defdc128",
+              "name": "email",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "ac6c483c-5357-41b9-8302-7047af057bb7",
+              "name": "senha",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "4135fbbc-f019-483b-86ce-a52a8a885e72",
+              "name": "id_admin",
+              "type": "INT",
+              "position": 0,
+              "isPrimaryKey": true,
+              "isOptional": false
+            },
+            {
+              "id": "fk_00687baa-a9ae-4db3-9f08-62e8fc1d856a",
+              "name": "fk_Perfil",
+              "type": "None",
+              "isForeignKey": true,
+              "foreignKeyProps": {
+                "foreignKeyGroupId": "2f8ee88c-451d-4c57-bfd7-0fba74b0813d",
+                "sourceTableId": "ed938c6b-da8e-4766-85ff-9888bbfab845",
+                "columns": [
+                  {
+                    "id": "fk_e69474ce-3f7f-4c0e-a67b-31b682ee334b",
+                    "name": "id_perfil",
+                    "type": "INT"
+                  }
+                ]
+              }
+            }
+          ],
+          "isSelected": false
+        },
+        "measured": {
+          "width": 240,
+          "height": 127
+        },
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "e2f72284-2311-4c9f-ad4e-e31e26260294",
+        "type": "Table",
+        "position": {
+          "x": 992.8525256379805,
+          "y": 262.2612664119142
+        },
+        "data": {
+          "label": "Moderador",
+          "isConnectable": false,
+          "columns": [
+            {
+              "id": "045524b4-ff8e-4635-96d8-f6a4804047ee",
+              "name": "email",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "46a939e5-1d7f-4b32-9350-369e495c3e00",
+              "name": "senha",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "0953b6d1-f6ea-43f2-9edf-3dd7563238a6",
+              "name": "id_moderador",
+              "type": "INT",
+              "position": 0,
+              "isPrimaryKey": true,
+              "isOptional": false
+            },
+            {
+              "id": "fk_a145c1f0-0fcc-41e8-b7f1-6b3bcd28e18c",
+              "name": "fk_Comunidade",
+              "type": "None",
+              "isForeignKey": true,
+              "foreignKeyProps": {
+                "foreignKeyGroupId": "768a265e-4a48-4754-a0f0-46f0c1a4430c",
+                "sourceTableId": "afa67f1f-2ee7-406e-96e4-83d3663eed59",
+                "columns": [
+                  {
+                    "id": "fk_a553b9fd-32f3-488a-a402-0473eecaf7dd",
+                    "name": "id_comunidade",
+                    "type": "INT"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "fk_a424d7db-8586-4bfa-b089-31aee54586e7",
+              "name": "fk_Perfil",
+              "type": "None",
+              "isForeignKey": true,
+              "foreignKeyProps": {
+                "foreignKeyGroupId": "291f324f-b2a4-4584-ae07-8ab8cb7ccf63",
+                "sourceTableId": "ed938c6b-da8e-4766-85ff-9888bbfab845",
+                "columns": [
+                  {
+                    "id": "fk_e69474ce-3f7f-4c0e-a67b-31b682ee334b",
+                    "name": "id_perfil",
+                    "type": "INT"
+                  }
+                ]
+              }
+            }
+          ],
+          "isSelected": false
+        },
+        "measured": {
+          "width": 240,
+          "height": 152
+        },
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "11937c33-7a8f-49fb-83ed-7c4300ef6ccf",
+        "type": "Table",
+        "position": {
+          "x": 321.8005867520862,
+          "y": 454.14320432663385
+        },
+        "data": {
+          "label": "Conteúdo Educacional",
+          "isConnectable": false,
+          "columns": [
+            {
+              "id": "5c795093-2207-4687-921c-5e1e903d2c9d",
+              "name": "id_conteudo",
+              "type": "INT",
+              "position": 0,
+              "isPrimaryKey": true,
+              "isOptional": false
+            },
+            {
+              "id": "fc4c97d1-b18d-4bf9-91f8-7250f8d9d8d6",
+              "name": "fonte",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "0a985f77-3249-4b8b-bbe6-bde191ca8089",
+              "name": "descricao",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "7a4f0571-b7a2-46cd-9b40-12119c6f0fa9",
+              "name": "titulo",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "08ee8a23-4292-4108-be06-caaf13f4d09e",
+              "name": "tipo_conteudo",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "fk_72608728-44a5-4665-8ad1-6ada78142979",
+              "name": "fk_Curador",
+              "type": "None",
+              "isForeignKey": true,
+              "foreignKeyProps": {
+                "foreignKeyGroupId": "5a8660ea-e056-4649-a124-172babf9b7bb",
+                "sourceTableId": "33cfdcc7-0bb6-4127-99fe-d413ddc114d0",
+                "columns": [
+                  {
+                    "id": "fk_412426ed-002d-4524-9ae1-73183fecd76d",
+                    "name": "id_curador",
+                    "type": "INT"
+                  }
+                ]
+              }
+            }
+          ],
+          "isSelected": false
+        },
+        "measured": {
+          "width": 240,
+          "height": 177
+        },
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "99fd5e40-59b3-44fb-9018-d443a36f6cf8",
+        "type": "Table",
+        "position": {
+          "x": 1296.4642018814668,
+          "y": 207.1958726227802
+        },
+        "data": {
+          "label": "Encontro",
+          "isConnectable": false,
+          "columns": [
+            {
+              "id": "bb25ae8d-bbba-441f-a74e-6ba8c3b4e546",
+              "name": "id_encontro",
+              "type": "INT",
+              "position": 0,
+              "isOptional": false,
+              "isPrimaryKey": true
+            },
+            {
+              "id": "7635d3ca-487b-4a31-a8ef-1960eb119e95",
+              "name": "titulo",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isOptional": false,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "f50d0a1c-07e9-4f91-86ce-53ebabffa83a",
+              "name": "descricao",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isOptional": false,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "ec6a2357-e646-4d36-830f-a1220d57d5e6",
+              "name": "data_hora_encontro",
+              "type": "DATE",
+              "position": 0,
+              "isOptional": false,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "74e83fbb-cea0-4b6b-be4d-93b492f08a65",
+              "name": "tags",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isOptional": true,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "39e8a721-2d41-44e5-bab2-1fa952068261",
+              "name": "imagem",
+              "type": "Custom",
+              "position": 0,
+              "isOptional": false,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "139bcc59-7118-42fc-bf6d-bda57b3b6842",
+              "name": "endereco",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isOptional": true,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "fk_c00134ba-7a44-4dcb-9b01-7d3f55f457da",
+              "name": "fk_Comunidade",
+              "type": "None",
+              "isForeignKey": true,
+              "foreignKeyProps": {
+                "foreignKeyGroupId": "e955745b-a0b5-44b0-a108-3e3d402688b5",
+                "sourceTableId": "afa67f1f-2ee7-406e-96e4-83d3663eed59",
+                "columns": [
+                  {
+                    "id": "fk_a553b9fd-32f3-488a-a402-0473eecaf7dd",
+                    "name": "id_comunidade",
+                    "type": "INT"
+                  }
+                ]
+              }
+            }
+          ],
+          "isSelected": false
+        },
+        "measured": {
+          "width": 240,
+          "height": 227
+        },
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "afa67f1f-2ee7-406e-96e4-83d3663eed59",
+        "type": "Table",
+        "position": {
+          "x": 994.6776639192483,
+          "y": 454.2196737492546
+        },
+        "data": {
+          "label": "Comunidade",
+          "isConnectable": false,
+          "columns": [
+            {
+              "id": "a553b9fd-32f3-488a-a402-0473eecaf7dd",
+              "name": "id_comunidade",
+              "type": "INT",
+              "position": 0,
+              "isPrimaryKey": true,
+              "isOptional": false
+            },
+            {
+              "id": "54e411c5-c32e-4440-93cf-49514c528a43",
+              "name": "nome",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isOptional": false
+            },
+            {
+              "id": "f904cb4a-0d1c-4845-8d68-b4c64816d24e",
+              "name": "descricao",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isOptional": false
+            },
+            {
+              "id": "81051ef0-ff3e-44d4-a892-d761c95b899c",
+              "name": "regras",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isOptional": false
+            },
+            {
+              "id": "8aabc058-e909-479f-a6e5-44b1615bcbe2",
+              "name": "tags",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isOptional": false
+            },
+            {
+              "id": "a85ba02b-cac0-46e0-a3c9-af6dc17b17e5",
+              "name": "tipo_visibilidade",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isOptional": false
+            },
+            {
+              "id": "05500925-742a-49a2-8c45-50aaa60bae41",
+              "name": "data_cricao",
+              "type": "DATE",
+              "position": 0,
+              "isOptional": false
+            },
+            {
+              "id": "b2dc6887-2960-49a3-b22b-bd82528be6fb",
+              "name": "img_banner",
+              "type": "Custom",
+              "position": 0,
+              "isOptional": true
+            },
+            {
+              "id": "88c2e417-65b8-4f72-8bc4-efdb0fa66885",
+              "name": "img_icon",
+              "type": "Custom",
+              "position": 0,
+              "isOptional": true
+            }
+          ],
+          "isSelected": false
+        },
+        "measured": {
+          "width": 240,
+          "height": 251
+        },
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "3ce1e456-2b68-4396-8526-a69582d2da42",
+        "type": "Table",
+        "position": {
+          "x": 1295.4152861954585,
+          "y": 456.08177696995847
+        },
+        "data": {
+          "label": "Post",
+          "isConnectable": false,
+          "columns": [
+            {
+              "id": "dd2ab95f-8886-4be6-9532-c5a6f3ef523f",
+              "name": "id_post",
+              "type": "INT",
+              "position": 0,
+              "isPrimaryKey": true,
+              "isOptional": false
+            },
+            {
+              "id": "905b51a3-64e9-4dc3-8624-2d940d35c5ca",
+              "name": "conteudo",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "e510ecd3-21c1-4493-b741-161e262cd388",
+              "name": "titulo",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "ba0a8020-f483-41d2-b5a8-1d5ef397e4ef",
+              "name": "descricao",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "55abad5a-b054-4ef1-b5f7-554a01911473",
+              "name": "data_postagem",
+              "type": "DATE",
+              "position": 0,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "fk_f84dc311-cbfc-493b-bef7-ba03ce7d1c5a",
+              "name": "fk_Comunidade",
+              "type": "None",
+              "isForeignKey": true,
+              "foreignKeyProps": {
+                "foreignKeyGroupId": "4edd0192-1786-4f05-8bbd-365a1ba488e9",
+                "sourceTableId": "afa67f1f-2ee7-406e-96e4-83d3663eed59",
+                "columns": [
+                  {
+                    "id": "fk_a553b9fd-32f3-488a-a402-0473eecaf7dd",
+                    "name": "id_comunidade",
+                    "type": "INT"
+                  }
+                ]
+              }
+            }
+          ],
+          "isSelected": false
+        },
+        "measured": {
+          "width": 240,
+          "height": 177
+        },
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "8800e0cb-5ba5-4605-9952-9951a7b5e0d3",
+        "type": "Table",
+        "position": {
+          "x": 1652.20372119485,
+          "y": 382.3586716067618
+        },
+        "data": {
+          "label": "Comentário",
+          "isConnectable": false,
+          "columns": [
+            {
+              "id": "8675cc53-cacb-44c7-aa1a-0ed63d5673ca",
+              "name": "id_comentario",
+              "type": "INT",
+              "position": 0,
+              "isPrimaryKey": true,
+              "isOptional": false
+            },
+            {
+              "id": "aad083d9-b055-471b-bad5-bc019ed7bffa",
+              "name": "texto",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "774751ba-62b8-4893-a9b7-15270389fe06",
+              "name": "data_comentario",
+              "type": "CHAR(n)",
+              "position": 0,
+              "isPrimaryKey": false
+            },
+            {
+              "id": "fk_bcff045d-8041-4ac2-902c-e87892c20018",
+              "name": "fk_Post",
+              "type": "None",
+              "isForeignKey": true,
+              "foreignKeyProps": {
+                "foreignKeyGroupId": "9fd20d17-8add-4004-878f-dbac131f53a8",
+                "sourceTableId": "3ce1e456-2b68-4396-8526-a69582d2da42",
+                "columns": [
+                  {
+                    "id": "fk_dd2ab95f-8886-4be6-9532-c5a6f3ef523f",
+                    "name": "id_post",
+                    "type": "INT"
+                  }
+                ]
+              }
+            }
+          ],
+          "isSelected": false,
+          "isFactTable": false
+        },
+        "measured": {
+          "width": 240,
+          "height": 127
+        },
+        "selected": false,
+        "dragging": false
+      }
+    ],
+    "edges": [
+      {
+        "id": "33cfdcc7-0bb6-4127-99fe-d413ddc114d0->11937c33-7a8f-49fb-83ed-7c4300ef6ccf_5a8660ea-e056-4649-a124-172babf9b7bb",
+        "type": "Relational",
+        "source": "33cfdcc7-0bb6-4127-99fe-d413ddc114d0",
+        "targetHandle": "foreign-key-handle-5a8660ea-e056-4649-a124-172babf9b7bb",
+        "target": "11937c33-7a8f-49fb-83ed-7c4300ef6ccf",
+        "markerStart": {
+          "type": "arrow"
+        },
+        "data": {
+          "foreignKeyProps": {
+            "foreignKeyGroupId": "5a8660ea-e056-4649-a124-172babf9b7bb",
+            "sourceTableId": "33cfdcc7-0bb6-4127-99fe-d413ddc114d0",
+            "columns": [
+              {
+                "id": "fk_412426ed-002d-4524-9ae1-73183fecd76d",
+                "name": "id_curador",
+                "type": "INT"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "afa67f1f-2ee7-406e-96e4-83d3663eed59->3ce1e456-2b68-4396-8526-a69582d2da42_4edd0192-1786-4f05-8bbd-365a1ba488e9",
+        "type": "Relational",
+        "source": "afa67f1f-2ee7-406e-96e4-83d3663eed59",
+        "targetHandle": "foreign-key-handle-4edd0192-1786-4f05-8bbd-365a1ba488e9",
+        "target": "3ce1e456-2b68-4396-8526-a69582d2da42",
+        "markerStart": {
+          "type": "arrow"
+        },
+        "data": {
+          "foreignKeyProps": {
+            "foreignKeyGroupId": "4edd0192-1786-4f05-8bbd-365a1ba488e9",
+            "sourceTableId": "afa67f1f-2ee7-406e-96e4-83d3663eed59",
+            "columns": [
+              {
+                "id": "fk_a553b9fd-32f3-488a-a402-0473eecaf7dd",
+                "name": "id_comunidade",
+                "type": "INT"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "3ce1e456-2b68-4396-8526-a69582d2da42->8800e0cb-5ba5-4605-9952-9951a7b5e0d3_9fd20d17-8add-4004-878f-dbac131f53a8",
+        "type": "Relational",
+        "source": "3ce1e456-2b68-4396-8526-a69582d2da42",
+        "targetHandle": "foreign-key-handle-9fd20d17-8add-4004-878f-dbac131f53a8",
+        "target": "8800e0cb-5ba5-4605-9952-9951a7b5e0d3",
+        "markerStart": {
+          "type": "arrow"
+        },
+        "data": {
+          "foreignKeyProps": {
+            "foreignKeyGroupId": "9fd20d17-8add-4004-878f-dbac131f53a8",
+            "sourceTableId": "3ce1e456-2b68-4396-8526-a69582d2da42",
+            "columns": [
+              {
+                "id": "fk_dd2ab95f-8886-4be6-9532-c5a6f3ef523f",
+                "name": "id_post",
+                "type": "INT"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "afa67f1f-2ee7-406e-96e4-83d3663eed59->99fd5e40-59b3-44fb-9018-d443a36f6cf8_e955745b-a0b5-44b0-a108-3e3d402688b5",
+        "type": "Relational",
+        "source": "afa67f1f-2ee7-406e-96e4-83d3663eed59",
+        "targetHandle": "foreign-key-handle-e955745b-a0b5-44b0-a108-3e3d402688b5",
+        "target": "99fd5e40-59b3-44fb-9018-d443a36f6cf8",
+        "markerStart": {
+          "type": "arrow"
+        },
+        "data": {
+          "foreignKeyProps": {
+            "foreignKeyGroupId": "e955745b-a0b5-44b0-a108-3e3d402688b5",
+            "sourceTableId": "afa67f1f-2ee7-406e-96e4-83d3663eed59",
+            "columns": [
+              {
+                "id": "fk_a553b9fd-32f3-488a-a402-0473eecaf7dd",
+                "name": "id_comunidade",
+                "type": "INT"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "afa67f1f-2ee7-406e-96e4-83d3663eed59->e2f72284-2311-4c9f-ad4e-e31e26260294_768a265e-4a48-4754-a0f0-46f0c1a4430c",
+        "type": "Relational",
+        "source": "afa67f1f-2ee7-406e-96e4-83d3663eed59",
+        "targetHandle": "foreign-key-handle-768a265e-4a48-4754-a0f0-46f0c1a4430c",
+        "target": "e2f72284-2311-4c9f-ad4e-e31e26260294",
+        "markerStart": {
+          "type": "arrow"
+        },
+        "data": {
+          "foreignKeyProps": {
+            "foreignKeyGroupId": "768a265e-4a48-4754-a0f0-46f0c1a4430c",
+            "sourceTableId": "afa67f1f-2ee7-406e-96e4-83d3663eed59",
+            "columns": [
+              {
+                "id": "fk_a553b9fd-32f3-488a-a402-0473eecaf7dd",
+                "name": "id_comunidade",
+                "type": "INT"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "ed938c6b-da8e-4766-85ff-9888bbfab845->991b5b2d-45c4-4d58-aa97-3fd9837eaf6c_881d22f3-a065-4537-a009-51ab4bfbe833",
+        "type": "Relational",
+        "source": "ed938c6b-da8e-4766-85ff-9888bbfab845",
+        "targetHandle": "foreign-key-handle-881d22f3-a065-4537-a009-51ab4bfbe833",
+        "target": "991b5b2d-45c4-4d58-aa97-3fd9837eaf6c",
+        "markerStart": {
+          "type": "arrow"
+        },
+        "data": {
+          "foreignKeyProps": {
+            "foreignKeyGroupId": "881d22f3-a065-4537-a009-51ab4bfbe833",
+            "sourceTableId": "ed938c6b-da8e-4766-85ff-9888bbfab845",
+            "columns": [
+              {
+                "id": "fk_e69474ce-3f7f-4c0e-a67b-31b682ee334b",
+                "name": "id_perfil",
+                "type": "INT"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "ed938c6b-da8e-4766-85ff-9888bbfab845->33cfdcc7-0bb6-4127-99fe-d413ddc114d0_e14dc574-15ee-4dcb-aacb-efa153c8d76e",
+        "type": "Relational",
+        "source": "ed938c6b-da8e-4766-85ff-9888bbfab845",
+        "targetHandle": "foreign-key-handle-e14dc574-15ee-4dcb-aacb-efa153c8d76e",
+        "target": "33cfdcc7-0bb6-4127-99fe-d413ddc114d0",
+        "markerStart": {
+          "type": "arrow"
+        },
+        "data": {
+          "foreignKeyProps": {
+            "foreignKeyGroupId": "e14dc574-15ee-4dcb-aacb-efa153c8d76e",
+            "sourceTableId": "ed938c6b-da8e-4766-85ff-9888bbfab845",
+            "columns": [
+              {
+                "id": "fk_e69474ce-3f7f-4c0e-a67b-31b682ee334b",
+                "name": "id_perfil",
+                "type": "INT"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "ed938c6b-da8e-4766-85ff-9888bbfab845->73a1d123-fdf4-4939-aed2-a27928977266_2f8ee88c-451d-4c57-bfd7-0fba74b0813d",
+        "type": "Relational",
+        "source": "ed938c6b-da8e-4766-85ff-9888bbfab845",
+        "targetHandle": "foreign-key-handle-2f8ee88c-451d-4c57-bfd7-0fba74b0813d",
+        "target": "73a1d123-fdf4-4939-aed2-a27928977266",
+        "markerStart": {
+          "type": "arrow"
+        },
+        "data": {
+          "foreignKeyProps": {
+            "foreignKeyGroupId": "2f8ee88c-451d-4c57-bfd7-0fba74b0813d",
+            "sourceTableId": "ed938c6b-da8e-4766-85ff-9888bbfab845",
+            "columns": [
+              {
+                "id": "fk_e69474ce-3f7f-4c0e-a67b-31b682ee334b",
+                "name": "id_perfil",
+                "type": "INT"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "ed938c6b-da8e-4766-85ff-9888bbfab845->e2f72284-2311-4c9f-ad4e-e31e26260294_291f324f-b2a4-4584-ae07-8ab8cb7ccf63",
+        "type": "Relational",
+        "source": "ed938c6b-da8e-4766-85ff-9888bbfab845",
+        "targetHandle": "foreign-key-handle-291f324f-b2a4-4584-ae07-8ab8cb7ccf63",
+        "target": "e2f72284-2311-4c9f-ad4e-e31e26260294",
+        "markerStart": {
+          "type": "arrow"
+        },
+        "data": {
+          "foreignKeyProps": {
+            "foreignKeyGroupId": "291f324f-b2a4-4584-ae07-8ab8cb7ccf63",
+            "sourceTableId": "ed938c6b-da8e-4766-85ff-9888bbfab845",
+            "columns": [
+              {
+                "id": "fk_e69474ce-3f7f-4c0e-a67b-31b682ee334b",
+                "name": "id_perfil",
+                "type": "INT"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "viewport": {
+      "x": 238.8894752957649,
+      "y": 349.2128254112507,
+      "zoom": 0.5
+    }
+  },
+  "name": "Tevejo - Modelo Relacional Bando de Dados Tarefa (1)",
+  "folder": {
+    "name": "Diagrams",
+    "folderType": 1,
+    "depth": 0,
+    "id": 290544
+  },
+  "id": 393830,
+  "updatedAtTimestamp": 1775532251
+}

@@ -1,0 +1,93 @@
+{% extends "principal/base.html" %}
+{% load static %}
+{% block title %}Criar Comunidade - Tevejo{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'comunidades/css/criarcomunidade.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="criar-comunidade-wrapper">
+  <div class="criar-comunidade-modal">
+    
+    <div class="modal-header">
+      <h2 class="modal-title">Conte um pouco sobre sua comunidade</h2>
+      <p class="modal-subtitle">O nome e a descrição ajudarão a facilitar a busca pela sua comunidade!</p>
+    </div>
+
+    <div class="modal-content">
+      
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert-message">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="form-left">
+        <form method="post" enctype="multipart/form-data" novalidate class="comunidade-form" id="comunidade-form">
+          {% csrf_token %}
+          
+          <div class="form-group">
+            <label class="form-label">
+              Nome da Comunidade <span class="required">*</span>
+            </label>
+            <input type="text" name="nome" class="form-input" placeholder="Digite o nome da comunidade" maxlength="100" required>
+            <span class="char-counter">
+              <span class="char-current">0</span>/100
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              Descrição <span class="required">*</span>
+            </label>
+            <textarea name="descricao" class="form-textarea" placeholder="Digite a descrição da comunidade" maxlength="500" required></textarea>
+            <span class="char-counter">
+              <span class="char-current">0</span>/500
+            </span>
+          </div>
+
+          <div class="form-group">
+            <div class="photo-upload-box">
+              <input type="file" id="file-input" name="icone" accept="image/*" style="display: none;">
+              <button type="button" class="photo-upload-btn" id="upload-btn">
+                <i class="fas fa-camera"></i> Adicionar Foto
+              </button>
+              <p class="upload-info">
+                Imagem selecionada: <span id="image-name">Nenhuma</span>
+              </p>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="form-right">
+        <div class="preview-section">
+          <div class="community-preview">
+            <img id="preview-image" src="{% static 'comunidades/imgs/default.png' %}" alt="Preview da comunidade" class="preview-image">
+          </div>
+          <div class="preview-info">
+            <div class="preview-name" id="preview-name-text">Nome da Comunidade</div>
+            <div class="preview-members">1 membro • 1 sem</div>
+            <div class="preview-desc" id="preview-desc-text">Descrição da sua Comunidade</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-cancel" onclick="history.back()">Cancelar</button>
+      <button type="submit" form="comunidade-form" class="btn-create">
+        <i class="fas fa-plus"></i> Criar
+      </button>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'comunidades/js/criarcomunidade.js' %}"></script>
+{% endblock %}

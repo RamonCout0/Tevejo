@@ -1,0 +1,130 @@
+### Variáveis globais
+@base = http://localhost:8000/api
+@contentType = application/json
+
+### Tokens (preencher após executar os logins)
+@tokenModerador = SEU_TOKEN_DO_MODERADOR_AQUI
+@tokenOutroConvivente = SEU_TOKEN_OUTRO_CONVIVENTE_AQUI
+
+### ID da comunidade onde os encontros serão criados
+@comunidadeId = 1
+
+####################################################################
+### AUTENTICAÇÃO
+####################################################################
+
+### Login do moderador da comunidade (quem criou a comunidade)
+POST {{base}}/token/
+Content-Type: {{contentType}}
+
+{
+    "username": "convivente1",
+    "password": "senha123"
+}
+
+###
+
+### Login de outro convivente (NÃO moderador desta comunidade)
+POST {{base}}/token/
+Content-Type: {{contentType}}
+
+{
+    "username": "convivente2",
+    "password": "senha123"
+}
+
+###
+
+####################################################################
+### CDU010 — CRIAR ENCONTRO
+####################################################################
+
+### 1. Criar encontro como moderador (Fluxo Principal)
+# Esperado: 201 Created com o encontro serializado
+POST {{base}}/comunidades/{{comunidadeId}}/encontros/criar/
+Content-Type: {{contentType}}
+Authorization: Token {{tokenModerador}}
+
+{
+    "titulo": "Encontro de boas-vindas",
+    "descricao": "Primeiro encontro presencial da comunidade.",
+    "data_hr_encontro": "2026-07-15T19:00:00Z",
+    "endereco": "Rua das Flores, 123 - Natal/RN",
+    "tags": "presencial, boas-vindas"
+}
+
+###
+
+### 2. Tentar criar encontro SEM autenticação
+# Esperado: 401 Unauthorized
+POST {{base}}/comunidades/{{comunidadeId}}/encontros/criar/
+Content-Type: {{contentType}}
+
+{
+    "titulo": "Encontro sem auth",
+    "descricao": "Tentando sem token.",
+    "data_hr_encontro": "2026-07-15T19:00:00Z",
+    "endereco": "Endereço qualquer"
+}
+
+###
+
+### 3. Tentar criar encontro sendo convivente NÃO moderador da comunidade
+# Esperado: 403 Forbidden — "Apenas o moderador da comunidade pode criar encontros."
+POST {{base}}/comunidades/{{comunidadeId}}/encontros/criar/
+Content-Type: {{contentType}}
+Authorization: Token {{tokenOutroConvivente}}
+
+{
+    "titulo": "Encontro indevido",
+    "descricao": "Não deveria ser permitido.",
+    "data_hr_encontro": "2026-07-15T19:00:00Z",
+    "endereco": "Endereço qualquer"
+}
+
+###
+
+### 4. Campos obrigatórios não preenchidos (Fluxo de Exceção I)
+# Esperado: 400 Bad Request com erros em titulo, descricao, data_hr_encontro e endereco
+POST {{base}}/comunidades/{{comunidadeId}}/encontros/criar/
+Content-Type: {{contentType}}
+Authorization: Token {{tokenModerador}}
+
+{
+    "titulo": "",
+    "descricao": "",
+    "data_hr_encontro": "",
+    "endereco": ""
+}
+
+###
+
+### 5. Data/hora em formato inválido
+# Esperado: 400 Bad Request — erro de validação em data_hr_encontro
+POST {{base}}/comunidades/{{comunidadeId}}/encontros/criar/
+Content-Type: {{contentType}}
+Authorization: Token {{tokenModerador}}
+
+{
+    "titulo": "Encontro com data inválida",
+    "descricao": "Data fora do padrão.",
+    "data_hr_encontro": "15/07/2026 às 19h",
+    "endereco": "Rua das Flores, 123"
+}
+
+###
+
+### 6. Criar encontro em comunidade inexistente
+# Esperado: 404 Not Found — "Comunidade não encontrada."
+POST {{base}}/comunidades/9999/encontros/criar/
+Content-Type: {{contentType}}
+Authorization: Token {{tokenModerador}}
+
+{
+    "titulo": "Encontro fantasma",
+    "descricao": "Comunidade não existe.",
+    "data_hr_encontro": "2026-07-15T19:00:00Z",
+    "endereco": "Endereço qualquer"
+}
+
+###

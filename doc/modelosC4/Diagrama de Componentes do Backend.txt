@@ -1,0 +1,143 @@
+@startuml Diagrama_de_Componentes_do_TeVejo_Backend
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam roundCorner 12
+skinparam nodesep 25
+skinparam ranksep 45
+skinparam defaultTextAlignment center
+
+skinparam rectangle {
+    BackgroundColor<<person>> #1B3A6B
+    FontColor<<person>> white
+    BorderColor<<person>> #0F2647
+
+    BackgroundColor<<container>> #EAF4FD
+    FontColor<<container>> #0B3558
+    BorderColor<<container>> #5FA3DB
+
+    BackgroundColor<<component>> #D9ECFB
+    FontColor<<component>> #0B3558
+    BorderColor<<component>> #5FA3DB
+
+    BackgroundColor<<external_auth>> #DCD3F0
+    FontColor<<external_auth>> #2C1A4D
+    BorderColor<<external_auth>> #8A6FC0
+
+    BackgroundColor<<external_maps>> #D3ECD2
+    FontColor<<external_maps>> #1F4A1E
+    BorderColor<<external_maps>> #6FAE6C
+
+    BackgroundColor<<boundary>> #F5FAFE
+    BorderColor<<boundary>> #5FA3DB
+    BorderThickness<<boundary>> 1
+}
+
+skinparam database {
+    BackgroundColor #2169C8
+    FontColor white
+    BorderColor #0B3558
+}
+
+title Diagrama de Componentes do TeVejo - Backend
+
+' ===================== ATORES =====================
+rectangle "**Convivente**\n--\nPessoa que convive com\numa pessoa autista." <<person>> as convivente
+rectangle "**Curador**\n--\nProfissional da Psicologia." <<person>> as curador
+rectangle "**Moderador**\n--\nCriador de uma comunidade ou\nqualquer pessoa convidada pelo\ncriador que se comprometa com a\nresponsabilidade de moderação." <<person>> as moderador
+rectangle "**Administrador**\n--\nUsuário de maior hierarquia\nna plataforma." <<person>> as administrador
+
+' ===================== FRONTEND =====================
+rectangle "**Aplicação Frontend**\n[Angular 21]\n--\nInterface web do usuário." <<container>> as frontend
+
+' ===================== BACKEND (BOUNDARY COM COMPONENTES) =====================
+rectangle "Aplicação Backend – Django REST\n[container]\nDjango 5.2 | Django REST Framework 5.4 | Gunicorn | Python 3.13" <<boundary>> as backend {
+
+    rectangle "**API REST / URL Router**\n[Django REST Framework]\n--\nResponsável pelo roteamento das\nrequisições e exposição dos\nendpoints da API." <<component>> as api_router
+
+    rectangle "**Usuários**\n[app usuarios]\n--\nGerencia perfis, papéis\n(convivente, curador,\nmoderador, admin) e\ncadastro de usuários." <<component>> as usuarios
+
+    rectangle "**Autenticação**\n[Simple JWT + TokenAuth]\n--\nLogin, emissão e validação\nde tokens JWT para\nacesso à API." <<component>> as autenticacao
+
+    rectangle "**Conteúdos Educacionais**\n[app conteudos]\n--\nCriação, edição, listagem,\ntags e denúncias de\nconteúdos educacionais." <<component>> as conteudos
+
+    rectangle "**Comunidades e Postagens**\n[app comunidades]\n--\nGerencia comunidades,\nmembros, postagens,\ncomentários, curtidas\ne denúncias." <<component>> as comunidades
+
+    rectangle "**Moderação e Denúncias**\n[serviços em comunidades/conteúdos]\n--\nAnálise de denúncias,\nrestrições, banimentos\ne ações de moderação." <<component>> as moderacao
+
+    rectangle "**Encontros**\n[modelo/serviço em comunidades]\n--\nCriação e gerenciamento\nde encontros dentro\ndas comunidades." <<component>> as encontros
+
+    rectangle "**Admin e Documentação**\n[Django Admin + drf-spectacular]\n--\nPainel administrativo,\ngestão de dados e\ndocumentação da API." <<component>> as admin_doc
+}
+
+' ===================== BANCO DE DADOS =====================
+database "**Banco de Dados**\n[PostgreSQL 16.2]\n--\nArmazena dados dos usuários,\ncomunidades, conteúdos, encontros,\nmoderação e sistema." as banco
+
+' ===================== SISTEMAS EXTERNOS =====================
+rectangle "**API do Google Authenticator**\n--\nAPI externa para proporcionar\numa alternativa de login e\nautenticação de usuário." <<external_auth>> as google_auth
+
+rectangle "**API do Google Maps**\n--\nServiços de mapas,\ngeocodificação e rotas." <<external_maps>> as google_maps
+
+' ===================== RELACIONAMENTOS: ATORES -> FRONTEND =====================
+convivente --> frontend : Acesso a conteúdo\neducacional e comunidades.
+curador --> frontend : Realiza a postagem e\nedição dos conteúdos\neducacionais.
+moderador --> frontend : Revisa postagens e denúncias\nem uma comunidade. Pode\nrestringir ou banir conviventes.
+administrador --> frontend : Pode cadastrar e gerenciar\nusuários e gerir conteúdos\ne comunidades já criados.
+
+' ===================== FRONTEND -> API =====================
+frontend --> api_router : Chamada para a API\n(JSON/HTTP)\nRequisições feitas pelo\nfrontend para consumir\nos recursos da API.
+
+' ===================== API -> COMPONENTES DE ENTRADA =====================
+api_router --> usuarios
+api_router --> autenticacao
+
+note right on link
+  Usuários e Autenticação
+  se comunicam entre si
+  (validação de credenciais)
+end note
+
+' ===================== COMPONENTES DE DOMÍNIO =====================
+usuarios --> conteudos
+usuarios --> comunidades
+usuarios --> moderacao
+usuarios --> encontros
+
+autenticacao --> conteudos
+autenticacao --> comunidades
+autenticacao --> moderacao
+autenticacao --> encontros
+
+note as domNote
+  Conteúdos, Comunidades, Moderação e Encontros
+  trocam informações entre si (denúncias,
+  banimentos e vínculo com comunidades)
+end note
+
+domNote .. conteudos
+domNote .. encontros
+
+' ===================== COMPONENTES -> ADMIN/DOCUMENTAÇÃO =====================
+conteudos --> admin_doc
+comunidades --> admin_doc
+moderacao --> admin_doc
+encontros --> admin_doc
+
+' ===================== BACKEND -> BANCO DE DADOS =====================
+admin_doc --> banco : Leitura e gravação\nde dados (SQL)\nPersistência de todas as\ninformações da aplicação.
+
+' ===================== INTEGRAÇÕES EXTERNAS =====================
+autenticacao ..> google_auth : Comunicação para autenticação\nde usuários via Google\n(JSON/HTTPS)
+
+encontros ..> google_maps : Consulta mapas,\ngeocodificação e rotas\n(JSON/HTTPS)
+
+' ===================== LEGENDA =====================
+legend right
+  |= Elemento |= Descrição |
+  |<#1B3A6B>   | **Ator** – Pessoa que usa a plataforma |
+  |<#EAF4FD>   | **Container** – Aplicação ou storage |
+  |<#D9ECFB>   | **Componente** – Parte lógica do backend |
+  |<#DCD3F0>   | **Sistema Externo** – API de terceiros |
+  |<#D3ECD2>   | **Sistema Externo** – Serviço externo de mapas |
+endlegend
+
+@enduml

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Postar - TeVejo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Radio+Canada:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/mysite/template/criarpost/postar_style.css">
+</head>
+<body>
+
+
+
+    <main class="main-layout">
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="content-area">
+            <div class="breadcrumb">Minhas Comunidades > tevejo/MãesDeNatal > Postar</div>
+            <h1 class="page-title">Postar</h1>
+
+            <div class="post-form-container">
+                <div class="community-selector">
+                    <img src="https://placehold.co/26x26/ccc/333?text=M" alt="Ícone Comunidade">
+                    <span>tevejo/MãesDeNatal</span>
+                </div>
+
+                <form class="post-form">
+                    <label for="titulo" class="form-label">Título *</label>
+                    <input type="text" id="titulo" class="form-input" maxlength="300" placeholder="Digite o título do post">
+                    <span class="char-count">0/300</span>
+
+                    <button type="button" class="tag-button">Adicionar Tag</button>
+
+                    <div class="editor-toolbar">
+                        <button type="button"><b>B</b></button>
+                        <button type="button"><i>I</i></button>
+                        <button type="button">S</button>
+                        <button type="button"><i data-lucide="link"></i></button>
+                        <button type="button"><i data-lucide="image"></i></button>
+                        <button type="button"><i data-lucide="list"></i></button>
+                        <button type="button"><i data-lucide="code"></i></button>
+                        <button type="button"><i data-lucide="more-horizontal"></i></button>
+                        <span class="editor-mode">Mudar para o editor Markdown</span>
+                    </div>
+
+                    <textarea class="form-textarea" placeholder="Texto do post (Opcional)"></textarea>
+
+                    <div class="post-button-container">
+                        <button type="submit" class="post-button">Postar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

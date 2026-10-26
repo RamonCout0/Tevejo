@@ -1,0 +1,106 @@
+<div class="min-h-screen flex" style="background: var(--color-tv-bg);">
+
+  <!-- MARCA (desktop) -->
+  <div class="hidden lg:block w-[480px] xl:w-[540px] shrink-0" style="border-right: 1px solid var(--tv-border-blue);">
+    <app-hero-marca eyebrow="Bem-vindo(a)" titulo="Vamos caminhar" destaque="juntos."></app-hero-marca>
+  </div>
+
+  <!-- FORMULÁRIO -->
+  <div class="flex-1 flex items-center justify-center px-5 py-10 relative">
+    <div class="tv-faixa-marca absolute inset-x-0 top-0 lg:hidden"></div>
+
+    <div class="w-full max-w-md tv-slide-up">
+      <div class="lg:hidden flex items-center justify-between mb-8">
+        <button (click)="voltar()" class="tv-btn tv-btn-ghost tv-btn-icone" aria-label="Voltar">
+          <i class="fas fa-arrow-left text-sm" aria-hidden="true"></i>
+        </button>
+        <img src="/assets/logo.svg" alt="TeVejo" class="h-11 w-auto">
+        <span class="w-9" aria-hidden="true"></span>
+      </div>
+
+      <div class="tv-card p-7 sm:p-9 space-y-7" style="box-shadow: var(--tv-shadow-lg);">
+        <div class="space-y-2">
+          <p class="tv-page-eyebrow">Criar conta</p>
+          <h2 class="tv-page-title">Vamos te conhecer</h2>
+          <p class="tv-page-subtitle">Leva menos de um minuto.</p>
+        </div>
+
+        <form class="space-y-4" (submit)="criarConta(); $event.preventDefault();" novalidate>
+          <div>
+            <label class="tv-label" for="cad-nome">Nome completo <span class="tv-required">*</span></label>
+            <input id="cad-nome" type="text" name="nome" autocomplete="name" [maxlength]="limites.usuarioNome"
+                   [(ngModel)]="nome" required class="tv-input" placeholder="Seu nome">
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="tv-label" for="cad-user">Usuário <span class="tv-required">*</span></label>
+              <input id="cad-user" type="text" name="username" autocomplete="username" maxlength="30"
+                     [(ngModel)]="username" required class="tv-input" placeholder="seu_usuario">
+            </div>
+            <div>
+              <label class="tv-label" for="cad-email">E-mail <span class="tv-required">*</span></label>
+              <input id="cad-email" type="email" name="email" autocomplete="email" maxlength="150"
+                     [(ngModel)]="email" required class="tv-input" placeholder="seu@email.com">
+            </div>
+          </div>
+
+          <div>
+            <label class="tv-label" for="cad-pass">Senha <span class="tv-required">*</span></label>
+            <div class="relative">
+              <input id="cad-pass" [type]="mostrarSenha() ? 'text' : 'password'" name="password"
+                     autocomplete="new-password" maxlength="128"
+                     [(ngModel)]="password" required class="tv-input pr-12" placeholder="Mínimo 8 caracteres">
+              <button type="button" (click)="mostrarSenha.set(!mostrarSenha())"
+                      class="absolute inset-y-0 right-1 my-1 tv-btn tv-btn-ghost tv-btn-icone"
+                      style="color: var(--color-tv-muted-fg);"
+                      [attr.aria-label]="mostrarSenha() ? 'Ocultar senha' : 'Mostrar senha'"
+                      [attr.aria-pressed]="mostrarSenha()">
+                <i [class]="mostrarSenha() ? 'fas fa-eye-slash' : 'fas fa-eye'" aria-hidden="true"></i>
+              </button>
+            </div>
+            <p class="text-xs mt-1.5" style="color: var(--color-tv-muted-fg);">
+              Use letras e números; evite senhas comuns ou parecidas com seu nome.
+            </p>
+          </div>
+
+          <div>
+            <label class="tv-label" for="cad-pass2">Confirmar senha <span class="tv-required">*</span></label>
+            <div class="relative">
+              <input id="cad-pass2" [type]="mostrarConfirmacao() ? 'text' : 'password'" name="password_confirmacao"
+                     autocomplete="new-password" maxlength="128"
+                     [(ngModel)]="confirmacao" required class="tv-input pr-12" placeholder="Digite a senha de novo"
+                     [attr.aria-invalid]="senhasDiferentes()"
+                     [attr.aria-describedby]="senhasDiferentes() ? 'cad-pass2-erro' : null">
+              <button type="button" (click)="mostrarConfirmacao.set(!mostrarConfirmacao())"
+                      class="absolute inset-y-0 right-1 my-1 tv-btn tv-btn-ghost tv-btn-icone"
+                      style="color: var(--color-tv-muted-fg);"
+                      [attr.aria-label]="mostrarConfirmacao() ? 'Ocultar confirmação de senha' : 'Mostrar confirmação de senha'"
+                      [attr.aria-pressed]="mostrarConfirmacao()">
+                <i [class]="mostrarConfirmacao() ? 'fas fa-eye-slash' : 'fas fa-eye'" aria-hidden="true"></i>
+              </button>
+            </div>
+            <p *ngIf="senhasDiferentes()" id="cad-pass2-erro" class="text-xs mt-1.5" style="color: var(--color-tv-destructive);">
+              <i class="fas fa-circle-exclamation" aria-hidden="true"></i> As senhas não coincidem.
+            </p>
+          </div>
+
+          <div *ngIf="erro() as msg" class="tv-alert tv-alert-error" role="alert">
+            <i class="fas fa-circle-exclamation mt-[2px]" aria-hidden="true"></i>
+            <span>{{ msg }}</span>
+          </div>
+
+          <button type="submit"
+                  [disabled]="enviando() || !nome || !email || !password || !confirmacao || !username"
+                  class="tv-btn tv-btn-primary tv-btn-lg w-full">
+            {{ enviando() ? 'Criando conta…' : 'Criar conta' }}
+          </button>
+        </form>
+
+        <p class="text-sm text-center" style="color: var(--color-tv-muted-fg);">
+          Já tem conta? <a routerLink="/login" class="tv-link">Entrar</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

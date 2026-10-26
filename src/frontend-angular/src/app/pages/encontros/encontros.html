@@ -1,0 +1,99 @@
+<div class="max-w-4xl mx-auto space-y-6">
+
+  <div class="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <h1 class="tv-page-title">Encontros</h1>
+      <p class="tv-page-subtitle pt-2">
+        Próximos encontros organizados pelas comunidades.
+      </p>
+    </div>
+
+    <div class="flex gap-2" role="group" aria-label="Filtrar encontros">
+      <button type="button" (click)="filtrar(false)"
+              class="tv-btn tv-btn-sm"
+              [class.tv-btn-primary]="!apenasMinhas()"
+              [class.tv-btn-secondary]="apenasMinhas()"
+              [attr.aria-pressed]="!apenasMinhas()">
+        Todos
+      </button>
+      <button type="button" (click)="filtrar(true)"
+              class="tv-btn tv-btn-sm"
+              [class.tv-btn-primary]="apenasMinhas()"
+              [class.tv-btn-secondary]="!apenasMinhas()"
+              [attr.aria-pressed]="apenasMinhas()">
+        Minhas comunidades
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="carregando()" class="tv-loading-row">
+    <span class="tv-dot-loader" aria-hidden="true"><span></span><span></span><span></span></span>
+    Carregando encontros…
+  </div>
+
+  <div *ngIf="erro() as msg" class="tv-alert tv-alert-error" role="alert">
+    {{ msg }}
+    <button type="button" (click)="carregar()" class="tv-btn tv-btn-ghost tv-btn-sm ml-2">Tentar novamente</button>
+  </div>
+
+  <!-- Fluxo Alternativo I: nenhum encontro -->
+  <div *ngIf="!carregando() && !erro() && encontros().length === 0" class="tv-empty tv-card">
+    <img src="/assets/girassol.svg" alt="" class="w-14" aria-hidden="true">
+    <p class="tv-empty-title">Nenhum encontro público disponível no momento.</p>
+    <p *ngIf="apenasMinhas()" class="tv-empty-desc">
+      Entre em mais comunidades para ver os encontros que elas organizam.
+    </p>
+    <a routerLink="/comunidades" class="tv-btn tv-btn-secondary tv-btn-sm">Explorar comunidades</a>
+  </div>
+
+  <ul *ngIf="!carregando() && encontros().length > 0" class="space-y-3">
+    <li *ngFor="let e of encontros()" class="tv-card overflow-hidden">
+      <button type="button" (click)="alternarDetalhes(e.id)"
+              class="w-full text-left flex items-start gap-4 p-5"
+              [attr.aria-expanded]="selecionadoId() === e.id"
+              [attr.aria-controls]="'encontro-' + e.id">
+        <div class="flex flex-col items-center shrink-0 px-3 py-2 rounded-md text-center"
+             style="background: var(--tv-gradiente-suave); min-width: 60px;">
+          <span class="text-[11px] uppercase tracking-wider font-bold leading-none"
+                style="color: var(--color-tv-primary-ink);">
+            {{ e.data_hr_encontro | date:'MMM':'':'pt-BR' }}
+          </span>
+          <span class="text-2xl font-bold leading-tight" style="color: var(--color-tv-primary-ink); font-family: var(--tv-font-display);">
+            {{ e.data_hr_encontro | date:'dd' }}
+          </span>
+        </div>
+
+        <div class="min-w-0 flex-1">
+          <p class="tv-section-title tv-linhas-2">{{ e.titulo }}</p>
+          <p class="text-sm tv-linhas-2" style="color: var(--color-tv-muted-fg);">
+            {{ e.data_hr_encontro | date:"EEEE, dd/MM 'às' HH:mm":'':'pt-BR' }} · {{ e.endereco }}
+          </p>
+          <p class="text-xs mt-1.5 font-semibold truncate" style="color: var(--color-tv-primary-ink);">
+            <span class="tv-bolinha inline-block align-middle mr-1" [style.background]="e.comunidade | corDaMarca"></span>{{ e.comunidade }}
+          </p>
+        </div>
+
+        <i class="fas text-xs mt-2" aria-hidden="true"
+           [class.fa-chevron-down]="selecionadoId() !== e.id"
+           [class.fa-chevron-up]="selecionadoId() === e.id"
+           style="color: var(--color-tv-muted-fg);"></i>
+      </button>
+
+      <!-- Detalhes do encontro selecionado -->
+      <div *ngIf="selecionadoId() === e.id" [id]="'encontro-' + e.id"
+           class="px-5 pb-5 space-y-3" style="border-top: 1px solid var(--tv-border-blue);">
+        <img *ngIf="e.img" [src]="e.img" alt="" class="w-full max-h-72 object-cover rounded-md mt-4">
+        <div class="tv-texto-rico pt-3" [innerHTML]="e.descricao | textoRico"></div>
+        <div *ngIf="tagsDe(e).length > 0" class="flex flex-wrap gap-1.5">
+          <span *ngFor="let t of tagsDe(e)" class="tv-badge max-w-[12rem]" [ngClass]="t | tomDaMarca" [title]="t">#{{ t }}</span>
+        </div>
+        <p class="text-xs" style="color: var(--color-tv-muted-fg);">
+          Organizado por {{ e.criado_por || 'moderação da comunidade' }}
+        </p>
+        <a [routerLink]="['/comunidades', e.comunidade_id]" class="tv-btn tv-btn-secondary tv-btn-sm">
+          Ver comunidade
+        </a>
+      </div>
+    </li>
+  </ul>
+</div>

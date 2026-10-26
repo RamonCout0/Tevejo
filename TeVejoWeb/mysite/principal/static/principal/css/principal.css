@@ -1,0 +1,90 @@
+    :root {
+    height: auto;
+    }
+
+    body {
+    font-family: 'Radio Canada', sans-serif;
+    background-color: #e2e1e1;
+    background-image: url("../imgs/background.jpg");
+    background-size: 15%;
+    background-blend-mode: multiply;
+    min-height: 100vh;
+    color:black;
+    }
+
+        
+    body {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .main-wrapper {
+        flex: 1 0 auto;
+    }
+    
+    footer {
+        flex-shrink: 0;
+    }
+    
+    .content-area {
+        min-height: 400px;
+    }
+    
+    /* Animação suave para links */
+    a {
+        transition: all 0.3s ease;
+    }
+    
+    /* Espaçamento do conteúdo principal */
+    .main-content {
+        padding: 0rem 0rem;
+    }
+
+    .section{
+        padding: 1.4rem 0rem;
+    }
+
+    .column{
+        padding: 0.6rem 10rem 0.6rem 0rem;
+    }
+
+    .container.is_fluid {
+        padding-left: 15px;
+    }
+    
+    /* --- RESPONSIVIDADE BASE (Adicionar ao final do base.css) --- */
+
+@media screen and (max-width: 768px) {
+    /* Reseta o padding exagerado de 10rem para telas pequenas */
+    .column {
+        padding: 0.5rem !important; 
+        width: 100%;
+        display: block;
+    }
+
+    /* Ajuste do container para aproveitar a tela toda */
+    .container.is-fluid {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    /* Remove padding lateral excessivo da section */
+    .section {
+        padding: 1rem 0.5rem;
+    }
+
+    /* Reordenar: Conteúdo primeiro, Sidebar depois (opcional, mas recomendado para UX) */
+    .columns {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .content-column {
+        order: 1;
+        margin-bottom: 2rem;
+    }
+    
+    .sidebar-column {
+        order: 2;
+    }
+}

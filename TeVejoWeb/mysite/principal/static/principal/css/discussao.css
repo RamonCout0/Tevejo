@@ -1,0 +1,228 @@
+/* --- CONFIGURAÇÕES GERAIS --- */
+:root {
+    --card-bg: #FFFFFF;
+    --border-color: #CCCCCC;
+    --text-primary: #222222;
+    --text-secondary: #787C7E;
+    --link-blue: #0079D3;
+    --hover-gray: #EFEFEF;
+}
+
+.content-area {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 0;
+}
+
+/* Page Header */
+.page-header {
+    margin-bottom: 10px;
+    padding: 0 5px;
+}
+.breadcrumb {
+    font-size: 0.85rem;
+    color: gray;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+.page-title {
+    font-size: 1.5rem;
+    color: #333;
+    font-weight: 700;
+}
+
+/* --- CARD DO POST --- */
+.post-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+}
+
+.post-card:hover {
+    border-color: #898989;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Cabeçalho do Card */
+.post-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px 4px 12px; /* Reduzi o padding bottom */
+    font-size: 12px;
+}
+
+.post-author-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.avatar {
+    width: 24px; /* Levemente menor para alinhar com texto */
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.meta-text {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--text-secondary);
+}
+
+.community-link {
+    font-weight: 700;
+    color: var(--link-blue);
+    text-decoration: none;
+    font-size: 0.85rem;
+}
+.community-link:hover { text-decoration: underline; }
+
+.user-meta {
+    color: var(--text-secondary);
+}
+
+/* Destaque leve para o nome do usuário se necessário */
+.user-name {
+    color: #555; 
+    font-weight: 500;
+}
+.user-name:hover { text-decoration: underline; }
+
+.dots {
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    padding: 4px;
+}
+
+/* Conteúdo */
+.post-content-wrapper {
+    padding: 4px 16px 8px 16px;
+}
+
+/* NOVO: Estilo do Título */
+.post-title-card {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 4px 0 8px 0;
+    line-height: 1.4;
+}
+
+.post-text {
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    line-height: 1.5;
+    margin: 0;
+    word-wrap: break-word;
+}
+
+/* Ações */
+.action-bar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px 4px 4px;
+    background-color: transparent;
+    color: #878A8C;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.btn-action {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+.btn-action:hover { background-color: var(--hover-gray); }
+.btn-action img { width: 20px; height: 20px; opacity: 0.6; }
+
+
+@media (max-width: 768px) {
+    
+    /* Ajuste do cabeçalho da página */
+    .page-title {
+        font-size: 1.25rem; /* Título um pouco menor */
+    }
+
+    /* Ajuste do cabeçalho do post (Autor/Comunidade) */
+    .post-head {
+        flex-wrap: wrap; /* Permite quebrar linha se o nome for longo */
+        gap: 5px;
+    }
+
+    .post-author-info {
+        max-width: 90%; /* Garante espaço para os 3 pontinhos */
+        flex-wrap: nowrap;
+    }
+
+    .meta-text {
+        font-size: 0.75rem; /* Texto de metadados menor */
+        flex-wrap: wrap;
+        line-height: 1.3;
+    }
+
+    /* Esconde a frase "Postado por" e deixa só o usuário para economizar espaço */
+    .user-meta {
+        display: inline-block;
+    }
+    
+    /* Opcional: Se quiser esconder o "Postado por" visualmente e manter só o user/data
+       descomente as linhas abaixo:
+    .user-meta { font-size: 0; }
+    .user-meta .user-name, .user-meta span { font-size: 0.75rem; }
+    */
+
+    /* Ajuste do Conteúdo */
+    .post-title-card {
+        font-size: 1rem; /* Título do post ajustado */
+    }
+    
+    .post-text {
+        font-size: 0.9rem; /* Texto do corpo ajustado */
+    }
+
+    /* Ajuste da Barra de Ações (Footer do card) */
+    .action-bar {
+        justify-content: space-between; /* Distribui os botões igualmente */
+        padding: 4px 8px;
+    }
+
+    .btn-action {
+        padding: 6px; /* Área de toque menor */
+        gap: 4px;
+    }
+
+    .btn-action span {
+        font-size: 0.75rem; /* Texto dos botões menor */
+    }
+
+    .btn-action img {
+        width: 18px; /* Ícones levemente menores */
+        height: 18px;
+    }
+}
+
+/* Ajuste para telas MUITO pequenas (ex: iPhone SE, Galaxy Fold fechado) */
+@media (max-width: 380px) {
+    /* Esconde o texto "Compartilhar" e "Comentários" mantendo só ícone e número */
+    .btn-action span {
+        display: none; 
+    }
+    
+    /* Se tiver número (ex: contador de likes/comentários), mostra só o número */
+    .btn-action span:not(:empty):first-of-type { 
+        display: inline-block; /* Mantém contadores visíveis se for o primeiro span */
+    }
+}

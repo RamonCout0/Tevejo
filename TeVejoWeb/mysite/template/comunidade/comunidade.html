@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tevejo/MãesDeNatal</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Radio+Canada:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  <link rel="stylesheet" href="comunidade.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <img class="logo" src="imagens/logo.png" alt="Logo TeVejo">
+    </div>
+
+    <div class="header-center">
+        <div class="search-bar">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" placeholder="“Auto Regulação Nível 3”" class="search-input">
+        </div>
+    </div>
+
+    <div class="header-right">
+      <button class="notif-btn">🔔 55 Notificações</button>
+      <img src="imagens/foto.png" class="avatar" alt="Usuário">
+    </div>
+  </header>
+
+  <!-- LAYOUT PRINCIPAL -->
+  <main class="layout">
+
+    <aside class="sidebar">
+    <nav class="sidebar-nav">
+        <a class="sidebar-item active"><i class="fas fa-comments"></i> Discussões em Destaque</a>
+        <a class="sidebar-item"><i class="fas fa-book-open"></i> Conteúdo Educacional</a>
+        <a class="sidebar-item"><i class="fas fa-users"></i> Encontros</a>
+
+        <div class="sidebar-divider"></div>
+
+        <span class="sidebar-label">Comunidades</span>
+        <a class="sidebar-item"><i class="fas fa-plus-circle"></i> Criar Comunidade</a>
+        <a class="sidebar-item"><i class="fas fa-cog"></i> Gerenciar Comunidades</a>
+        <a class="sidebar-item community"><i class="fas fa-users"></i> tevejo/MãesDeNatal</a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <a class="sidebar-item"><i class="fas fa-user"></i> Meu Perfil</a>
+    </div>
+    </aside>
+
+    <!-- CONTEÚDO CENTRAL -->
+    <section class="main-content">
+      <div class="breadcrumb">Minhas Comunidades > tevejo/MãesDeNatal</div>
+
+      <!-- BANNER -->
+      <div class="banner-wrapper">
+        <div class="banner-inner">
+          <img src="imagens/imagem1.png" alt="banner" class="banner-img">
+          <img src="imagens/imagem2.png" alt="avatar" class="banner-avatar">
+          <div class="banner-content">
+            <h1 class="banner-title">tevejo/MãesDeNatal <span class="lock">🔒</span></h1>
+            <div class="banner-members">278 membros</div>
+          </div>
+          <div class="banner-actions">
+            <button class="btn red small">Moderar</button>
+            <button class="btn neutral small">+ Postar</button>
+            <button class="btn outline-blue small">Unir-se</button>
+            <span class="alert-icon">⚠️</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- POSTS -->
+      <div class="posts">
+        <article class="post">
+          <div class="post-header">
+            <img src="imagens/imagem2.png" class="post-avatar" alt="Avatar">
+            <div class="post-meta">
+              <span class="user">c/DonaMaria</span> • <span>há 2h</span>
+            </div>
+          </div>
+          <p class="post-text">Meu filho de 11 anos não desenvolveu a fala direito, alguém sabe como melhorar a comunicação dele?</p>
+          <div class="tag nivel2">Autista Nível 2</div>
+          <div class="actions">
+            <span>❤️ 240</span> <span>💬 33</span> <span>🔗 11</span>
+          </div>
+        </article>
+
+        <article class="post">
+          <div class="post-header">
+            <img src="imagens/imagem2.png" class="post-avatar" alt="Avatar">
+            <div class="post-meta">
+              <span class="user">c/Fabiana</span> • <span>há 12h</span>
+            </div>
+          </div>
+          <p class="post-text">Gente, como vocês lidam com seus filhos numa crise de ansiedade no ônibus? O meu tentando fugir do ônibus e eu não sei o que fazer.</p>
+          <div class="tag nivel3">Autista Nível 3</div>
+          <div class="actions">
+            <span>❤️ 341</span> <span>💬 53</span> <span>🔗 21</span>
+          </div>
+        </article>
+
+        <article class="post">
+          <div class="post-header">
+            <img src="imagens/imagem2.png" class="post-avatar" alt="Avatar">
+            <div class="post-meta">
+              <span class="user">c/Cesar</span> • <span>há 12h</span>
+            </div>
+          </div>
+          <p class="post-text">Na escola minha filha está sendo excluída pelas coleguinhas, e ela está ficando cabisbaixa em casa por conta disso, o que dizer?</p>
+          <div class="tag nivel1">Autista Nível 1</div>
+          <div class="actions">
+            <span>❤️ 341</span> <span>💬 53</span> <span>🔗 21</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- LATERAL DIREITA -->
+    <aside class="right-panel">
+      <section class="card">
+        <h2>Mães de Natal</h2>
+        <p>Comunidade criada com objetivo de acolher e unir as mães de filhos TEA em Natal-RN.</p>
+        <p>📅 Criada em 14 de nov. de 2004</p>
+        <p>🌍 Pública</p>
+      </section>
+
+      <section class="card">
+        <h3>Regras do tevejo/MãesDeNatal</h3>
+        <ol>
+          <li>Não falamos de política.</li>
+          <li>Não seja desonesto academicamente.</li>
+          <li>Seja sempre respeitoso com qualquer dúvida ou discussão.</li>
+        </ol>
+      </section>
+
+      <section class="card event">
+        <h3>Próximo Encontro</h3>
+        <p><strong>Roda de conversa semanal</strong></p>
+        <p>Evento voltado à conscientização sobre o autismo, com foco na correção de informações equivocadas e estereótipos.</p>
+        <p><strong>Dia:</strong> 02 de Abril de 2025 às 09:33</p>
+        <p><strong>Aberto ao público</strong></p>
+        <p><strong>231 pessoas marcaram presença</strong></p>
+        <button class="btn-outline">Cancelar Encontro</button>
+        <button class="btn blue">+ Agendar Encontro</button>
+      </section>
+    </aside>
+
+  </main>
+</body>
+</html>

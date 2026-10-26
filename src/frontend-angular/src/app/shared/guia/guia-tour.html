@@ -1,0 +1,57 @@
+<ng-container *ngIf="guia.ativo() && guia.passoAtual() as passo">
+
+  <!-- Escurece a tela inteira, com um "furo" arredondado em volta do alvo,
+       e bloqueia cliques fora do guia -->
+  <svg class="fixed inset-0 z-[90] w-full h-full" aria-hidden="true">
+    <path [attr.d]="mascara()" fill="#121214" fill-opacity="0.7" fill-rule="evenodd"></path>
+  </svg>
+
+  <!-- Anel em volta do alvo destacado -->
+  <div *ngIf="destaque() as d" class="fixed z-[91] pointer-events-none tv-guia-destaque" aria-hidden="true"
+       [style.top.px]="d.top" [style.left.px]="d.left" [style.width.px]="d.width" [style.height.px]="d.height"></div>
+
+  <!-- Balão do Gui -->
+  <section #balao tabindex="-1" role="dialog" aria-modal="true"
+           [attr.aria-labelledby]="'guia-titulo-' + passo.id" [attr.aria-describedby]="'guia-texto-' + passo.id"
+           class="fixed z-[92] tv-card tv-guia-balao outline-none"
+           [style.top.px]="posicaoBalao().top" [style.left.px]="posicaoBalao().left" [style.width.px]="posicaoBalao().width">
+
+    <span *ngIf="posicaoSeta() as s" class="tv-guia-seta" aria-hidden="true"
+          [style.top.px]="s.top" [style.left.px]="s.left"></span>
+
+    <div class="p-5 space-y-3">
+      <div class="flex items-start gap-3">
+        <img src="/assets/personagens/gui.svg" alt="" class="w-10 shrink-0 tv-guia-mascote" aria-hidden="true">
+        <div class="min-w-0 space-y-1">
+          <p class="tv-page-eyebrow" style="color: var(--color-tv-primary-ink);">
+            Guia · passo {{ guia.indice() + 1 }} de {{ guia.passos().length }}
+          </p>
+          <h2 [id]="'guia-titulo-' + passo.id" class="tv-section-title leading-snug">{{ passo.titulo }}</h2>
+        </div>
+      </div>
+
+      <p [id]="'guia-texto-' + passo.id" class="text-[15px] leading-relaxed" aria-live="polite">{{ passo.texto }}</p>
+
+      <!-- Progresso -->
+      <div class="flex gap-1.5 pt-1" aria-hidden="true">
+        <span *ngFor="let p of guia.passos(); let i = index" class="h-1.5 rounded-full transition-all"
+              [style.width.px]="i === guia.indice() ? 18 : 6"
+              [style.background]="i <= guia.indice() ? 'var(--color-tv-primary)' : 'var(--tv-border-blue)'"></span>
+      </div>
+
+      <div class="flex items-center gap-2 pt-1">
+        <button type="button" class="tv-btn tv-btn-ghost tv-btn-sm -ml-2" (click)="guia.encerrar()">
+          {{ guia.ehUltimo() ? 'Fechar' : 'Pular guia' }}
+        </button>
+        <span class="flex-1"></span>
+        <button *ngIf="!guia.ehPrimeiro()" type="button" class="tv-btn tv-btn-secondary tv-btn-sm" (click)="guia.anterior()">
+          <i class="fas fa-arrow-left text-xs" aria-hidden="true"></i> Voltar
+        </button>
+        <button type="button" class="tv-btn tv-btn-primary tv-btn-sm" (click)="guia.proximo()">
+          {{ guia.ehUltimo() ? 'Concluir' : (guia.ehPrimeiro() ? 'Vamos lá!' : 'Próximo') }}
+          <i *ngIf="!guia.ehUltimo()" class="fas fa-arrow-right text-xs" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+</ng-container>

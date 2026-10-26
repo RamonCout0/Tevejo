@@ -1,0 +1,114 @@
+<div class="max-w-6xl mx-auto space-y-6">
+
+  <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+    <div class="space-y-1">
+      <h1 class="tv-page-title">Comunidades</h1>
+      <p class="tv-page-subtitle pt-1">Encontre sua tribo, ou crie a sua.</p>
+    </div>
+    <a *ngIf="podeVerParticipar()" routerLink="/criar-comunidade" class="tv-btn tv-btn-primary self-start sm:self-auto">
+      <i class="fas fa-plus" aria-hidden="true"></i> Nova comunidade
+    </a>
+  </div>
+
+  <div class="tv-card p-3 sm:p-4 space-y-3" data-guia="busca-comunidades">
+    <div class="relative">
+      <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-sm" style="color: var(--color-tv-muted-fg);" aria-hidden="true"></i>
+      <label class="sr-only" for="busca-comunidades">Buscar comunidades</label>
+      <input id="busca-comunidades" type="search" maxlength="80"
+             [(ngModel)]="filtro" (ngModelChange)="onFiltroChange($event)"
+             placeholder="Buscar por nome, categoria ou descrição…"
+             class="tv-input" style="padding-left: 44px; border-radius: 9999px;">
+    </div>
+
+    <div *ngIf="categorias().length > 0" class="flex flex-wrap gap-2" role="group" aria-label="Filtrar por categoria">
+      <button type="button" class="tv-chip" [class.tv-chip-active]="categoria() === null"
+              (click)="categoria.set(null)" [attr.aria-pressed]="categoria() === null">
+        Todas <span class="opacity-70">({{ comunidades().length }})</span>
+      </button>
+      <button *ngFor="let cat of categorias()" type="button" class="tv-chip"
+              [class.tv-chip-active]="categoria() === cat.nome" (click)="categoria.set(cat.nome)"
+              [attr.aria-pressed]="categoria() === cat.nome">
+        <i class="fas text-xs" [ngClass]="cat.icone" aria-hidden="true"></i>
+        {{ cat.nome }} <span class="opacity-70">({{ cat.total }})</span>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="carregando()" class="tv-loading-row">
+    <span class="tv-dot-loader" aria-hidden="true"><span></span><span></span><span></span></span>
+    Carregando comunidades…
+  </div>
+
+  <div *ngIf="erro() as msg" class="tv-alert tv-alert-error" role="alert">
+    <i class="fas fa-circle-exclamation mt-[2px]" aria-hidden="true"></i>
+    <span>{{ msg }}</span>
+  </div>
+
+  <div *ngIf="!carregando() && comunidadesFiltradas().length === 0 && !erro()" class="tv-empty tv-card">
+    <img src="/assets/girassol.svg" alt="" class="w-14" aria-hidden="true">
+    <p class="tv-empty-title">Nenhuma comunidade encontrada</p>
+    <p class="tv-empty-desc">Tente outro termo de busca, ou crie uma comunidade nova sobre esse assunto.</p>
+  </div>
+
+  <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3 tv-stagger">
+    <article *ngFor="let c of comunidadesFiltradas()"
+             class="tv-card tv-card-hover overflow-hidden cursor-pointer group flex flex-col"
+             [routerLink]="['/comunidades', c.id]"
+             tabindex="0" role="link" [attr.aria-label]="c.nome">
+
+      <!-- Banner: imagem real se houver, senão o degradê da marca -->
+      <div class="aspect-[4/1] relative shrink-0"
+           [style.background]="c.banner ? 'none' : 'var(--tv-gradiente-diagonal)'">
+        <img *ngIf="c.banner" [src]="c.banner" alt="" class="absolute inset-0 w-full h-full object-cover">
+      </div>
+
+      <div class="p-5 pt-0 flex flex-col gap-3 flex-1">
+        <div class="relative z-10 flex items-end justify-between gap-2 -mt-8">
+          <!-- Ícone sobreposto -->
+          <div class="w-16 h-16 rounded-full p-[3px] shrink-0" style="background: var(--tv-gradiente-diagonal); box-shadow: var(--tv-shadow-md);">
+            <div class="w-full h-full rounded-full overflow-hidden flex items-center justify-center"
+                 style="background: var(--color-tv-card); border: 2px solid var(--color-tv-card);">
+              <img *ngIf="c.icone" [src]="c.icone" alt="" class="w-full h-full object-cover">
+              <span *ngIf="!c.icone" class="tv-avatar w-full h-full text-base" [ngClass]="c.nome | tomDaMarca">{{ c.nome | iniciais }}</span>
+            </div>
+          </div>
+          <span *ngIf="c.is_moderador" class="tv-badge tv-badge-role">
+            <i class="fas fa-shield text-[9px]" aria-hidden="true"></i>Moderador
+          </span>
+          <span *ngIf="!c.is_moderador && c.is_membro" class="tv-badge tv-badge-success">
+            <i class="fas fa-check text-[9px]" aria-hidden="true"></i>Membro
+          </span>
+        </div>
+
+        <div class="space-y-1.5 min-w-0">
+          <h2 class="tv-section-title leading-snug tv-linhas-2 group-hover:text-[var(--color-tv-primary-ink)] transition-colors">
+            {{ c.nome }}
+          </h2>
+          <span class="tv-badge" [ngClass]="c.categoria | tomDaMarca" [title]="c.categoria">{{ c.categoria }}</span>
+        </div>
+
+        <p class="text-sm leading-relaxed tv-linhas-2 flex-1" style="color: var(--color-tv-muted-fg);">
+          {{ c.descricao || '—' }}
+        </p>
+
+        <div class="flex items-center justify-between gap-3 pt-1">
+          <span class="inline-flex items-center gap-1.5 text-sm" style="color: var(--color-tv-muted-fg);">
+            <i class="fas fa-users text-xs" aria-hidden="true"></i>
+            {{ c.membros_count }} {{ c.membros_count === 1 ? 'membro' : 'membros' }}
+          </span>
+
+          <button *ngIf="!c.is_membro && !c.is_moderador && podeVerParticipar()"
+                  (click)="participar(c, $event)"
+                  [disabled]="acaoEmId() === c.id"
+                  class="tv-btn tv-btn-secondary tv-btn-sm">
+            <i class="fas fa-user-plus" aria-hidden="true"></i>
+            {{ acaoEmId() === c.id ? 'Entrando…' : 'Participar' }}
+          </button>
+          <i *ngIf="c.is_membro || c.is_moderador || !podeVerParticipar()"
+             class="fas fa-arrow-right text-sm group-hover:translate-x-1 transition-transform"
+             style="color: var(--color-tv-primary-ink);" aria-hidden="true"></i>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>

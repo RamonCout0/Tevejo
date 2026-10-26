@@ -1,0 +1,128 @@
+{% extends 'principal/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'comunidades/css/comunidade.css' %}">
+{% endblock %}
+
+{% block content %}
+  <main class="layout">
+    
+    <section class="main-content">
+      <div class="breadcrumb">Minhas Comunidades > TeVejo/{{ comunidade.nome }}</div>
+
+      <div class="banner-wrapper">
+        <div class="banner-inner">
+          
+          <div class="banner-image-container">
+            {% if comunidade.banner %}
+              <img src="{{ comunidade.banner.url }}" alt="banner" class="banner-img">
+            {% else %}
+              <img src="{% static 'comunidades/imgs/imagem1.png' %}" alt="banner" class="banner-img">
+            {% endif %}
+          </div>
+          
+          <div class="banner-info-group">
+            <div class="avatar-wrapper">
+              {% if comunidade.icone %}
+                <img src="{{ comunidade.icone.url }}" alt="avatar" class="banner-avatar">
+              {% else %}
+                <img src="{% static 'comunidades/imgs/imagem2.png' %}" alt="avatar" class="banner-avatar">
+              {% endif %}
+            </div>
+            
+            <div class="banner-content">
+              <h1 class="banner-title">
+                TeVejo/{{ comunidade.nome }} 
+                <span class="lock">{% if comunidade.tipoVisibilidade == 'privado' %}🔒{% else %}🌍{% endif %}</span>
+              </h1>
+              <div class="banner-members">{{ comunidade.conviventes.count }} membros</div>
+            </div>
+
+            <div class="banner-actions">
+                {% if request.user in comunidade.moderadores.all %}
+                <button class="btn red small">Moderar</button>
+                {% endif %}
+                
+                {% if request.user in comunidade.conviventes.all %}
+                <a href="{% url 'comunidades:criarpost' comunidade.id %}" class="btn neutral small" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">+ Postar</a>
+                <a href="{% url 'comunidades:sair' comunidade.id %}" class="btn btn-membro small">✓ Sair</a>
+                {% else %}
+                <a href="{% url 'comunidades:participar' comunidade.id %}" class="btn btn-participar small">Unir-se</a>
+                {% endif %}
+                
+                <span class="alert-icon" title="Denunciar Comunidade">⚠️</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="posts">
+        {% for post in posts %}
+        <article class="post">
+          <div class="post-header">
+            <div class="post-user-info">
+                {% if post.autor.foto %}
+                  <img src="{{ post.autor.foto.url }}" class="post-avatar" alt="Avatar">
+                {% else %}
+                  <img src="{% static 'comunidades/imgs/imagem2.png' %}" class="post-avatar" alt="Avatar">
+                {% endif %}
+                <div class="post-meta">
+                  <span class="user">{{ post.autor.username }}</span>
+                  <span class="date">há {{ post.dataPostagem|timesince }}</span>
+                </div>
+            </div>
+          </div>
+          
+          <h2 class="post-title">{{ post.titulo }}</h2>
+          <p class="post-text">{{ post.conteudo }}</p>
+          
+          <div class="post-actions">
+            <span class="post-action like"><i class="fas fa-heart"></i> {{ post.reacoes.count }}</span>
+            <span class="post-action comment"><i class="fas fa-comment"></i> {{ post.comentarios.count }}</span>
+            <span class="post-action report"><i class="fas fa-flag"></i> {{ post.denuncias.count }}</span>
+          </div>
+        </article>
+        {% empty %}
+        <div class="empty-posts">
+            <i class="fas fa-ghost"></i>
+            <p>Nenhum post nesta comunidade ainda.</p>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <aside class="right-panel">
+      <section class="card">
+        <h2>Sobre</h2>
+        <p class="desc-text">{{ comunidade.descricao }}</p>
+        <div class="meta-info">
+            <p>📅 Criada em {{ comunidade.dataCriacao|date:"d/m/Y" }}</p>
+            <p>{% if comunidade.tipoVisibilidade == 'privado' %}🔒 Comunidade Privada{% else %}🌍 Comunidade Pública{% endif %}</p>
+        </div>
+      </section>
+
+      {% if comunidade.regras %}
+      <section class="card">
+        <h3>Regras</h3>
+        <ol class="regras-list">
+          {% for regra in comunidade.regras|linebreaks %}
+            <li>{{ regra }}</li>
+          {% endfor %}
+        </ol>
+      </section>
+      {% endif %}
+      <!-- 
+      <section class="card event">
+        <h3>Próximo Encontro</h3>
+        <p><b>Roda de conversa semanal</b></p>
+        <p>Evento voltado à conscientização sobre o autismo.</p>
+        <p><b>Dia:</b> 02 de Abril de 2025 às 09:33</p>
+        <button class="btn blue">+ Agendar Encontro</button>
+      </section>
+      -->
+    </aside>
+
+  </main>
+{% endblock %}

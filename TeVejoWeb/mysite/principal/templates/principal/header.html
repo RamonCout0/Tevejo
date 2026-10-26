@@ -1,0 +1,198 @@
+{% load static %}
+<header class="header">
+  <button class="mobile-menu-btn" id="mobile-menu-btn">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <div class="header-left">
+    <a href="{% url 'principal:discussoes' %}">
+      <img class="logo" src="{% static 'principal/imgs/logo.png' %}" alt="Logo TeVejo">
+    </a>
+  </div>
+
+  <div class="header-center">
+    <div class="search-bar-wrapper">
+      <div class="search-bar">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" placeholder="Buscar comunidades..." class="search-input" id="header-search-input">
+      </div>
+      <div class="search-results-dropdown" id="search-results-dropdown" style="display: none;">
+        <div class="search-results-list" id="search-results-list">
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="header-right">
+    {% if user.is_authenticated %}
+      <span class="username">Olá, {{ user.username }}</span>
+      
+      <div class="profile-dropdown" id="profile-dropdown">
+        {% if user.foto %}
+        <img src="{{ user.foto.url }}" class="avatar-profile dropdown-trigger" alt="Usuário" title="Clique para menu" style="cursor: pointer;">
+        {% else %}
+        <div class="avatar-placeholder dropdown-trigger">
+          <img src="{% static 'principal/imgs/imagem2.png' %}" class="avatar-profile" alt="Usuário" title="Clique para menu" style="cursor: pointer;">
+        </div>
+        {% endif %}
+        
+        <div class="dropdown-menu" id="dropdown-menu">
+          <a href="{% url 'usuarios:perfil' %}" class="dropdown-item">
+            <i class="fas fa-user"></i> Meu Perfil
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="{% url 'usuarios:logout' %}" class="dropdown-item">
+            <i class="fas fa-sign-out-alt"></i> Sair
+          </a>
+        </div>
+      </div>
+    {% else %}
+      <a class="button is-light" href="{% url 'usuarios:login' %}">Entrar</a>
+    {% endif %}
+  </div>
+</header>
+
+<script>
+  // Funcionalidade da barra de busca no header
+  const searchInput = document.getElementById('header-search-input');
+  const searchResultsDropdown = document.getElementById('search-results-dropdown');
+  const searchResultsList = document.getElementById('search-results-list');
+  let debounceTimer;
+
+  // Event listener para o input de busca
+  searchInput.addEventListener('keyup', function(e) {
+    clearTimeout(debounceTimer);
+    const query = e.target.value.trim();
+
+    // Limpar resultados se o input estiver vazio
+    if (query.length === 0) {
+      searchResultsDropdown.style.display = 'none';
+      return;
+    }
+
+    // Debounce para não fazer requisições a cada caractere digitado
+    debounceTimer = setTimeout(() => {
+      buscarComunidades(query);
+    }, 300);
+  });
+
+  // Fechar dropdown ao clicar fora
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.search-bar-wrapper')) {
+      searchResultsDropdown.style.display = 'none';
+    }
+  });
+
+  // Fechar dropdown ao pressionar ESC
+  searchInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      searchResultsDropdown.style.display = 'none';
+    }
+  });
+
+  // Função para buscar comunidades
+  function buscarComunidades(query) {
+    fetch(`/comunidades/api/buscar/?q=${encodeURIComponent(query)}`)
+      .then(response => response.json())
+      .then(data => {
+        exibirResultados(data.resultados);
+      })
+      .catch(error => {
+        console.error('Erro na busca:', error);
+      });
+  }
+
+  // Função para exibir resultados
+  function exibirResultados(resultados) {
+    if (resultados.length === 0) {
+      searchResultsList.innerHTML = '<div class="search-result-empty">Nenhum resultado correspondente a busca</div>';
+    } else {
+      searchResultsList.innerHTML = resultados.map(comunidade => `
+        <a href="${comunidade.url}" class="search-result-item">
+          <div class="result-icon">
+            ${comunidade.icone ? 
+              `<img src="${comunidade.icone}" alt="${comunidade.nome}">` : 
+              `<div class="result-icon-placeholder"><i class="fas fa-users"></i></div>`
+            }
+          </div>
+          <div class="result-info">
+            <div class="result-name">${comunidade.nome}</div>
+            <div class="result-meta">
+              <span class="result-members"><i class="fas fa-users"></i> ${comunidade.membros} membros</span>
+            </div>
+          </div>
+        </a>
+      `).join('');
+    }
+    searchResultsDropdown.style.display = 'block';
+  }
+  // Dropdown com click
+  document.addEventListener('DOMContentLoaded', function() {
+  const dropdown = document.getElementById('profile-dropdown');
+  const menu = document.getElementById('dropdown-menu');
+  const triggers = dropdown.querySelectorAll('.dropdown-trigger');
+  
+  triggers.forEach(trigger => {
+    trigger.addEventListener('click', function(e) {
+      e.stopPropagation();
+      menu.classList.toggle('active');
+    });
+  });
+  
+  // Fechar ao clicar em um item
+  const items = menu.querySelectorAll('.dropdown-item');
+  items.forEach(item => {
+    item.addEventListener('click', function() {
+      menu.classList.remove('active');
+    });
+  });
+  
+  // Fechar ao clicar fora
+  document.addEventListener('click', function(e) {
+    if (!dropdown.contains(e.target)) {
+      menu.classList.remove('active');
+    }
+  });
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Referências aos elementos
+  const mobileBtn = document.getElementById('mobile-menu-btn');
+  const sidebar = document.getElementById('main-sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+
+  // Função para abrir sidebar
+  function openSidebar() {
+      sidebar.classList.add('active');
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden'; // Impede rolagem do fundo
+  }
+
+  // Função para fechar sidebar
+  function closeSidebar() {
+      sidebar.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = ''; // Libera rolagem
+  }
+
+  // Event Listeners
+  if (mobileBtn) {
+      mobileBtn.addEventListener('click', function(e) {
+          e.stopPropagation(); // Evita conflitos de clique
+          openSidebar();
+      });
+  }
+
+  if (overlay) {
+      overlay.addEventListener('click', closeSidebar);
+  }
+  
+  // Opcional: Fechar ao clicar em um item da sidebar (para navegação em SPA ou âncoras)
+  // Se o site recarrega a página ao clicar, isso não é estritamente necessário, mas ajuda na UX visual
+  const sidebarItems = sidebar.querySelectorAll('.sidebar-item');
+  sidebarItems.forEach(item => {
+      item.addEventListener('click', closeSidebar);
+  });
+});
+</script>
